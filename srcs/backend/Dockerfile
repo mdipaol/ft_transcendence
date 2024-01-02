@@ -2,10 +2,9 @@
 FROM python:3.9.18-slim-bullseye
 
 # Set the working directory in the container
-RUN mkdir -p /app
 WORKDIR /app
 
-# Copy the requirements file to the container wowwowowowowowowowowowowowowowowowwowowowowowowowowowowowo
+# Copy the requirements file to the container
 COPY ./requirements.txt .
 
 # Install the Python dependencies

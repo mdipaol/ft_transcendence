@@ -1,40 +1,47 @@
 version: '3'
 services:
-  frontend:
-    build:
-      context: ./srcs/frontend/
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    volumes:
-      - ./frontend:/app
-    depends_on:
-      - backend
+  # frontend:
+  #   build:
+  #     context: ./srcs/frontend/
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./frontend:/app
+  #   depends_on:
+  #     - backend
 
   backend:
+    container_name: backend
     build:
-      context: ./srcs/backend/
+      context: ./backend/
       dockerfile: Dockerfile
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/app
-    depends_on:
-      - db
+      - backend:/app
+    # depends_on:
+    #   - db
 
-  db:
-    build:
-      context: ./srcs/postres
-      dockerfile: Dockerfile
-    ports:
-      - 5432:5432
-    volumes:
-      - ./data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=your_username
-      - POSTGRES_PASSWORD=your_password
-      - POSTGRES_DB=your_database_name
+  # db:
+  #   build:
+  #     context: ./srcs/postres
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - ./data:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_USER=your_username
+  #     - POSTGRES_PASSWORD=your_password
+  #     - POSTGRES_DB=your_database_name
 
 
 volumes:
-  
+  backend:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./backend/app
+    name: django_volume
