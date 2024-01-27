@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:0.1
+    build:
+      context: ./services/nginx/
+    ports:
+      - "443:443"
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+  django:
+    container_name: django
+    image: django:0.1
+    build:
+      context: ./services/django
+    volumes:
+      - django-volume:/app/
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+  postgres:
+    container_name: postgres
+    image: postgres:0.1
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    build:
+      context: ./services/postgres
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data/
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+
+networks:
+  transcendence-network:
+    name: transcendence-network
+
+volumes:
+  django-volume:
+    name: django-volume
+    driver: local
+    driver_opts:
+      type: none
+      device: ./volumes/django/
+      o: bind
+  postgres-volume:
+    name: postgres-volume
+    driver: local
+    driver_opts:
+      type: none
+      device: ./volumes/postgres/
+      o: bind

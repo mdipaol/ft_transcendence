@@ -1,4 +1,4 @@
-NAME = build
+NAME := ft_transcendence
 
 SRC = srcs/
 
@@ -18,4 +18,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all stop clean fclean re
+.PHONY: all clean fclean re
