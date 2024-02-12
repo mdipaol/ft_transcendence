@@ -1,6 +1,6 @@
 NAME := ft_transcendence
 
-SRC = srcs/
+SRC = srcs
 
 all: $(NAME)
 
@@ -15,6 +15,9 @@ clean:
 
 fclean: clean
 	@ docker compose --project-directory $(SRC) down -v --rmi all
+
+purge: fclean
+	@ sudo rm -rf $(SRC)/volumes/postgres/*
 
 re: fclean all
 

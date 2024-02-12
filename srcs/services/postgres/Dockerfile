@@ -1,1 +1,3 @@
 FROM postgres:13.13-bullseye
+
+RUN apt update

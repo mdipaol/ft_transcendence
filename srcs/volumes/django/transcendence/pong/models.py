@@ -4,9 +4,9 @@ from django.db import models
 #   Models   #
 # ========== #
 
-# User model class
+# Player model class
 
-class	User(models.Model):
+class	Player(models.Model):
 	nickname = models.CharField(max_length=20, unique=True)
 	email = models.EmailField(unique=True)
 	password = models.CharField()
@@ -18,8 +18,8 @@ class	User(models.Model):
 # Matches between users
 
 class	Match(models.Model):
-	player1 = models.ForeignKey(User, on_delete=models.CASCADE)
-	player2 = models.ForeignKey(User, on_delete=models.CASCADE)
+	player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player1")
+	player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="player2")
 	score1 = models.IntegerField()
 	score2 = models.IntegerField()
 	date = models.DateField()
@@ -28,8 +28,8 @@ class	Match(models.Model):
 # Messages
 
 class	Message(models.Model):
-	sender = models.ForeignKey(User, on_delete=models.CASCADE)
-	reciever = models.ForeignKey(User, on_delete=models.CASCADE)
+	sender = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="sender")
+	reciever = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="reciever")
 	text = models.CharField(max_length=200)
 	date = models.DateField()
 
@@ -42,8 +42,8 @@ class	TypeOfRelationship(models.TextChoices):
 # Relationship
 
 class	Relationship(models.Model):
-	user1 = models.ForeignKey(User, on_delete=models.CASCADE)
-	user2 = models.ForeignKey(User, on_delete=models.CASCADE)
+	user1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="user1")
+	user2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="user2")
 	relationship = models.CharField(
 		choices=TypeOfRelationship.choices,
 		default=TypeOfRelationship.FRIEND,
