@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-ip(n_3zoyp5f@ftc(bxd4(iv-n#*zgaedt6y$-@j2e^%y*2bc-
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	'172.18.0.4',
+	'localhost',
 ]
 
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'transcendence.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -107,13 +107,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'pong.BaseUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 

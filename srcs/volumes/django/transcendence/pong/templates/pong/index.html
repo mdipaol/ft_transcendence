@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="{% static 'pong/css/style.css' %}">
+	<title>{% block title %}Transcendence{% endblock %}</title>
+</head>
+
+<body>
+	
+	<!-- Header content -->
+	<header>
+		<nav>
+			<button id="registration-button">Registration</button>
+			<button id="login_button">Log in</button>
+		</nav>
+	</header>
+	
+	<!-- SPA container -->
+	<div id="pong">
+
+		<!-- Main content -->
+		<main>
+			<div id="content">
+			</div>
+
+			<section id="Home">
+				<h2>Home</h2>
+                <p>Welcome to our single-page application!</p>
+			</section>
+
+			<section id="registration">
+
+			</section>
+
+			<section id="about">
+				<h2>About</h2>
+                <p>Learn more about us.</p>
+			</section>
+
+			<section id="contact">
+				<h2>Contact</h2>
+                <p>Get in touch with us.</p>
+			</section>
+
+		</main>
+
+		<!-- Footer content -->
+		<footer>
+			<p>&copy; 2024 Transcendence. All rights reserved.</p>
+		</footer>
+	</div>
+		
+	<script src="{% static 'pong/js/main.js' %}"></script>
+</body>
+</html>
