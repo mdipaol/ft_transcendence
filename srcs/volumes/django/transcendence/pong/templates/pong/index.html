@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<link rel="stylesheet" href="{% static 'pong/css/style.css' %}">
-	<title>{% block title %}Transcendence{% endblock %}</title>
+	<title>Transcendence</title>
 </head>
 
 <body>
@@ -12,46 +12,68 @@
 	<!-- Header content -->
 	<header>
 		<nav>
-			<button id="registration-button">Registration</button>
-			<button id="login_button">Log in</button>
+			{% if not user.is_authenticated %}
+				<button id="registration-button">Registration</button>
+				<button id="login-button">Log in</button>
+			{% endif %}
+			{% if user.is_authenticated %}
+				<button id="logout-button">Log out</button>
+			{% endif %}
 		</nav>
 	</header>
 	
-	<!-- SPA container -->
-	<div id="pong">
+	<!-- Main content -->
+	<main>
+		<!-- SPA container -->
+		<div id="app" class="app">
 
-		<!-- Main content -->
-		<main>
-			<div id="content">
-			</div>
-
-			<section id="Home">
-				<h2>Home</h2>
-                <p>Welcome to our single-page application!</p>
-			</section>
-
-			<section id="registration">
-
-			</section>
-
-			<section id="about">
-				<h2>About</h2>
-                <p>Learn more about us.</p>
-			</section>
-
-			<section id="contact">
-				<h2>Contact</h2>
-                <p>Get in touch with us.</p>
-			</section>
-
-		</main>
-
-		<!-- Footer content -->
-		<footer>
-			<p>&copy; 2024 Transcendence. All rights reserved.</p>
-		</footer>
-	</div>
+				<div id="pong" class="content">
 		
-	<script src="{% static 'pong/js/main.js' %}"></script>
+				</div>
+
+				<div id="registration" class="registration content">
+
+				</div>
+
+				<div id="login" class="login content">
+
+				</div>
+
+				<div id="Home" class="content">
+					<h2>Home</h2>
+					<p>Welcome to our single-page application!</p>
+				</div>
+
+				<div id="about" class="content">
+					<h2>About</h2>
+					<p>Learn more about us.</p>
+				</div>
+
+				<div id="contact" class="content">
+					<h2>Contact</h2>
+					<p>Get in touch with us.</p>
+				</div>
+		</div>
+	</main>
+	<!-- Footer content -->
+	<footer>
+		<p>&copy; 2024 Transcendence. All rights reserved.</p>
+	</footer>
+	{% if user.is_authenticated %}
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+				}
+			}
+		</script>
+		<script>
+			window.staticUrl = "{% static 'pong/' %}"
+		</script>
+		<script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
+	{% endif %}
+	<script src="{% static 'pong/js/registration.js' %}"></script>
+	<script src="{% static 'pong/js/login.js' %}"></script>	
 </body>
 </html>

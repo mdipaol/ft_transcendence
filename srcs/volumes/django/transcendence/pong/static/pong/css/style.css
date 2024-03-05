@@ -3,6 +3,29 @@ body, html{
 	width: 100%;
 }
 
+header{
+	height: 10%;
+	width: 100%;
+}
+
+footer{
+	display: block;
+	float: right;
+}
+
+.app{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.content{
+	height: 30%;
+	width: 50%;
+}
+
 .registration{
-	background-color: chocolate;
+}
+
+.login{
 }
