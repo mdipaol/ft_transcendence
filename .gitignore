@@ -1,4 +1,3 @@
-.gitignore
 srcs/.env
 srcs/volumes/postgres
 srcs/volumes/django/transcendence/transcendence/__pycache__/
