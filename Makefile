@@ -5,6 +5,7 @@ SRC = srcs
 all: $(NAME)
 
 $(NAME): $(SRC)
+	@ bash $(SRC)/utils/volumes_check.sh
 	@ docker compose --project-directory $(SRC) up -d --build
 
 start:
@@ -20,7 +21,7 @@ fclean: clean
 	@ docker compose --project-directory $(SRC) down -v --rmi all
 
 purge: fclean
-	@ sudo rm -rf $(SRC)/volumes/postgres/*
+	@ sudo rm -rf $(SRC)/volumes/postgres/
 
 re: fclean all
 

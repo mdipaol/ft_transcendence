@@ -17,7 +17,9 @@
 				<button id="login-button">Log in</button>
 			{% endif %}
 			{% if user.is_authenticated %}
-				<button id="logout-button">Log out</button>
+				<a href={% url 'pong:logout' %}>
+					<button id="logout-button">Log out</button>
+				</a>
 			{% endif %}
 		</nav>
 	</header>
@@ -74,6 +76,7 @@
 		<script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
 	{% endif %}
 	<script src="{% static 'pong/js/registration.js' %}"></script>
-	<script src="{% static 'pong/js/login.js' %}"></script>	
+	<script src="{% static 'pong/js/login.js' %}"></script>
+	<script src="{% static 'pong/js/logout.js' %}"></script>
 </body>
 </html>
