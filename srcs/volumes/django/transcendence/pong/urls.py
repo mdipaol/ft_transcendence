@@ -17,7 +17,7 @@ app_name= 'pong'
 
 urlpatterns = [
 	path('', views.IndexView.as_view(), name='index'),
-	path('login/', views.login_view, name='login'),
+	path('login/', views.LoginCustomView.as_view(), name='login'),
 	path('logout/', views.LogoutView.as_view(), name='logout'),
 	path('registration/', views.RegistrationFormView.as_view(), name='registration'),
 	path('profile/<str:nickname>', views.ProfileView.as_view(), name='profile'),

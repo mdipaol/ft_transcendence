@@ -11,6 +11,8 @@ services:
       - "443:443"
       - "80:80"
     restart: unless-stopped
+    volumes:
+      - static-files:/var/www/django-files/static
     depends_on:
       - django
     networks:
@@ -25,9 +27,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
     build:
       context: ./services/django
-    ports:
-      - "8000:8000"
     volumes:
+      - static-files:/app/transcendence/staticfiles
       - django-volume:/app/
     depends_on:
       postgres:
@@ -62,6 +63,13 @@ volumes:
     driver_opts:
       type: none
       device: ./volumes/django/
+      o: bind
+  static-files:
+    name: static-files
+    driver: local
+    driver_opts:
+      type: none
+      device: ./volumes/static
       o: bind
   postgres-volume:
     name: postgres-volume

@@ -1,9 +1,9 @@
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.template import loader
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
+from django.template import loader
 from django.urls import reverse
 
 from .models import BaseUser
@@ -35,13 +35,19 @@ class RegistrationFormView(TemplateView):
 			user.save()
 		return HttpResponseRedirect(reverse('pong:login'))
 
-class LoginView(View):
+class LoginCustomView(View):
 	def get(self, request):
-		...
+		form = LoginForm()
+		return render(request, 'pong/login_form.html', {'form': form})
 	def post(self, request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+			if user is not None:
+				login(request, user)
+				return HttpResponseRedirect(reverse('pong:index'))
+			else:
+				return HttpResponse('Authentication failed')
 
 class LogoutView(TemplateView):
 	def get(self, request):
