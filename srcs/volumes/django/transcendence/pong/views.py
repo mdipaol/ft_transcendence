@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -13,9 +13,6 @@ class IndexView(TemplateView):
 	template_name = 'pong/index.html'
 	def get(self, request):
 		return render(request, self.template_name, {'user': request.user})
-
-class ProfileView(TemplateView):
-	template_name='pong/profile.html'
 
 class RegistrationFormView(TemplateView):
 	form_class = RegistrationForm
@@ -53,6 +50,17 @@ class LogoutView(TemplateView):
 	def get(self, request):
 		logout(request)
 		return HttpResponseRedirect(reverse('pong:index'))
+
+class ProfileView(View):
+	def get(self, request, username):
+		user = get_object_or_404(BaseUser, username=username)
+		data = {
+			'username' : user.username,
+			'email' : user.email,
+			'level' : user.level,
+		}
+		return JsonResponse(data)
+
 
 def login_view(request):
 	if request.method == 'POST':
