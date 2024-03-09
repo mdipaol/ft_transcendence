@@ -6,7 +6,7 @@ all: $(NAME)
 
 $(NAME): $(SRC)
 	@ bash $(SRC)/utils/volumes_check.sh
-	@ docker compose --project-directory $(SRC) up -d --build
+	@ docker compose --project-directory $(SRC) up -d --build --force-recreate
 
 start:
 	@ docker compose --project-directory $(SRC) start
