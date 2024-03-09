@@ -32,7 +32,7 @@ services:
       - django-volume:/app/
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - transcendence-network
@@ -51,6 +51,11 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   transcendence-network:
