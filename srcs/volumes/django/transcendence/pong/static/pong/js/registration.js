@@ -1,9 +1,13 @@
 function showRegistration() { 
-	fetch('/registration/')
+	fetch('/registration/',{
+		headers:{
+			'x-requested-with': 'XMLHttpRequest',
+		}
+	})
 	.then(response => response.text())
 	.then(text => {
 		console.log(text);
-		document.querySelector('#registration').innerHTML = text;
+		document.querySelector('#form-section').innerHTML = text;
 	});
 }
 

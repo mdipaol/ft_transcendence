@@ -17,8 +17,11 @@ class IndexView(TemplateView):
 class RegistrationFormView(TemplateView):
 	form_class = RegistrationForm
 	template_name = 'pong/registration_form.html'
-	# GET	
+	# GET
+	# @vary_on_headers('X-Requested-With')
 	def get(self, request):
+		if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
+			return HttpResponseRedirect(reverse('pong:index'))
 		form = self.form_class()
 		return render(request, self.template_name, {'form': form})
 	# POST	
@@ -61,40 +64,46 @@ class ProfileView(View):
 		}
 		return JsonResponse(data)
 
+def username(request):
+	user = request.user
+	data = {'username': ''}
+	if user.is_authenticated:
+		data['username'] = user.get_username()
+	return HttpResponse(data['username'])
 
-def login_view(request):
-	if request.method == 'POST':
-		form = LoginForm(request.POST)
-		user = authenticate(username=form.data['username'], password=form.data['password'])
-		if user is not None:
-			login(request, user)
-			# return render(request, 'pong/index.html', {'user': request.user})
-			return HttpResponseRedirect(reverse('pong:index'))
-		else:
-			return HttpResponse('Authentication failed')
-	else:
-		form = LoginForm()
-	return render(request, 'pong/login_form.html', { 'form': form })
+# def login_view(request):
+# 	if request.method == 'POST':
+# 		form = LoginForm(request.POST)
+# 		user = authenticate(username=form.data['username'], password=form.data['password'])
+# 		if user is not None:
+# 			login(request, user)
+# 			# return render(request, 'pong/index.html', {'user': request.user})
+# 			return HttpResponseRedirect(reverse('pong:index'))
+# 		else:
+# 			return HttpResponse('Authentication failed')
+# 	else:
+# 		form = LoginForm()
+# 	return render(request, 'pong/login_form.html', { 'form': form })
 
-def index_view(request):
-	context = {
-		'user': request.user
-	}
-	return render(request, 'pong/index.html', context)
+# def index_view(request):
+# 	context = {
+# 		'user': request.user
+# 	}
+# 	return render(request, 'pong/index.html', context)
 
-def registration_view(request):
-	if request.method == 'POST':
-		form = RegistrationForm(request.POST)
-		username = form.data['username']
-		email = form.data['email']
-		password = form.data['password']
-		user = BaseUser.objects.create_user(username, email, password)
-		user.save()
-		return render(request, 'pong/index.html', {'user': request.user})
-	else:
-		form = RegistrationForm()
-	return render(request, 'pong/registration_form.html', { 'form': form })
+# def registration_view(request):
+# 	if request.method == 'POST':
+# 		form = RegistrationForm(request.POST)
+# 		username = form.data['username']
+# 		email = form.data['email']
+# 		password = form.data['password']
+# 		user = BaseUser.objects.create_user(username, email, password)
+# 		user.save()
+# 		return render(request, 'pong/index.html', {'user': request.user})
+# 	else:
+# 		form = RegistrationForm()
+# 	return render(request, 'pong/registration_form.html', { 'form': form })
 
-def logout_view(request):
-	logout(request)
-	return HttpResponseRedirect(reverse('pong:index'))
+# def logout_view(request):
+# 	logout(request)
+# 	return HttpResponseRedirect(reverse('pong:index'))

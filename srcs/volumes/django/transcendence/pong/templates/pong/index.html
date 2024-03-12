@@ -13,51 +13,50 @@
 	<header>
 		<nav>
 			{% if not user.is_authenticated %}
-				<button id="registration-button">Registration</button>
-				<button id="login-button">Log in</button>
+			<button id="registration-button">Registration</button>
+			<button id="login-button">Log in</button>
 			{% endif %}
 			{% if user.is_authenticated %}
-				<a href={% url 'pong:logout' %}>
-					<button id="logout-button">Log out</button>
-				</a>
-				<button id="profile-button">Profile</button>
+			<a href={% url 'pong:logout' %}>
+				<button id="logout-button">Log out</button>
+			</a>
+			<button id="profile-button">Profile</button>
 			{% endif %}
 		</nav>
 	</header>
 	
 	<!-- Main content -->
 	<main>
-		<!-- SPA container -->
 		<div id="app" class="app">
-				<div id="registration" class="registration content">
-
-				</div>
-
-				<div id="login" class="login content">
-
-				</div>
+			<!-- SPA container -->
+			{% if not user.is_authenticated %}
+			<div id="form-section" class="content"></div>
+			{% else %}
+			<div id="friends" class="content"></div>
+			{% endif %}
+			<div id="game" class="content game"></div>
+			<div id="chat" class="chat content"></div>
 		</div>
 	</main>
 	<!-- Footer content -->
 	<footer>
-		<p>&copy; 2024 Transcendence. All rights reserved.</p>
+		<p class="rigths">&copy; 2024 Transcendence. All rights reserved.</p>
 	</footer>
 	{% if user.is_authenticated %}
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-				}
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
 			}
-		</script>
-		<script>
-			window.staticUrl = "{% static 'pong/' %}"
-		</script>
-		<script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
+		}
+	</script>
+	<script>
+		window.staticUrl = "{% static 'pong/' %}"
+	</script>
+	<script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
 	{% endif %}
 	<script src="{% static 'pong/js/registration.js' %}"></script>
 	<script src="{% static 'pong/js/login.js' %}"></script>
-	<script src="{% static 'pong/js/logout.js' %}"></script>
 </body>
 </html>

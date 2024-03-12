@@ -3,7 +3,7 @@ function showLogin() {
 	.then(response => response.text())
 	.then(text => {
 		console.log(text);
-		document.querySelector('#login').innerHTML = text;
+		document.querySelector('#form-section').innerHTML = text;
 	});
 }
 

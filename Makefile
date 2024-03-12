@@ -6,7 +6,7 @@ all: $(NAME)
 
 $(NAME): $(SRC)
 	@ bash $(SRC)/utils/volumes_check.sh
-	@ docker compose --project-directory $(SRC) up -d --build --force-recreate
+	@ docker compose --project-directory $(SRC) up -d --build
 
 start:
 	@ docker compose --project-directory $(SRC) start
@@ -22,6 +22,8 @@ fclean: clean
 
 purge: fclean
 	@ sudo rm -rf $(SRC)/volumes/postgres/
+	@ sudo rm -rf $(SRC)/volumes/django/transcendence/pong/__pycache__/*
+	@ sudo rm -rf $(SRC)/volumes/django/transcendence/pong/migrations/*
 
 re: fclean all
 
