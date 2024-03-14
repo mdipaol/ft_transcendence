@@ -1,21 +1,21 @@
 body, html{
-	height: 100vh;
-	width: 100vw;
-}
-
-header{
-	height: 10%;
+	height: 100%;
 	width: 100%;
-	border-radius: 10px;
-	background-color: aquamarine;
 }
 
+header, footer{
+	height: 10vh;
+	width: 100vw;
+	border-radius: 10px;
+	background-color: black
+}
+/* 
 footer{
 	height: 10%;
 	width: 100%;
 	border-radius: 10px;
 	background-color: yellow;
-}
+} */
 
 .rigths{
 	float: right;
@@ -25,7 +25,7 @@ footer{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
+	height: 80vh;
 	width: 100vw;
 }
 
@@ -35,10 +35,14 @@ footer{
 	width: 100%;
 }
 
+.form{
+	background-color: green;
+}
+
 .game{
-	background-color: black;
+	background-color: white;
 }
 
 .chat{
-	background-color: blue;
+	background-color: red;
 }
