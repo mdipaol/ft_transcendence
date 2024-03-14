@@ -1,3 +1,5 @@
-django
+django==5.0.3
 psycopg
 psycopg2-binary
+channels
+gunicorn

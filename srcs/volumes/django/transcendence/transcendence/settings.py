@@ -26,10 +26,9 @@ SECRET_KEY = 'django-insecure-ip(n_3zoyp5f@ftc(bxd4(iv-n#*zgaedt6y$-@j2e^%y*2bc-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-	'localhost',
-]
+ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://localhost']
 
 # Application definition
 
@@ -80,8 +79,8 @@ WSGI_APPLICATION = 'transcendence.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'transcendence',
-		'USER': 'postgres',
+        'NAME': os.environ['POSTGRES_DB'],
+		'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
 		'HOST': 'postgres',
 		'PORT': '5432',
@@ -124,7 +123,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

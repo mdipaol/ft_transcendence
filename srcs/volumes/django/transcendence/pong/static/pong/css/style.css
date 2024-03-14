@@ -3,6 +3,46 @@ body, html{
 	width: 100%;
 }
 
-.registration{
-	background-color: chocolate;
+header, footer{
+	height: 10vh;
+	width: 100vw;
+	border-radius: 10px;
+	background-color: black
+}
+/* 
+footer{
+	height: 10%;
+	width: 100%;
+	border-radius: 10px;
+	background-color: yellow;
+} */
+
+.rigths{
+	float: right;
+}
+
+.app{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 80vh;
+	width: 100vw;
+}
+
+.content{
+	text-align: center;
+	height: 100%;
+	width: 100%;
+}
+
+.form{
+	background-color: green;
+}
+
+.game{
+	background-color: white;
+}
+
+.chat{
+	background-color: red;
 }

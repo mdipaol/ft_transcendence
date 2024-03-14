@@ -9,7 +9,12 @@ services:
       context: ./services/nginx/
     ports:
       - "443:443"
+      - "80:80"
     restart: unless-stopped
+    volumes:
+      - static-files:/var/www/django-files/static
+    depends_on:
+      - django
     networks:
       - transcendence-network
 
@@ -18,14 +23,19 @@ services:
     image: django:0.1
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
     build:
       context: ./services/django
-    ports:
-      - "8000:8000"
     volumes:
+      - static-files:/app/transcendence/staticfiles
       - django-volume:/app/
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - transcendence-network
@@ -35,6 +45,8 @@ services:
     image: postgres:0.1
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
     build:
       context: ./services/postgres
     volumes:
@@ -42,6 +54,11 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
 networks:
   transcendence-network:
@@ -54,6 +71,13 @@ volumes:
     driver_opts:
       type: none
       device: ./volumes/django/
+      o: bind
+  static-files:
+    name: static-files
+    driver: local
+    driver_opts:
+      type: none
+      device: ./volumes/static
       o: bind
   postgres-volume:
     name: postgres-volume

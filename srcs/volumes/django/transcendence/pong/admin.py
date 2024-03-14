@@ -9,8 +9,9 @@ from django.contrib import admin
 # admin.site.register(Message)
 # admin.site.register(Relationship)
 
-from .models import BaseUser, Match, Relationship
+from .models import BaseUser, Match, Group, Message
 
 admin.site.register(BaseUser)
 admin.site.register(Match)
-admin.site.register(Relationship)
+admin.site.register(Group)
+admin.site.register(Message)
