@@ -1,6 +1,7 @@
 srcs/.env
 srcs/volumes/static
 srcs/volumes/postgres
+srcs/volumes/django/__pycache__/
 srcs/volumes/django/transcendence/transcendence/__pycache__/
 srcs/volumes/django/transcendence/pong/__pycache__/
 srcs/volumes/django/transcendence/pong/migrations/

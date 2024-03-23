@@ -1,21 +1,15 @@
 body, html{
-	height: 100%;
 	width: 100%;
+	height: 100%;
 }
 
 header, footer{
 	height: 10vh;
 	width: 100vw;
 	border-radius: 10px;
-	background-color: black
+	background-color: white;
 }
-/* 
-footer{
-	height: 10%;
-	width: 100%;
-	border-radius: 10px;
-	background-color: yellow;
-} */
+
 
 .rigths{
 	float: right;
@@ -35,7 +29,7 @@ footer{
 	width: 100%;
 }
 
-.form{
+.form, .data{
 	background-color: green;
 }
 

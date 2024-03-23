@@ -1,5 +1,7 @@
 from django.db import models
 
+import datetime
+
 from django.contrib.auth.models import AbstractUser
 
 class BaseUser(AbstractUser):
@@ -21,4 +23,10 @@ class Message(models.Model):
 	sender = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
 	group_id = models.ForeignKey(Group, on_delete=models.CASCADE)
 	text = models.CharField(max_length=255)
-	date = models.DateField()
+	timestamp = models.DateTimeField()
+
+class Tournament(models.Model):
+	matches = models.ManyToManyField(Match)
+	start = models.DateTimeField(default=datetime.datetime.now())
+	end = models.DateTimeField(null=True)
+	ended = models.BooleanField(default=False)

@@ -5,40 +5,58 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
 from django.template import loader
 from django.urls import reverse
+import logging
 
+# import online_users.models
+# from online_users.models import OnlineUserActivity
+from datetime import datetime, timedelta
 from .models import BaseUser
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, ChangePasswordForm
 
+output_file_path = 'output.log'
+
+def log_to_file(message):
+	with open(output_file_path, 'a') as f:  # 'a' for append mode
+		f.write(message + '\n')
+
+# def see_users(request):
+# 	user_status = online_users.models.OnlineUserActivity.get_user_activities(timedelta(seconds=60))
+# 	users = (user for user in  user_status)
+# 	context = {"online_users"}
+# 	return render(request, 'pong/online.html', context)
 
 class IndexView(TemplateView):
 	template_name = 'pong/index.html'
 	def get(self, request):
 		return render(request, self.template_name, {'user': request.user})
 
-class RegistrationFormView(TemplateView):
-	form_class = RegistrationForm
-	template_name = 'pong/registration_form.html'
+class RegistrationFormView(View):
+	template_name = 'pong/form.html'
+	context = {
+		'id' : 'registration-form',
+	}
+
 	def get(self, request):
-		is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-		if not is_ajax:
+		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 			return HttpResponseRedirect(reverse('pong:index'))
-		form = self.form_class()
-		return render(request, self.template_name, {'form': form})
-	# POST	
+		self.context['form'] = RegistrationForm()
+		return render(request, self.template_name, self.context)
 	def post(self, request):
-		form = self.form_class(request.POST)
+		form = RegistrationForm(request.POST)
 		if form.is_valid():
-			username = form.cleaned_data['username']
-			email = form.cleaned_data['email']
-			password = form.cleaned_data['password']
-			user = BaseUser.objects.create_user(username, email, password)
-			user.save()
-		return HttpResponseRedirect(reverse('pong:index'))
+			form.save()
+			return JsonResponse({'success': True, 'redirect': '/index/'})
+		else:
+			self.context['form'] = form
+			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
+			return JsonResponse({'success': False, 'form_html': form_html})
 
 class LoginCustomView(View):
+	template_name = 'pong/form.html'
+	context = {'id' : 'login-form'}
+
 	def get(self, request):
-		is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-		if not is_ajax:
+		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 			return HttpResponseRedirect(reverse('pong:index'))
 		form = LoginForm()
 		return render(request, 'pong/login_form.html', {'form': form})
@@ -51,6 +69,7 @@ class LoginCustomView(View):
 				return HttpResponseRedirect(reverse('pong:index'))
 			else:
 				return HttpResponse('Authentication failed')
+		return HttpResponse('ciao')
 
 class LogoutView(TemplateView):
 	def get(self, request):
@@ -71,6 +90,22 @@ class ProfileView(View):
 		}
 		return JsonResponse(data)
 
+
+# class UpdatePassword(View):
+# 	def get(self, request):
+# 		template = loader.get_template('pong/form.html')
+# 		form = ChangePasswordForm()
+# 		return HttpResponse(template.render({'form' : form}, request))
+# 	def post(self, request):
+# 		form = ChangePasswordForm(request.POST)
+# 		if form.is_valid():
+# 			if user is not None:
+# 				login(request, user)
+# 				return HttpResponseRedirect(reverse('pong:index'))
+# 			else:
+# 				return HttpResponse('Authentication failed')
+		
+
 def username(request):
 	is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 	if not is_ajax:
@@ -88,3 +123,6 @@ def is_authenticated(request):
 		else:
 			return HttpResponse('0')
 	return HttpResponseNotFound('<h1>404 Not Found</h1>')
+
+def personal_profile(request):
+	return HttpResponseRedirect(reverse('pong:profile/' + request.user.get_username()))
