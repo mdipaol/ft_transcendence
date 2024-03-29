@@ -30,6 +30,8 @@ services:
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
     build:
       context: ./services/django
+    ports:
+      - "8000:8000"
     volumes:
       - static-files:/app/transcendence/staticfiles
       - django-volume:/app/
@@ -39,6 +41,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
+    stdin_open: true
+    tty: true
 
   postgres:
     container_name: postgres

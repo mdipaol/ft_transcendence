@@ -40,8 +40,6 @@
 	<!-- Footer content -->
 	<footer>
 	</footer>
-	{% comment %}
-	{% if user.is_authenticated %}
 	<script type="importmap">
 		{
 			"imports": {
@@ -54,13 +52,11 @@
 		window.staticUrl = "{% static 'pong/' %}"
 	</script>
 	<script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
-	{% endif %}
-	{% endcomment %}
 	<script src="{% static 'pong/js/profile.js' %}"></script>
 	<script src="{% static 'pong/js/registration.js' %}"></script>
-	<script src="{% static 'pong/js/login.js' %}"></script>
+	<script src="{% static 'pong/js/logged.js' %}"></script>
 	{% comment %} <script>
-		const socket = new WebSocket("wss://" + window.location.host + "/ws/chat/")
+		const socket = new WebSocket("wss://" + window.location.host + "/ws/game/")
 
 		socket.addEventListener('open', function (event) {
 			console.log('Connected to WebSocket server');
@@ -80,7 +76,7 @@
 		// Event listener for handling the connection close
 		socket.addEventListener('close', function (event) {
 			console.log('Connection closed');
-		}); {% endcomment %}
-	</script>
+		});
+	</script> {% endcomment %}
 </body>
 </html>

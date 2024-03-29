@@ -1,15 +1,17 @@
-# chat/consumers.py
+
 import json
 
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, Websocket
 
+class GameConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
 
-class ChatConsumer(WebsocketConsumer):
-    def connect(self):
-        self.accept()
-
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         pass
 
-    def receive(self, text_data):
-        self.send(text_data=text_data)
+    async def receive(self, text_data):
+        # Deserialize the received message
+        game_data = json.loads(text_data)    
+        response_data = json.dumps(game_data)
+        await self.send(text_data=response_data)

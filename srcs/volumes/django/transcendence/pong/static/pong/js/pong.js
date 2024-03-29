@@ -4,14 +4,14 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 //import { randFloat, randInt } from 'three/src/math/MathUtils';
 
-
+const socket = new WebSocket("wss://" + window.location.host + "/ws/game/")
 // (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 console.log(window.staticUrl)
 
 var MOVSPEED = 0.9;
 var BALLSPEED = 0.4;
-
+//const protobuf = require('./protobut_pb.js');
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, -10, 70); // Esempio di posizione della telecamera
@@ -203,6 +203,8 @@ var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
 scene.add(ambientLight);
 
 var collision = false;
+
+var counter = 0;
 var update = function()
 {
 	ball.position.x += BALLSPEED * directionX;
@@ -220,7 +222,6 @@ var update = function()
 		directionX *= -1.1;
 		directionY *= 1.1;
 		collision = true;
-		console.log(ball.position.z);
 	}
 	if (wallCollision(ball, wall))
 	{
@@ -259,8 +260,19 @@ var update = function()
 	else
 		ball.position.z = negCurve.getPointAt((-ball.position.x + 45)/100).z;
 
-
-
+	if(counter % 10 == 0)
+	{
+		socket.send(JSON.stringify({ 'BallX': ball.position.x, 'BallY': ball.position.y }));
+		console.log("posizione X:",ball.position.x);
+		socket.addEventListener('message', function (event) {
+			var msg = JSON.parse(event.data);
+			ball.position.x = msg['BallY'];
+			console.log('Message from server:', event.data);
+		});		
+	if (counter > 10000000)
+		counter = 0;
+	}
+counter++;
 }
 
 var render = function()

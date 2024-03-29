@@ -1,4 +1,4 @@
-django==5.0.3
+django==4.2.11
 psycopg==3.1.18
 psycopg2-binary==2.9.9
 channels==4.0.0

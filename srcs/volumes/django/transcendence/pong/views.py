@@ -7,23 +7,15 @@ from django.template import loader
 from django.urls import reverse
 import logging
 
-# import online_users.models
-# from online_users.models import OnlineUserActivity
 from datetime import datetime, timedelta
 from .models import BaseUser
-from .forms import RegistrationForm, LoginForm, ChangePasswordForm
+from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ChangeUsernameForm, ChangeEmailForm, ChangeImageForm
 
 output_file_path = 'output.log'
 
 def log_to_file(message):
 	with open(output_file_path, 'a') as f:  # 'a' for append mode
 		f.write(message + '\n')
-
-# def see_users(request):
-# 	user_status = online_users.models.OnlineUserActivity.get_user_activities(timedelta(seconds=60))
-# 	users = (user for user in  user_status)
-# 	context = {"online_users"}
-# 	return render(request, 'pong/online.html', context)
 
 class IndexView(TemplateView):
 	template_name = 'pong/index.html'
@@ -53,23 +45,26 @@ class RegistrationFormView(View):
 
 class LoginCustomView(View):
 	template_name = 'pong/form.html'
-	context = {'id' : 'login-form'}
+	context = {
+		'id' : 'login-form',
+	}
 
 	def get(self, request):
 		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 			return HttpResponseRedirect(reverse('pong:index'))
-		form = LoginForm()
-		return render(request, 'pong/login_form.html', {'form': form})
+		self.context['form'] = LoginForm()
+		return render(request, self.template_name, self.context)
 	def post(self, request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
-			user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+			user = authenticate(request, username=form.cleaned_data.get("username"), password=form.cleaned_data.get("password"))
 			if user is not None:
 				login(request, user)
-				return HttpResponseRedirect(reverse('pong:index'))
-			else:
-				return HttpResponse('Authentication failed')
-		return HttpResponse('ciao')
+			return JsonResponse({'success': True, 'redirect': '/index/'})
+		else:
+			self.context['form'] = form
+			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
+			return JsonResponse({'success': False, 'form_html': form_html})
 
 class LogoutView(TemplateView):
 	def get(self, request):
@@ -90,21 +85,42 @@ class ProfileView(View):
 		}
 		return JsonResponse(data)
 
+SETTINGS_FORM = {
+	'username' : ChangeUsernameForm,
+	'password' : ChangePasswordForm,
+	'image' : ChangeImageForm,
+	'email' : ChangeEmailForm,
+}
 
-# class UpdatePassword(View):
-# 	def get(self, request):
-# 		template = loader.get_template('pong/form.html')
-# 		form = ChangePasswordForm()
-# 		return HttpResponse(template.render({'form' : form}, request))
-# 	def post(self, request):
-# 		form = ChangePasswordForm(request.POST)
-# 		if form.is_valid():
-# 			if user is not None:
-# 				login(request, user)
-# 				return HttpResponseRedirect(reverse('pong:index'))
-# 			else:
-# 				return HttpResponse('Authentication failed')
-		
+class SettingsView(View):
+	template_name = 'pong/form.html'
+
+	def get(self, request, setting):
+		# if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+		# 	return HttpResponseRedirect(reverse('pong:index'))
+		# import pdb; pdb.set_trace()
+		form_class = SETTINGS_FORM[setting]
+		if form_class is None:
+			return HttpResponseNotFound()
+		form = form_class(user=request.user)
+		return render(request, self.template_name, {
+			'form' : form,
+			'id' : form.id,
+		})
+	def post(self, request, setting):
+		form_class = SETTINGS_FORM[setting]
+		if form_class is None:
+			return HttpResponseNotFound()
+		form = form_class(request.POST)
+		if form.is_valid():
+			return JsonResponse({'success': True, 'redirect': '/index/'})
+		else:
+			context = {
+				'form' : form,
+				'id' : form.id,
+			}
+			form_html = render(request, self.template_name, context).content.decode('utf-8')
+			return JsonResponse({'success': False, 'form_html': form_html})
 
 def username(request):
 	is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'

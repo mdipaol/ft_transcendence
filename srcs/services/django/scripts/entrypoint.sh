@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
+python3 transcendence/manage.py makemigrations;
 python3 transcendence/manage.py makemigrations pong;
 python3 transcendence/manage.py migrate;
 python3 transcendence/manage.py createsuperuser --no-input;
