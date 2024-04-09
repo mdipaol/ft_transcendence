@@ -9,7 +9,7 @@ import logging
 
 from datetime import datetime, timedelta
 from .models import BaseUser
-from .forms import RegistrationForm, LoginForm, ChangePasswordForm, ChangeUsernameForm, ChangeEmailForm, ChangeImageForm
+from .forms import *
 
 output_file_path = 'output.log'
 
@@ -37,7 +37,7 @@ class RegistrationFormView(View):
 		form = RegistrationForm(request.POST)
 		if form.is_valid():
 			form.save()
-			return JsonResponse({'success': True, 'redirect': '/index/'})
+			return JsonResponse({'success': True, 'redirect': '/'})
 		else:
 			self.context['form'] = form
 			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
@@ -60,7 +60,7 @@ class LoginCustomView(View):
 			user = authenticate(request, username=form.cleaned_data.get("username"), password=form.cleaned_data.get("password"))
 			if user is not None:
 				login(request, user)
-			return JsonResponse({'success': True, 'redirect': '/index/'})
+			return JsonResponse({'success': True, 'redirect': '/'})
 		else:
 			self.context['form'] = form
 			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
@@ -75,7 +75,7 @@ class ProfileView(View):
 	def get(self, request, username):
 		is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 		if not is_ajax:
-			return HttpResponseNotFound('Not found')
+			return HttpResponseNotFound(reverse('pong:index'))
 		user = get_object_or_404(BaseUser, username=username)
 		data = {
 			'username' : user.username,
@@ -88,7 +88,7 @@ class ProfileView(View):
 SETTINGS_FORM = {
 	'username' : ChangeUsernameForm,
 	'password' : ChangePasswordForm,
-	'image' : ChangeImageForm,
+	'image' : UpdateAvatar,
 	'email' : ChangeEmailForm,
 }
 
@@ -96,9 +96,8 @@ class SettingsView(View):
 	template_name = 'pong/form.html'
 
 	def get(self, request, setting):
-		# if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-		# 	return HttpResponseRedirect(reverse('pong:index'))
-		# import pdb; pdb.set_trace()
+		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+			return HttpResponseRedirect(reverse('pong:index'))
 		form_class = SETTINGS_FORM[setting]
 		if form_class is None:
 			return HttpResponseNotFound()
@@ -113,7 +112,7 @@ class SettingsView(View):
 			return HttpResponseNotFound()
 		form = form_class(request.POST)
 		if form.is_valid():
-			return JsonResponse({'success': True, 'redirect': '/index/'})
+			return JsonResponse({'success': True, 'redirect': '/'})
 		else:
 			context = {
 				'form' : form,
@@ -121,6 +120,15 @@ class SettingsView(View):
 			}
 			form_html = render(request, self.template_name, context).content.decode('utf-8')
 			return JsonResponse({'success': False, 'form_html': form_html})
+
+def chat_index(request):
+	return render(request, 'pong/chat.html')
+
+def room(request, room_name):
+    return render(request, "pong/room.html", {"room_name": room_name})
+
+def game_room(request, room_name):
+	return render(request, 'pong/game.html', {"room_name": room_name})
 
 def username(request):
 	is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'

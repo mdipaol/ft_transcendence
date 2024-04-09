@@ -1,0 +1,23 @@
+{% load static %}
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+</head>
+<body>
+    <script>
+        window.staticUrl = "{% static 'pong/' %}"
+    </script>
+    <script type="importmap">
+        {
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+			}
+		}
+    </script>
+    <script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
+</body>
+</html>

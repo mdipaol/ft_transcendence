@@ -125,5 +125,5 @@ class ChangeEmailForm(UpdateForm):
 			raise forms.ValidationError("Another user is currently registered with this email")
 		return email
 	
-class ChangeImageForm(UpdateForm):
-	id = 'change-image'
+class UpdateAvatar(UpdateForm):
+	id = 'avatar-form'

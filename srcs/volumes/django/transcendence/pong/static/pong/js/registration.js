@@ -1,4 +1,31 @@
 
+function postData(formData, nameForm) {
+	return new Promise((resolve, reject) => {
+		// Example: Perform a POST request using Fetch API
+		toSend = new URLSearchParams(Object.fromEntries(formData))
+		fetch("/" + nameForm + "/", {
+		method: "POST",
+		body: toSend,
+		headers: {
+			"Content-Type": 'application/x-www-form-urlencoded',
+			'X-Requested-With' : 'XMLHttpRequest',
+		}
+		})
+		.then(response => {
+		if (!response.ok) {
+			throw new Error("POST request failed");
+		}
+		return response.json();
+		})
+		.then(data => {
+		resolve(data);
+		})
+		.catch(error => {
+		reject(error);
+		});
+	});
+}
+
 function eventListenerForms(nameForm) {
 	document.getElementById(nameForm + "-button").addEventListener("click", function() {
 		fetch("/" + nameForm + "/", {headers: {'X-Requested-With' : 'XMLHttpRequest'}})
@@ -34,33 +61,6 @@ function eventListenerForms(nameForm) {
 		.catch(error => console.error("Error fetching form:", error));
 	});
 
-}
-  
-function postData(formData, nameForm) {
-	return new Promise((resolve, reject) => {
-		// Example: Perform a POST request using Fetch API
-		toSend = new URLSearchParams(Object.fromEntries(formData))
-		fetch("/" + nameForm + "/", {
-		method: "POST",
-		body: toSend,
-		headers: {
-			"Content-Type": 'application/x-www-form-urlencoded',
-			'X-Requested-With' : 'XMLHttpRequest',
-		}
-		})
-		.then(response => {
-		if (!response.ok) {
-			throw new Error("POST request failed");
-		}
-		return response.json();
-		})
-		.then(data => {
-		resolve(data);
-		})
-		.catch(error => {
-		reject(error);
-		});
-	});
 }
 
 eventListenerForms("login");

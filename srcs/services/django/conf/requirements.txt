@@ -3,4 +3,5 @@ psycopg==3.1.18
 psycopg2-binary==2.9.9
 channels==4.0.0
 daphne==4.0.0
-password_strength
+password_strength==0.0.3.post2
+channels_redis==4.2.0
