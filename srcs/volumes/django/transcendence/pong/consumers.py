@@ -72,6 +72,13 @@ import uuid
 
 match_manager = MatchManager()
 
+# async def print_task():
+#     for item in asyncio.all_tasks():
+#         print(item)
+#     await asyncio.sleep(5)
+
+# asyncio.create_task(print_task())
+
 class AsyncGameConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -85,7 +92,10 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             self.username = self.user.username
 
         # Game logic
-
+        # print("+++++++++++++++++++")
+        # for item in asyncio.all_tasks():
+        #     print(item)
+        # print("-------------------")
         self.player_id = str(uuid.uuid4())
 
         async with self.update_lock:
@@ -105,19 +115,22 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         async with self.update_lock:
             if self.match.get_full():
+                print(self.match.get_players())
+                print()
                 await self.channel_layer.group_send(
                     self.room_name, {"type" : "game_start", "message": ""}
                 )
-                self.match.task = asyncio.create_task(self.game_loop())
+                self.match.set_task(asyncio.create_task(self.game_loop()))
 
     async def disconnect(self, close_code):
 
         # Game logic
 
         async with self.update_lock:
+            self.match.delete_player(self.player_id)
             if not self.match.task is None:
                 self.match.task.cancel()
-                self.match.task = None
+                self.match.set_task(None)
 
         # Django channels logic
 
@@ -129,11 +142,12 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             self.room_name, self.channel_name
         )
 
-        print(asyncio.all_tasks())
+        for item in asyncio.all_tasks():
+            print(item)
 
     async def receive(self, text_data):
-        print(self.player_id)
-        print(text_data)
+        # print(self.player_id)
+        # print(text_data)
 
         direction = json.loads(text_data).get("direction")
         async with self.update_lock:
@@ -144,11 +158,11 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             
             # Logica gioco
             ...
-
-            await self.channel_layer.group_send(
-                self.room_name, {"type": "game.message", "message": self.match.get_state()}
-            )
+            await self.match.ball_move()
             await asyncio.sleep(constants.REFRESH_RATE)
+            await self.channel_layer.group_send(
+                self.room_name, {"type": "game_message", "message": self.match.get_state()}
+            )
 
     async def prova_message(self, event):
         #JSON.stringify({ 'direction': 'down' }
@@ -156,7 +170,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
     async def game_start(self, event):
 
-        await self.send(text_data=json.dumps({"type": "game_start"}))
+        await self.send(text_data=json.dumps({"type": "game_start", "player": self.match.who_player(self.player_id)}))
 
     async def game_message(self, event):
         message = event["message"]

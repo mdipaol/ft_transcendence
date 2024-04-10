@@ -1,5 +1,5 @@
 
-import time
+import time, asyncio
 from . import constants
 
 class Game:
@@ -83,28 +83,89 @@ class BallController:
 
 class Match:
     def __init__(self, name) -> None:
+        self.state = constants.INITIAL_STATE
         self.name = name
 
     task = None
-    state = constants.INITIAL_STATE
+    ball_direction = []
     full = False
     player_one = None
     player_two = None
+    collision = False
+    
+
+    time = time.time()
+
+    def get_task(self):
+        return self.task
+    
+    def set_task(self, task):
+        self.task = task
+
+    def get_players(self):
+        return [self.player_one, self.player_two]
+
+    def who_player(self, name):
+        player = "error"
+        if name == self.player_one:
+            player = "player_one"
+        elif name == self.player_two:
+            player = "player_two"
+        return player
 
     def add_player(self, player):
         if self.player_one is None:
             self.player_one = player
         elif self.player_two is None:
             self.player_two = player
+        if self.player_one and self.player_two:
             self.full = True
 
+    def delete_player(self, player):
+        self.full = False
+        if self.player_one == player:
+            self.player_one = None
+        elif self.player_two == player:
+            self.player_two = None
+        else:
+            self.full = True
+
+    def check_collision(self):
+        if self.collision:
+            return None
+        if self.state["ball"]["x"] <= constants.MIN_WIDTH:
+            return "player_one"
+        elif self.state["ball"]["x"] >= constants.MAX_WIDTH:
+            return "player_two"
+        return None
+
+    def check_collision_walls(self):
+        if self.state["ball"]["y"] >= constants.MAX_PADDLE_Y or self.state["ball"]["y"] <= constants.MIN_PADDLE_Y:
+            return True
+        return False
+
+    async def ball_move(self):
+        self.state["ball"]["x"] += self.state["ball"]["speed"] * self.state["ball"]["dirX"]
+        self.state["ball"]["y"] += self.state["ball"]["speed"] * self.state["ball"]["dirY"]
+        bam = self.check_collision()
+        if bam:
+            self.state["ball"]["dirX"] *= -1
+            self.state["ball"]["dirY"] = (self.state["ball"]["y"] - self.state[bam]["y"]) / 10
+            self.collision = True
+        if self.check_collision_walls():
+            self.state["ball"]["dirY"] *= -1
+        if self.collision and self.state["ball"]["x"] > -constants.SCREEN_CENTER and self.state["ball"]["x"] < constants.SCREEN_CENTER:
+            self.collision = False        
+
     def move(self, player_id, direction):
+        if player_id not in [self.player_one, self.player_two]:
+            return
         paddle = "player_one"
         if not player_id == self.player_one:
             paddle = "player_two"
-        if direction == "up" :
+        if direction == "up" and self.state[paddle]["y"] + constants.MOVSPEED < constants.MAX_PADDLE_Y:
             self.state[paddle]["y"] += constants.MOVSPEED
-        else:
+        elif direction == "down" and self.state[paddle]["y"] - constants.MOVSPEED > constants.MIN_PADDLE_Y:
             self.state[paddle]["y"] -= constants.MOVSPEED
 
     def get_full(self):
