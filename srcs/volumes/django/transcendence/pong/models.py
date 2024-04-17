@@ -10,8 +10,6 @@ class BaseUser(AbstractUser):
 
 class Match(models.Model):
 	base_users = models.ManyToManyField(BaseUser)
-	# user1 = models.ForeignKey()
-	# user2 = models.ForeignKey()
 	score1 = models.IntegerField()
 	score2 = models.IntegerField()
 	date = models.DateTimeField()

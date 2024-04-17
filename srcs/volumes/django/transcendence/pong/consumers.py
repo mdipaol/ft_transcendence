@@ -48,10 +48,6 @@ class GameConsumer(WebsocketConsumer):
     def receive(self, text_data):
         direction = json.loads(text_data).get("direction")
         self.paddle_controller.move(direction)
-        # Deserialize the received message
-        # game_data = json.loads(text_data)    
-        # response_data = json.dumps(game_data)
-        # await self.send(text_data=response_data)
 
     async def propagate_state(self):
         while True:
@@ -70,14 +66,9 @@ class GameConsumer(WebsocketConsumer):
 
 import uuid
 
+# Game sockets with asyncio
+
 match_manager = MatchManager()
-
-# async def print_task():
-#     for item in asyncio.all_tasks():
-#         print(item)
-#     await asyncio.sleep(5)
-
-# asyncio.create_task(print_task())
 
 class AsyncGameConsumer(AsyncWebsocketConsumer):
 
@@ -85,48 +76,54 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.user = self.scope['user']
         self.username = 'Anonymous'
-        self.update_lock = asyncio.Lock()
-        self.match = None
+        self.match: Match = None
+        self.player_id = str(uuid.uuid4())
+        self.spectator = False
 
-        if self.user is not None and self.user.is_authenticated:
+        if self.user and self.user.is_authenticated:
             self.username = self.user.username
 
-        # Game logic
-        # print("+++++++++++++++++++")
-        # for item in asyncio.all_tasks():
-        #     print(item)
-        # print("-------------------")
-        self.player_id = str(uuid.uuid4())
+        if not self.room_name in match_manager.get_matches():
+            match_manager.get_matches()[self.room_name] = Match(self.room_name)
+        self.match = match_manager.get_matches()[self.room_name]
+        if not self.match.get_full():
+            self.match.add_player(self.player_id)
+        else:
+            # Add spectators
+            self.spectator = True
+            ...
 
-        async with self.update_lock:
-            if not self.room_name in match_manager.get_matches():
-                match_manager.get_matches()[self.room_name] = Match(self.room_name)
-            self.match = match_manager.get_matches()[self.room_name]
-            if not self.match.get_full():
-                self.match.add_player(self.player_id)
-            
+        if self.match is None:
+            return
+        
         # Django channels logic
+
+        await self.accept()
 
         await self.channel_layer.group_add(
             self.room_name, self.channel_name
         )
 
-        await self.accept()
-
-        async with self.update_lock:
-            if self.match.get_full():
+        async with self.match.get_lock():
+            if self.match.get_full() and not self.spectator:
+                print("Player List")
                 print(self.match.get_players())
-                print()
                 await self.channel_layer.group_send(
                     self.room_name, {"type" : "game_start", "message": ""}
                 )
                 self.match.set_task(asyncio.create_task(self.game_loop()))
+                print("Task created: ", self.match.get_task())
+
+        for item in asyncio.all_tasks():
+            print(item)
 
     async def disconnect(self, close_code):
 
         # Game logic
+        if self.match is None:
+            return
 
-        async with self.update_lock:
+        async with self.match.get_lock():
             self.match.delete_player(self.player_id)
             if not self.match.task is None:
                 self.match.task.cancel()
@@ -146,27 +143,23 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             print(item)
 
     async def receive(self, text_data):
-        # print(self.player_id)
-        # print(text_data)
 
         direction = json.loads(text_data).get("direction")
-        async with self.update_lock:
-            self.match.move(self.player_id, direction)
+        async with self.match.get_lock():
+            self.match.paddle_move(self.player_id, direction)
 
     async def game_loop(self):
-        while True:
+        while not self.match.get_end():
             
             # Logica gioco
-            ...
             await self.match.ball_move()
             await asyncio.sleep(constants.REFRESH_RATE)
             await self.channel_layer.group_send(
                 self.room_name, {"type": "game_message", "message": self.match.get_state()}
             )
-
-    async def prova_message(self, event):
-        #JSON.stringify({ 'direction': 'down' }
-        print(event)
+        await self.channel_layer.group_send(
+                self.room_name, {"type": "game_end", "message": self.match.get_state()}
+        )
 
     async def game_start(self, event):
 
@@ -177,9 +170,12 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "game_message", "message": message}))
 
-    async def game_end(self, event):
-        
-        await self.send(text_data=json.dumps({"type": "game_end"}))
+    async def game_end(self, event):    
+        message = event["message"]
+
+        await self.send(text_data=json.dumps({"type": "game_end", "message": message}))
+
+
 
 # Chat sockets
 

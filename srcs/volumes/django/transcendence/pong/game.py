@@ -85,16 +85,19 @@ class Match:
     def __init__(self, name) -> None:
         self.state = constants.INITIAL_STATE
         self.name = name
+        self.lock = asyncio.Lock()
+        self.task = None
+        self.ball_direction = []
+        self.full = False
+        self.player_one = None
+        self.player_two = None
+        self.collision = False
+        self.start_time = time.time()
+        self.end = False
+        self.winner = None
 
-    task = None
-    ball_direction = []
-    full = False
-    player_one = None
-    player_two = None
-    collision = False
-    
-
-    time = time.time()
+    def get_lock(self):
+        return self.lock
 
     def get_task(self):
         return self.task
@@ -130,19 +133,51 @@ class Match:
         else:
             self.full = True
 
+    def get_winner(self):
+        return self.winner
+
+    def get_end(self):
+        return self.end
+
+    def match_end(self):
+        self.end = True
+        if self.state["player_one"]["score"] == constants.MAX_SCORE:
+            self.winner = self.player_one
+        elif self.state["player_two"]["score"] == constants.MAX_SCORE:
+            self.winner = self.player_two
+
     def check_collision(self):
         if self.collision:
             return None
         if self.state["ball"]["x"] <= constants.MIN_WIDTH:
-            return "player_one"
+            if  self.state["ball"]["y"] >= self.state["player_one"]["y"] - constants.PADDLE_HALF and self.state["ball"]["y"] <= self.state["player_one"]["y"] + constants.PADDLE_HALF:
+                return "player_one"
         elif self.state["ball"]["x"] >= constants.MAX_WIDTH:
-            return "player_two"
+            if  self.state["ball"]["y"] >= self.state["player_two"]["y"] - constants.PADDLE_HALF and self.state["ball"]["y"] <= self.state["player_two"]["y"] + constants.PADDLE_HALF:
+                return "player_two"
         return None
 
-    def check_collision_walls(self):
-        if self.state["ball"]["y"] >= constants.MAX_PADDLE_Y or self.state["ball"]["y"] <= constants.MIN_PADDLE_Y:
-            return True
-        return False
+    def wall_collision(self):
+        if self.state["ball"]["y"] >= constants.MAX_PADDLE_Y:
+            self.state["ball"]["y"] = constants.MAX_PADDLE_Y - 0.1
+            self.state["ball"]["dirY"] *= -1
+        elif self.state["ball"]["y"] <= constants.MIN_PADDLE_Y:
+            self.state["ball"]["y"] = constants.MIN_PADDLE_Y + 0.1
+            self.state["ball"]["dirY"] *= -1
+
+    def check_point(self):
+        if self.state["ball"]["x"] <= constants.MIN_WIDTH -5 or self.state["ball"]["x"] >= constants.MAX_WIDTH + 5:
+            if self.state["ball"]["x"] < 0:
+                self.state["player_two"]["score"] += 1
+                self.state["ball"]["dirX"] = -1
+            else:
+                self.state["player_one"]["score"] += 1
+                self.state["ball"]["dirX"] = 1
+            self.state["ball"]["dirY"] = 0
+            self.state["ball"]["y"] = 0
+            self.state["ball"]["x"] = 0
+            if self.state["player_one"]["score"] == constants.MAX_SCORE or self.state["player_two"]["score"] == constants.MAX_SCORE:
+                self.match_end()
 
     async def ball_move(self):
         self.state["ball"]["x"] += self.state["ball"]["speed"] * self.state["ball"]["dirX"]
@@ -152,12 +187,12 @@ class Match:
             self.state["ball"]["dirX"] *= -1
             self.state["ball"]["dirY"] = (self.state["ball"]["y"] - self.state[bam]["y"]) / 10
             self.collision = True
-        if self.check_collision_walls():
-            self.state["ball"]["dirY"] *= -1
+        self.wall_collision()
         if self.collision and self.state["ball"]["x"] > -constants.SCREEN_CENTER and self.state["ball"]["x"] < constants.SCREEN_CENTER:
-            self.collision = False        
+            self.collision = False
+        self.check_point()
 
-    def move(self, player_id, direction):
+    def paddle_move(self, player_id, direction):
         if player_id not in [self.player_one, self.player_two]:
             return
         paddle = "player_one"
@@ -170,12 +205,13 @@ class Match:
 
     def get_full(self):
         return self.full
-    
+
     def get_state(self):
         return self.state
 
 class MatchManager:
-    matches = {}
+    def __init__(self):
+        self.matches = {}
 
     def get_matches(self):
         return self.matches

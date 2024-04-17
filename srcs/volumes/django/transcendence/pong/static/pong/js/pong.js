@@ -548,6 +548,14 @@ function updateMovements()
 		SuperPlayer.position.y -= MOVSPEED;
 		socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 	}
+	/*
+	if (SuperPlayer === player2){
+			if (SuperPlayer.position.y < ball.position.y)
+				p2Moves.up = true;
+			else if (SuperPlayer.position.y > ball.position.y)
+				p2Moves.down = true;
+	}
+*/
 	if (p2Moves.up && player2.position.y < 27)
 	{
 		SuperPlayer.position.y += MOVSPEED;
@@ -558,9 +566,15 @@ function updateMovements()
 		SuperPlayer.position.y -= MOVSPEED;
 		socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 	}
+	/*
+	if (SuperPlayer === player2){
+		p2Moves.down = false;
+		p2Moves.up = false;
+	}
+	*/
 }
 
-//---------COLLISIONS----------
+//---------COLLISIONS-----------
 
 
 function wallCollision(ball)
@@ -627,10 +641,13 @@ socket.addEventListener('message', function (event) {
 	else if (msg.type == "game_end")
 	{
 		console.log("game ended")
+		if (msg.message.player_one.score > msg.message.player_two.score)
+			console.log("Player One WINS")
+		else
+			console.log("Player Two WINS")
 		started = false;
 	}
 });
-
 
 
 //---------UPDATE AND RENDER----------

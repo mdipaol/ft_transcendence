@@ -9,7 +9,6 @@
 </head>
 
 <body>
-	
 	<!-- Header content -->
 	<header>
 		<nav>
@@ -43,28 +42,5 @@
 	<script src="{% static 'pong/js/profile.js' %}"></script>
 	<script src="{% static 'pong/js/registration.js' %}"></script>
 	<script src="{% static 'pong/js/logged.js' %}"></script>
-	{% comment %} <script>
-		const socket = new WebSocket("wss://" + window.location.host + "/ws/game/")
-
-		socket.addEventListener('open', function (event) {
-			console.log('Connected to WebSocket server');
-			socket.send('First connection');
-		});
-		
-		// Event listener for receiving messages from the server
-		socket.addEventListener('message', function (event) {
-			console.log('Message from server:', event.data);
-		});
-		
-		// Event listener for handling errors
-		socket.addEventListener('error', function (event) {
-			console.error('WebSocket error:', event);
-		});
-		
-		// Event listener for handling the connection close
-		socket.addEventListener('close', function (event) {
-			console.log('Connection closed');
-		});
-	</script> {% endcomment %}
 </body>
 </html>
