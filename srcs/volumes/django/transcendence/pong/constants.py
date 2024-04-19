@@ -27,5 +27,5 @@ MAX_SCORE = 5
 INITIAL_STATE = {
     "player_one": {"x": MIN_WIDTH, "y": 0, "score": 0,},
     "player_two": {"x": MAX_WIDTH, "y": 0, "score": 0,},
-    "ball": {"x": 0, "y": 0,"dirX": 1, "dirY": 0, "speed": 2,},
+    "ball": {"x": 0, "y": 0,"dirX": 1, "dirY": 0, "speed": 1,},
 }

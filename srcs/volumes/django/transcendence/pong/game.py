@@ -215,3 +215,12 @@ class MatchManager:
 
     def get_matches(self):
         return self.matches
+    
+class NewMatchManager:
+
+    matches = {}
+
+    @classmethod
+    def player(cls, consumer):
+        for m in cls.matches.values():
+            ...

@@ -11,12 +11,13 @@
     </script>
     <script type="importmap">
         {
-			"imports": {
-				"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-				"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-			}
+            "imports": {
+                "three": "{% static 'pong/js/three/build/three.module.js'%}",
+                "three/addons/": "{% static 'pong/js/three/examples /jsm/'%}"
+            }
 		}
     </script>
     <script src = "{% static 'pong/js/pong.js' %}" type="module"></script>
+    
 </body>
 </html>
