@@ -127,8 +127,8 @@ def chat_index(request):
 def room(request, room_name):
     return render(request, "pong/room.html", {"room_name": room_name})
 
-def game_room(request, room_name):
-	return render(request, 'pong/game.html', {"room_name": room_name})
+def game(request):
+	return render(request, 'pong/game.html')
 
 def username(request):
 	is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'

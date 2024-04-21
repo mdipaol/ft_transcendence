@@ -253,8 +253,7 @@ scene.add(ambientLight);
 const socket = new WebSocket(
 	'wss://'
 	+ window.location.host
-	+ '/ws'
-	+ window.location.pathname
+	+ '/ws/game/'
 )
 let started = false;
 let SuperPlayer = null

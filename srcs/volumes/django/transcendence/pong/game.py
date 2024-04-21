@@ -1,6 +1,7 @@
 
-import time, asyncio
+import time, asyncio, uuid, re
 from . import constants
+from channels.layers import get_channel_layer
 
 class Game:
     state = constants.INITIAL_STATE
@@ -82,17 +83,16 @@ class BallController:
             self.time = time.time()
 
 class Match:
-    def __init__(self, name) -> None:
+    def __init__(self):
         self.state = constants.INITIAL_STATE
-        self.name = name
+        self.id = str(uuid.uuid4())
         self.lock = asyncio.Lock()
         self.task = None
-        self.ball_direction = []
-        self.full = False
         self.player_one = None
         self.player_two = None
         self.collision = False
         self.start_time = time.time()
+        self.update_time = time.time()
         self.end = False
         self.winner = None
 
@@ -108,6 +108,12 @@ class Match:
     def get_players(self):
         return [self.player_one, self.player_two]
 
+    def full(self):
+        return self.player_one and self.player_two
+
+    def empty(self):
+        return not self.player_one and not self.player_two
+
     def who_player(self, name):
         player = "error"
         if name == self.player_one:
@@ -121,17 +127,16 @@ class Match:
             self.player_one = player
         elif self.player_two is None:
             self.player_two = player
-        if self.player_one and self.player_two:
-            self.full = True
 
     def delete_player(self, player):
-        self.full = False
         if self.player_one == player:
             self.player_one = None
         elif self.player_two == player:
             self.player_two = None
-        else:
-            self.full = True
+
+        if self.task:
+            self.task.cancel()
+            self.taks = None
 
     def get_winner(self):
         return self.winner
@@ -180,6 +185,11 @@ class Match:
                 self.match_end()
 
     async def ball_move(self):
+
+        now = time.time()
+        if now - self.update_time > constants.REFRESH_RATE:
+            await asyncio.sleep(now - self.update_time)
+
         self.state["ball"]["x"] += self.state["ball"]["speed"] * self.state["ball"]["dirX"]
         self.state["ball"]["y"] += self.state["ball"]["speed"] * self.state["ball"]["dirY"]
         bam = self.check_collision()
@@ -192,6 +202,8 @@ class Match:
             self.collision = False
         self.check_point()
 
+        self.update_time = time()
+
     def paddle_move(self, player_id, direction):
         if player_id not in [self.player_one, self.player_two]:
             return
@@ -203,24 +215,78 @@ class Match:
         elif direction == "down" and self.state[paddle]["y"] - constants.MOVSPEED > constants.MIN_PADDLE_Y:
             self.state[paddle]["y"] -= constants.MOVSPEED
 
-    def get_full(self):
-        return self.full
-
     def get_state(self):
         return self.state
 
+async def game_loop(match):
+
+    channel_layer = get_channel_layer()
+
+    while not match.get_end():
+        
+        # Logica gioco
+        await match.ball_move()
+        await channel_layer.group_send(
+            match.id, {"type": "game_message", "message": match.get_state()}
+        )
+    await channel_layer.group_send(
+            match.id, {"type": "game_end", "message": match.get_state()}
+    )
+
 class MatchManager:
-    def __init__(self):
-        self.matches = {}
 
-    def get_matches(self):
-        return self.matches
-    
-class NewMatchManager:
-
-    matches = {}
+    matches = []
 
     @classmethod
-    def player(cls, consumer):
-        for m in cls.matches.values():
-            ...
+    def get_avaiable_match(cls):
+        for item in cls.matches:
+            if not item.full():
+                return item
+        match = Match()
+        cls.matches.append(match)
+        return match
+
+    @classmethod
+    def get_consumer_match(cls, consumer):
+        for item in cls.matches:
+            if consumer.player_id in item.get_players():
+                return item
+        return None
+
+    @classmethod
+    async def add_player(cls, consumer):
+
+        # check if player is already on match...
+        if consumer.match:
+            return
+
+        # get avaiable match
+        consumer.match = cls.get_avaiable_match()
+
+        # add player to match
+        consumer.match.add_player(consumer.player_id)
+
+        # Django Channels messages
+        await consumer.channel_layer.group_add(consumer.match.id, consumer.channel_name)
+
+        # Create task if two players are added in the same match
+        if consumer.match.full():
+            print("Player List")
+            print(consumer.match.get_players())
+            await consumer.channel_layer.group_send(consumer.match.id, {"type" : "game_start", "message": ""})
+            consumer.match.set_task(asyncio.create_task(game_loop(consumer.match)))
+            print("Task created: ", consumer.match.get_task())
+
+    @classmethod
+    async def delete_player(cls, consumer):
+        match = cls.get_consumer_match(consumer)
+
+        # Remove consumer from match
+        if match:
+            match.delete_player(consumer.player_id)
+            # Django channels group delete
+            await consumer.channel_layer.group_send(match.id, {"type": "game_end"})
+            await consumer.channel_layer.group_discard(match.id, consumer.channel_name)
+            if len(match.get_players()) == 0:
+                cls.matches.remove(match)
+                del match

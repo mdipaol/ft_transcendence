@@ -1,5 +1,5 @@
 
-import json, pdb, asyncio
+import uuid, json, pdb, asyncio
 
 from . import constants
 from .thread_pool import ThreadPool
@@ -64,102 +64,68 @@ class GameConsumer(WebsocketConsumer):
 
         self.send(text_data=json.dumps(state))
 
-import uuid
-
 # Game sockets with asyncio
-
-match_manager = MatchManager()
 
 class AsyncGameConsumer(AsyncWebsocketConsumer):
 
-    async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.user = self.scope['user']
-        self.username = 'Anonymous'
+    def __init__(self):
+        super().__init__(self)
+        self.username : str = 'Anonymous'
+        self.player_id : str = str(uuid.uuid4())
         self.match: Match = None
-        self.player_id = str(uuid.uuid4())
-        self.spectator = False
+
+    async def connect(self):
+        # self.room_name = self.scope['url_route']['kwargs']['room_name']
+
+        self.user = self.scope['user']
 
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
 
-        if not self.room_name in match_manager.get_matches():
-            match_manager.get_matches()[self.room_name] = Match(self.room_name)
-        self.match = match_manager.get_matches()[self.room_name]
-        if not self.match.get_full():
-            self.match.add_player(self.player_id)
-        else:
-            # Add spectators
-            self.spectator = True
-            ...
+        await MatchManager.add_player(self)
 
-        if self.match is None:
-            return
+        await self.accept()
+        # if not self.room_name in match_manager.get_matches():
+        #     match_manager.get_matches()[self.room_name] = Match(self.room_name)
+        # self.match = match_manager.get_matches()[self.room_name]
+        # if not self.match.get_full():
+        #     self.match.add_player(self.player_id)
+        # else:
+        #     # Add spectators
+        #     self.spectator = True
+        #     ...
+
+        # if self.match is None:
+        #     self.close()
+        #     return
         
         # Django channels logic
 
-        await self.accept()
+        # await self.channel_layer.group_add(
+        #     self.room_name, self.channel_name
+        # )
 
-        await self.channel_layer.group_add(
-            self.room_name, self.channel_name
-        )
-
-        async with self.match.get_lock():
-            if self.match.get_full() and not self.spectator:
-                print("Player List")
-                print(self.match.get_players())
-                await self.channel_layer.group_send(
-                    self.room_name, {"type" : "game_start", "message": ""}
-                )
-                self.match.set_task(asyncio.create_task(self.game_loop()))
-                print("Task created: ", self.match.get_task())
-
-        for item in asyncio.all_tasks():
-            print(item)
+        # async with self.match.get_lock():
+        #     if self.match.get_full():
+        #         print("Player List")
+        #         print(self.match.get_players())
+        #         await self.channel_layer.group_send(
+        #             self.room_name, {"type" : "game_start", "message": ""}
+        #         )
+        #         self.match.set_task(asyncio.create_task(game_loop(self)))
+        #         print("Task created: ", self.match.get_task())
 
     async def disconnect(self, close_code):
 
         # Game logic
-        if self.match is None:
-            return
+        await MatchManager.delete_player(self)
 
-        async with self.match.get_lock():
-            self.match.delete_player(self.player_id)
-            if not self.match.task is None:
-                self.match.task.cancel()
-                self.match.set_task(None)
-
-        # Django channels logic
-
-        await self.channel_layer.group_send(
-            self.room_name, {"type": "game_end"}
-        )
-
-        await self.channel_layer.group_discard(
-            self.room_name, self.channel_name
-        )
-
-        for item in asyncio.all_tasks():
-            print(item)
 
     async def receive(self, text_data):
 
         direction = json.loads(text_data).get("direction")
         async with self.match.get_lock():
             self.match.paddle_move(self.player_id, direction)
-
-    async def game_loop(self):
-        while not self.match.get_end():
-            
-            # Logica gioco
-            await self.match.ball_move()
-            await asyncio.sleep(constants.REFRESH_RATE)
-            await self.channel_layer.group_send(
-                self.room_name, {"type": "game_message", "message": self.match.get_state()}
-            )
-        await self.channel_layer.group_send(
-                self.room_name, {"type": "game_end", "message": self.match.get_state()}
-        )
 
     async def game_start(self, event):
 
@@ -174,8 +140,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         message = event["message"]
 
         await self.send(text_data=json.dumps({"type": "game_end", "message": message}))
-
-
 
 # Chat sockets
 
