@@ -40,10 +40,7 @@ loader.load(
 			table.position.set(0, 0, -23.5)
 			scene.add(table);
 		}
-
-
 )
-
 
 //---------CONSTANTS----------
 const MOVSPEED = 0.7;
@@ -345,4 +342,3 @@ var gameLoop = function()
 	render();
 };
 gameLoop();
-

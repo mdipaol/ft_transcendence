@@ -1,6 +1,7 @@
 
-import time, asyncio, uuid, re
+import time, asyncio, uuid, re, copy
 from . import constants
+from .models import Match
 from channels.layers import get_channel_layer
 
 class Game:
@@ -84,7 +85,7 @@ class BallController:
 
 class Match:
     def __init__(self):
-        self.state = constants.INITIAL_STATE.copy()
+        self.state = copy.deepcopy(constants.INITIAL_STATE)
         self.id = str(uuid.uuid4())
         self.lock = asyncio.Lock()
         self.task = None
@@ -173,7 +174,7 @@ class Match:
             self.state["ball"]["y"] = constants.MIN_PADDLE_Y + 0.1
             self.state["ball"]["dirY"] *= -1
 
-    def check_point(self):
+    async def check_point(self):
         if self.state["ball"]["x"] <= constants.MIN_WIDTH -5 or self.state["ball"]["x"] >= constants.MAX_WIDTH + 5:
             if self.state["ball"]["x"] < 0:
                 self.state["player_two"]["score"] += 1
@@ -184,11 +185,16 @@ class Match:
             self.state["ball"]["dirY"] = 0
             self.state["ball"]["y"] = 0
             self.state["ball"]["x"] = 0
+            self.state["player_one"]["y"] = 0
+            self.state["player_two"]["y"] = 0
+            print(self.state)
             if self.state["player_one"]["score"] == constants.MAX_SCORE or self.state["player_two"]["score"] == constants.MAX_SCORE:
                 self.match_end()
+            else:
+                await asyncio.sleep(1)
 
     async def ball_move(self):
-        
+
         now = time.time()
         # print(time.time() - self.update_time)
         if now - self.update_time < constants.REFRESH_RATE:
@@ -204,7 +210,7 @@ class Match:
         self.wall_collision()
         if self.collision and self.state["ball"]["x"] > -constants.SCREEN_CENTER and self.state["ball"]["x"] < constants.SCREEN_CENTER:
             self.collision = False
-        self.check_point()
+        await self.check_point()
 
         self.update_time = time.time()
 
@@ -227,7 +233,7 @@ async def game_loop(match):
     channel_layer = get_channel_layer()
 
     while not match.get_end():
-        
+
         # Logica gioco
         await match.ball_move()
         await channel_layer.group_send(
@@ -288,6 +294,7 @@ class MatchManager:
         if consumer.match.full():
             print("Player List")
             print(consumer.match.get_players())
+            print(id(consumer.match))
             await consumer.channel_layer.group_send(consumer.match.id, {"type" : "game_start"})
             consumer.match.set_task(asyncio.create_task(game_loop(consumer.match)))
             print("Task created: ", consumer.match.get_task())
