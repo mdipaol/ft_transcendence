@@ -5,17 +5,87 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
 from django.template import loader
 from django.urls import reverse
-import logging
+import logging, json
+from transcendence import settings
 
 from datetime import datetime, timedelta
 from .models import BaseUser
 from .forms import *
+
+import requests
+import secrets
+from oauthlib.oauth2 import WebApplicationClient
+
+# pip install requests_toolbelt
+
 
 output_file_path = 'output.log'
 
 def log_to_file(message):
 	with open(output_file_path, 'a') as f:  # 'a' for append mode
 		f.write(message + '\n')
+
+def login42(request):
+	client_id = settings.INTRA_OAUTH_CLIENT_ID
+	client = WebApplicationClient(client_id)
+	request.session['state'] = secrets.token_urlsafe(16)
+
+	auth_url = "https://api.intra.42.fr/oauth/authorize"
+
+	url = client.prepare_request_uri( auth_url, redirect_uri="https://localhost/callback", state=request.session['state'])
+	return HttpResponseRedirect(url)
+
+class CallbackView(View):
+	def get(self, request, *args, **kwargs):
+		data = self.request.GET
+		code = data['code']
+		state = data['state']
+
+		if state != self.request.session['state']:
+			print('Invalid state')
+			return HttpResponseRedirect(reverse('pong:index'))
+		else:
+			del self.request.session['state']
+
+		token_url = 'https://api.intra.42.fr/oauth/token'
+		client_id = settings.INTRA_OAUTH_CLIENT_ID
+		client_secret = settings.INTRA_OAUTH_SECRET
+
+		client = WebApplicationClient(client_id)
+		# data = client.prepare_token_request(
+		# 	client_id = client_id,
+		# 	secret_id = secret_id,
+		# 	code = code,
+		# 	redirect_url = "https://localhost/callback",
+		# 	token_url=token_url,
+		# 	#grant_type = 'authorization_code'
+		# )
+
+		# data = {
+		# 	"code" : code,
+		# 	"state" : state,
+		# 	"grant_type" : 'authorization_code',
+		# 	"client_id" : client_id,
+		# 	"client_secret" : secret_id,
+		# 	"redirect_uri" : "https://localhost/callback"
+		# }
+
+		data = client.prepare_request_body(
+			code = code,
+			redirect_uri = "https://localhost/callback",
+			client_id = client_id,
+			client_secret = client_secret,
+		)
+
+		response = requests.post(token_url, data=data)
+		print(response.text)
+		print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
+			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
+		}).text), indent=4)))
+
+		#image_url
+		#name
+		#email
 
 class IndexView(TemplateView):
 	template_name = 'pong/index.html'
