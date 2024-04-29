@@ -7,4 +7,4 @@ python3 transcendence/manage.py createsuperuser --no-input;
 python3 transcendence/manage.py runserver 0.0.0.0:8000;
 # python3 transcendence/manage.py collectstatic --noinput;
 # cd transcendence;
-# gunicorn -b 0.0.0.0:8000 transcendence.wsgi:application;
+# daphne -b 0.0.0.0 asgi:application;

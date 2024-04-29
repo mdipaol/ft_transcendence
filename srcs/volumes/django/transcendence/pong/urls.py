@@ -4,10 +4,12 @@ from . import views
 
 app_name= 'pong'
 
-# 
+#
 
 urlpatterns = [
 	path('', views.IndexView.as_view(), name='index'),
+	path('login42/', views.login42, name='login42'),
+	path('callback/', views.CallbackView.as_view(), name='callback'),
     path('chat/<str:room_name>/', views.room, name='room'),
     path('game/', views.game, name='game'),
     path('chat/', views.chat_index, name='chat'),

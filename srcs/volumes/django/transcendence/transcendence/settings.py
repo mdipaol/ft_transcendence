@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import mimetypes
+
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/html", ".html", True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,7 +138,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -155,3 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USER_ONLINE_TIMEOUT = 300
 
 USER_LASTSEEN_TIMEOUT = 60 * 60 * 24 * 7
+
+INTRA_OAUTH_CLIENT_ID = 'u-s4t2ud-30df5fbe358cd88c16ef4e5cdb1fa3211ec7caf93a90de0496ad767ec0e56202'
+
+INTRA_OAUTH_SECRET = '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'

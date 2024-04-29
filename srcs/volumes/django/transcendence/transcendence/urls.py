@@ -20,6 +20,6 @@ from django.urls import path, include
 # redirect '/' requests to main app 'pong/'
 
 urlpatterns = [
-	path('', include('pong.urls')),
     path('admin/', admin.site.urls),
+	path('', include('pong.urls')),
 ]
