@@ -16,18 +16,6 @@ import requests
 import secrets
 from oauthlib.oauth2 import WebApplicationClient
 
-<<<<<<< HEAD
-=======
-# pip install requests_toolbelt
-
-
->>>>>>> 12c0b026d4f88fbb5f493dce94cb910a83510ab0
-output_file_path = 'output.log'
-
-def log_to_file(message):
-	with open(output_file_path, 'a') as f:  # 'a' for append mode
-		f.write(message + '\n')
-
 def login42(request):
 	client_id = settings.INTRA_OAUTH_CLIENT_ID
 	client = WebApplicationClient(client_id)
@@ -96,48 +84,26 @@ class IndexView(TemplateView):
 		return render(request, self.template_name, {'user': request.user})
 
 class RegistrationFormView(View):
-	template_name = 'pong/form.html'
-	context = {
-		'id' : 'registration-form',
-	}
-
 	def get(self, request):
-		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-			return HttpResponseRedirect(reverse('pong:index'))
-		self.context['form'] = RegistrationForm()
-		return render(request, self.template_name, self.context)
+		form = RegistrationForm()
+		return render(request, 'pong/registration.html', {'form': form})
 	def post(self, request):
 		form = RegistrationForm(request.POST)
 		if form.is_valid():
 			form.save()
-			return JsonResponse({'success': True, 'redirect': '/'})
-		else:
-			self.context['form'] = form
-			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
-			return JsonResponse({'success': False, 'form_html': form_html})
+			return HttpResponse("Registration Succesfull")
+		return(render(request, 'pong/registration.html', {'form': form}))
 
 class LoginCustomView(View):
-	template_name = 'pong/form.html'
-	context = {
-		'id' : 'login-form',
-	}
-
 	def get(self, request):
-		if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-			return HttpResponseRedirect(reverse('pong:index'))
-		self.context['form'] = LoginForm()
-		return render(request, self.template_name, self.context)
+		form = LoginForm()
+		return render(request, 'pong/login.html', {'form': form})
 	def post(self, request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
-			user = authenticate(request, username=form.cleaned_data.get("username"), password=form.cleaned_data.get("password"))
-			if user is not None:
-				login(request, user)
-			return JsonResponse({'success': True, 'redirect': '/'})
-		else:
-			self.context['form'] = form
-			form_html = render(request, self.template_name, self.context).content.decode('utf-8')
-			return JsonResponse({'success': False, 'form_html': form_html})
+			form.save(request)
+			return HttpResponse("Succesfull login")
+		return render(request, 'pong/login.html', {'form': form})
 
 class LogoutView(TemplateView):
 	def get(self, request):
@@ -214,12 +180,13 @@ def username(request):
 	return HttpResponse(data['username'])
 
 def is_authenticated(request):
-	if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-		if request.user.is_authenticated == True:
-			return HttpResponse('1')
-		else:
-			return HttpResponse('0')
-	return HttpResponseNotFound('<h1>404 Not Found</h1>')
+	if request.method == 'GET':
+		authenticated = request.user.is_authenticated
+		json_res = {'authenticated': authenticated, 'prova': 'ciao'}
+		string = json.dumps(json_res)
+		print(string)
+		return JsonResponse(string, safe=False)
+	return(HttpResponseRedirect(reverse('pong:index')))
 
 def personal_profile(request):
 	return HttpResponseRedirect(reverse('pong:profile/' + request.user.get_username()))

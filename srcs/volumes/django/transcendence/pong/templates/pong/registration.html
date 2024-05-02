@@ -1,9 +1,10 @@
 <h2>Registration</h2>
 <form action="{% url 'pong:registration' %}" method="post">
 	{% csrf_token %}
-	{% for item in form %}
+	{% for field in form %}
 	<div class="fieldWrapper">
-		{{ item.as_field_group }}
+		{{ field.errors }}
+        {{ field.label_tag }} {{ field }}
 	</div>
 	{% endfor %}
 	<input type="submit" value="Submit">

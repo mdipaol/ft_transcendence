@@ -1,7 +1,7 @@
 
 from password_strength import PasswordPolicy
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.core.files import File
 from django import forms
 from .models import BaseUser
@@ -68,6 +68,10 @@ class LoginForm(forms.Form):
 		if user is None or not user.check_password(password):
 			raise forms.ValidationError({"password" : "Password incorrect"})
 		return cleaned_data
+
+	def save(self, request):
+		user = authenticate(request, username=self.cleaned_data.get("username"), password=self.cleaned_data.get("password"))
+		login(request, user)
 
 
 class UpdateForm(forms.Form):

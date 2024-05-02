@@ -2,8 +2,6 @@
 import uuid, json, pdb, asyncio
 
 from . import constants
-from .thread_pool import ThreadPool
-from .game import Game, PaddleController, BallController
 from .game import MatchManager, Match
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
@@ -75,7 +73,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         self.match: Match = None
 
     async def connect(self):
-        # self.room_name = self.scope['url_route']['kwargs']['room_name']
 
         self.user = self.scope['user']
 
@@ -85,35 +82,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         await MatchManager.add_player(self)
 
         await self.accept()
-        # if not self.room_name in match_manager.get_matches():
-        #     match_manager.get_matches()[self.room_name] = Match(self.room_name)
-        # self.match = match_manager.get_matches()[self.room_name]
-        # if not self.match.get_full():
-        #     self.match.add_player(self.player_id)
-        # else:
-        #     # Add spectators
-        #     self.spectator = True
-        #     ...
-
-        # if self.match is None:
-        #     self.close()
-        #     return
-        
-        # Django channels logic
-
-        # await self.channel_layer.group_add(
-        #     self.room_name, self.channel_name
-        # )
-
-        # async with self.match.get_lock():
-        #     if self.match.get_full():
-        #         print("Player List")
-        #         print(self.match.get_players())
-        #         await self.channel_layer.group_send(
-        #             self.room_name, {"type" : "game_start", "message": ""}
-        #         )
-        #         self.match.set_task(asyncio.create_task(game_loop(self)))
-        #         print("Task created: ", self.match.get_task())
 
     async def disconnect(self, close_code):
 
