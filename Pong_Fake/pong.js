@@ -132,9 +132,10 @@ window.addEventListener('resize', function()
 
 //---------OBJECTS----------
 var sphere = new THREE.SphereGeometry(0.8, 16, 32);
-var ballMaterial = new THREE.MeshPhongMaterial({color:0xf06400});
+var ballMaterial = new THREE.MeshPhongMaterial({color:0xf06400, emissive: 0xf06400,roughness: 1 ,metalness: 0.973});
 var ball = new THREE.Mesh(sphere, ballMaterial);
-
+const ballLight = new THREE.PointLight(0xf06400, 5, 100, 1);
+ball.add(ballLight);
 
 var box = new THREE.BoxGeometry(BOXSIZE, BOXSIZE, BOXSIZE);
 const wall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("mattone.png"), side: THREE.DoubleSide});
@@ -164,7 +165,7 @@ const spotLight = new THREE.SpotLight( 0xE03918,15, 325, 500, 1, 0.3);
 spotLight.position.set( 0, 0, 227 );
 const axesHelper = new THREE.AxesHelper(100);
 //scene.add(spotLight);
-scene.add(axesHelper);
+//scene.add(axesHelper);
 
 const spotLightHelper = new THREE.SpotLightHelper( spotLight );
 scene.add( spotLightHelper );
