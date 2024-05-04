@@ -7,3 +7,5 @@ password_strength==0.0.3.post2
 channels_redis==4.2.0
 requests==2.31.0
 oauthlib==3.2.2
+django-friendship
+Pillow

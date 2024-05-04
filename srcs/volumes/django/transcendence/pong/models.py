@@ -6,7 +6,8 @@ from django.contrib.auth.models import AbstractUser
 
 class BaseUser(AbstractUser):
 	level = models.FloatField(default=0)
-	image = models.FileField(upload_to="images")
+	image = models.ImageField(upload_to='images/')
+	online = models.IntegerField(default=0)
 
 class Match(models.Model):
 	base_users = models.ManyToManyField(BaseUser)

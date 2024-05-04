@@ -1,66 +1,14 @@
 
 import uuid, json, pdb, asyncio
+from asgiref.sync import sync_to_async
 
 from . import constants
 from .game import MatchManager, Match
-from asgiref.sync import async_to_sync
+from .models import BaseUser
+
+from django.db.models import F
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
-
-# Game sockets (with threads)
-
-class GameConsumer(WebsocketConsumer):
-    def __init__(self, *args, **kwargs):
-        self.ball_controller = BallController()
-        self.thread = None
-
-        super().__init__(*args, **kwargs)
-
-    def connect(self):
-        # self.game = self.scope["url_route"]["kwargs"]["room_name"]
-        self.game = self.scope["url_route"]["kwargs"]["room_name"]
-
-        if self.game not in ThreadPool.threads:
-            ThreadPool.add_game(self.game, self)
-        self.thread = ThreadPool.threads[self.game]
-
-        async_to_sync(self.channel_layer.group_add)(self.game, self.channel_name)
-        if not self.thread["player_one"]:
-            self.paddle_controller = PaddleController("player_one")
-            self.thread["player_one"] = True
-
-        elif not self.thread["player_two"]:
-            self.paddle_controller = PaddleController("player_two")
-            self.thread["player_two"] = True
-
-        if self.thread["player_one"] and self.thread["player_two"]:
-            self.thread["active"] = True
-
-        (self.accept())
-
-    def disconnect(self, close_code):
-        self.thread[str(self.paddle_controller)] = False
-        self.thread["active"] = False
-
-        async_to_sync(self.channel_layer.group_discard)(self.game, self.channel_name)
-
-    def receive(self, text_data):
-        direction = json.loads(text_data).get("direction")
-        self.paddle_controller.move(direction)
-
-    async def propagate_state(self):
-        while True:
-            if self.thread:
-                if self.thread["active"]:
-                    self.ball_controller.move()
-                    async_to_sync(self.channel_layer.group_send)(
-                        self.game,
-                        {"type": "stream_state", "state": Game.state,},
-                    )
-
-    def stream_state(self, event):
-        state = event["state"]
-
-        self.send(text_data=json.dumps(state))
 
 # Game sockets with asyncio
 
@@ -111,6 +59,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 # Chat sockets
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
@@ -144,3 +93,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))
+
+# Online status consumer
+
+class OnlineConsumer(WebsocketConsumer):
+
+    def connect(self):
+        user = self.scope['user']
+        self.add_connection(user)
+        self.accept()
+    
+    def disconnect(self, status_code):
+        user = self.scope['user']
+        self.del_connection(user)
+
+    def add_connection(self, user):
+        BaseUser.objects.filter(pk=user.pk).update(online=F('online') + 1)
+
+    def del_connection(self, user):
+        BaseUser.objects.filter(pk=user.pk).update(online=F('online') - 1)

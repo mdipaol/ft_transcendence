@@ -1,3 +1,12 @@
+import logging, json, requests, secrets, uuid, os
+from pathlib import Path
+
+from datetime import datetime, timedelta
+from oauthlib.oauth2 import WebApplicationClient
+
+from transcendence import settings
+
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -5,16 +14,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
 from django.template import loader
 from django.urls import reverse
-import logging, json
-from transcendence import settings
 
-from datetime import datetime, timedelta
+from friendship.models import Friend, Follow, Block
+
 from .models import BaseUser
 from .forms import *
-
-import requests
-import secrets
-from oauthlib.oauth2 import WebApplicationClient
 
 def login42(request):
 	client_id = settings.INTRA_OAUTH_CLIENT_ID
@@ -25,6 +29,20 @@ def login42(request):
 
 	url = client.prepare_request_uri( auth_url, redirect_uri="https://localhost/callback", state=request.session['state'])
 	return HttpResponseRedirect(url)
+
+def sendFriendRequest(request, username):
+	to_send = BaseUser.objects.get(username=username)
+	if not to_send:
+		return(HttpResponse("to_send not found"))
+	if not request.user.is_authenticated:
+		return (HttpResponse("Bad"))
+	Friend.objects.add_friend(
+		request.user,
+		to_send,
+		message='Sono proprio io'
+	)
+	return HttpResponse("Request Sent")	
+
 
 class CallbackView(View):
 	def get(self, request, *args, **kwargs):
@@ -78,10 +96,26 @@ class CallbackView(View):
 		#name
 		#email
 
+
 class IndexView(TemplateView):
 	template_name = 'pong/index.html'
 	def get(self, request):
-		return render(request, self.template_name, {'user': request.user})
+		friend_requests = None
+		friends = None
+		incoming_requests = None
+		image = None
+		if request.user.is_authenticated:
+			friend_requests = Friend.objects.sent_requests(user=request.user)
+			friends = Friend.objects.friends(request.user)
+			incoming_requests = Friend.objects.unread_requests(user=request.user)
+			image = str(BaseUser.objects.get(username=request.user.get_username()).image)
+		return render(request, self.template_name, {
+			'user': request.user,
+			'image': image,
+			'friends' : friends,
+			'friend_requests' : friend_requests,
+			'incoming_requests' : incoming_requests,
+			})
 
 class RegistrationFormView(View):
 	def get(self, request):
@@ -105,10 +139,37 @@ class LoginCustomView(View):
 			return HttpResponse("Succesfull login")
 		return render(request, 'pong/login.html', {'form': form})
 
+
 class LogoutView(TemplateView):
 	def get(self, request):
 		logout(request)
 		return HttpResponseRedirect(reverse('pong:index'))
+
+def handle_uploaded_file(file):
+	ext = Path(file.name).suffix
+	new_file_name = str(uuid.uuid4()) + ext
+	full_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
+	with open(full_path, "wb+") as destination:
+		for chunk in file.chunks():
+			destination.write(chunk)
+	return new_file_name
+
+class ImageUpload(View):
+	def get(self, request):
+		form = ImageUploadForm()
+		return render(request, 'pong/image_form.html', {'form' : form})
+	def post(self, request):
+		form = ImageUploadForm(request.POST, request.FILES)
+		# Non entro qui non so perchè
+		if form.is_valid():
+			print(request.FILES)
+			file_name = handle_uploaded_file(request.FILES['image'])
+			user: BaseUser = request.user
+			user.image = settings.MEDIA_URL + file_name
+			user.save()
+			return HttpResponse("Avatar Uploaded!")
+		return render(request, 'pong/image_form.html', {'form': form})
+
 
 class ProfileView(View):
 	def get(self, request, username):

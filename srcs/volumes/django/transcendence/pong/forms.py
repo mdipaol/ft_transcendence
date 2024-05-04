@@ -51,7 +51,9 @@ class RegistrationForm(forms.Form):
 		username = self.cleaned_data.get("username")
 		email = self.cleaned_data.get("email")	
 		password = self.cleaned_data.get("password1")
-		user = BaseUser.objects.create_user(username=username, email=email, password=password)
+		user: BaseUser = BaseUser.objects.create_user(username=username, email=email, password=password)
+		user.image = 'static/pong/images/man.png'
+		user.save()
 		return user
 
 class LoginForm(forms.Form):
@@ -72,6 +74,10 @@ class LoginForm(forms.Form):
 	def save(self, request):
 		user = authenticate(request, username=self.cleaned_data.get("username"), password=self.cleaned_data.get("password"))
 		login(request, user)
+
+class ImageUploadForm(forms.Form):
+
+	image = forms.ImageField(label="Load a new image")
 
 
 class UpdateForm(forms.Form):

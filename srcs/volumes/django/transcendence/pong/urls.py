@@ -1,6 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name= 'pong'
 
@@ -21,4 +24,11 @@ urlpatterns = [
     path('profile/', views.personal_profile),
 	path('username/', views.username, name='username'),
 	path('is_authenticated/', views.is_authenticated, name='is_authenticated'),
+    path('send_friend/<str:username>/', views.sendFriendRequest, name='send_friend'),
+    path('image_upload/', views.ImageUpload.as_view(), name='image_upload'),
 ]
+
+# To serve media files in development, because they are not server by default in development
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

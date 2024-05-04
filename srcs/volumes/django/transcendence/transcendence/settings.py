@@ -32,12 +32,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:38893']
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
+    'friendship',
 	'pong.apps.PongConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -154,10 +155,6 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-USER_ONLINE_TIMEOUT = 300
-
-USER_LASTSEEN_TIMEOUT = 60 * 60 * 24 * 7
 
 INTRA_OAUTH_CLIENT_ID = 'u-s4t2ud-30df5fbe358cd88c16ef4e5cdb1fa3211ec7caf93a90de0496ad767ec0e56202'
 
