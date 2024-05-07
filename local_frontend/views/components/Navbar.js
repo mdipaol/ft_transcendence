@@ -9,7 +9,7 @@ const Navbar = {
     const navLinks = links
       .map(
         link =>
-          /*html*/ `<li class="nav-item"><a class="nav-link" href="/#/${link.toLowerCase()}">${link}</a></li>`
+          /*html*/ `<li class="nav-item"><a class="neonbar" href="/#/${link.toLowerCase()}">${link}</a></li>`
       )
       .join('\n');
     return /*html*/ `

@@ -4,9 +4,9 @@ const Footer = {
    */
   render: async () => {
     return /*html*/ `
-      <p class="text-center mt-4"><em>Questo è il footer che appare in ogni pagina, ho pensato per privacy etc, po verimm</em></p>  
+      <h8><p class="text-center mt-4"><em>Questo è il footer che appare in ogni pagina, ho pensato per privacy etc, po verimm</em></p>  
       <p class="text-center"><em>Tutti i diritti, non riservati, sono sul quaderno di Vic</a></em></p>  
-      <p class="text-center ">ne avevamo bisogno? probabilmente no---->  <em id="time"></em></p>  
+      <p class="text-center ">ne avevamo bisogno? probabilmente no---->  <em id="time"></em></p><h8>
     `;
   },
   /**

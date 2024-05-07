@@ -1,0 +1,136 @@
+body {
+	background-image: url('wall.jpg');
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+	font-family: "Vibur", sans-serif;
+  }
+
+nav {
+	background-image: url('wall.jpg');
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+  }
+  
+  .neonbar {
+	color: #fff;
+	text-shadow:
+	  0 0 5px #fff,
+	  0 0 10px #fff,
+	  0 0 20px #fff,
+	  0 0 40px #0ff,
+	  0 0 80px #0ff,
+	  0 0 90px #0ff,
+	  0 0 100px #0ff,
+	  0 0 150px #0ff;
+	  margin-right: 20px;
+  }
+
+  .neonpink {
+	color: #e7e7e7;
+	text-shadow:
+	  0 0 7px #fff,
+	  0 0 10px #fff,
+	  0 0 21px #fff,
+	  0 0 42px #ff00e6,
+	  0 0 85px #ff00e6,
+	  0 0 90px #ff00e6,
+  }
+
+  .neongreen {
+	color: #e7e7e7;
+	text-shadow:
+	  0 0 7px #fff,
+	  0 0 10px #fff,
+	  0 0 21px #fff,
+	  0 0 42px #20d310,
+	  0 0 85px #17a6df,
+	  0 0 90px #7bcd17,
+  }
+
+  .neonblue {
+	color: #e7e7e7;
+	text-shadow:
+	  0 0 7px #fff,
+	  0 0 10px #fff,
+	  0 0 21px #fff,
+	  0 0 42px #0fcedc,
+	  0 0 85px #0300bb,
+	  0 0 90px #0033ff,
+  }
+
+  @media screen and (max-width: 600px) {
+	.neonbar {
+	  display: block;
+	  width: 100%;
+	  text-align: center;
+	  margin: 10px 0;
+	  
+	}
+	.neonpink {
+		display: block;
+		width: 100%;
+		text-align: center;
+		margin: 10px 0;
+		animation: glow3 1s ease-in-out infinite alternate; 
+  }
+
+  .neongreen {
+	display: block;
+	width: 100%;
+	text-align: center;
+	margin: 10px 0;
+	animation: glow2 1s ease-in-out infinite alternate;
+}
+
+.neonblue {
+	display: block;
+	width: 100%;
+	text-align: center;
+	margin: 10px 0;
+	animation: glow1 1s ease-in-out infinite alternate; 
+}}
+
+h1 {
+	font-size: 80px;
+	color: #fff;
+	font-family: "Vibur", sans-serif;
+	text-align: center;
+  }
+  
+  h2 {
+	font-size: 40px;
+	text-align: center;
+	color: #fff;
+	animation: glow 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow1 {
+	from {
+	  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6, 0 0 25px #0073e6, 0 0 30px #0073e6, 0 0 35px #0073e6;
+	}
+	to {
+	  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6, 0 0 50px #0073e6, 0 0 60px #0073e6, 0 0 70px #0073e6;
+	}
+  }
+
+  @keyframes glow2 {
+	from {
+	  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00e66f, 0 0 20px #12fa6b, 0 0 25px #00e608, 0 0 30px #00cfe6, 0 0 35px #0073e6;
+	}
+	to {
+	  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00c7e6, 0 0 40px #0073e6, 0 0 50px #0073e6, 0 0 60px #0073e6, 0 0 70px #12e72e;
+	}
+  }
+
+  @keyframes glow3 {
+	from {
+	  text-shadow: 0 0 5px #fff, 0 0 10px #ffadfa, 0 0 15px #ea54c2, 0 0 20px #e588e9, 0 0 25px #0073e6, 0 0 30px #dd6ae5, 0 0 35px #f643ed;
+	}
+	to {
+	  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #eb45e5, 0 0 50px #0073e6, 0 0 60px #d142d6, 0 0 70px #cc39e0;
+	}
+  }
