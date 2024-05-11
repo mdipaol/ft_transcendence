@@ -151,11 +151,33 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
+# Logs monitoring using ELK stack
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'logstash': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.SocketHandler',
+#             'host': 'logstash',  # or the host where Logstash is running
+#             'port': 5000,         # the port Logstash is listening on
+#         },
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['logstash'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INTRA_OAUTH_CLIENT_ID = 'u-s4t2ud-30df5fbe358cd88c16ef4e5cdb1fa3211ec7caf93a90de0496ad767ec0e56202'
+INTRA_OAUTH_CLIENT_ID = os.environ['INTRA_OAUTH_CLIENT_ID']
 
-INTRA_OAUTH_SECRET = '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'
+INTRA_OAUTH_SECRET = os.environ['INTRA_OAUTH_SECRET']

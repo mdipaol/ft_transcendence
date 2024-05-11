@@ -247,8 +247,6 @@ async def game_loop(match):
             match.id, {"type": "game_end", "message": match.get_state()}
     )
 
-
-
 class MatchManager:
 
     matches = []
