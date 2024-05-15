@@ -8,3 +8,4 @@ srcs/volumes/django/transcendence/transcendence/__pycache__/
 srcs/volumes/django/transcendence/pong/__pycache__/
 srcs/volumes/django/transcendence/pong/migrations/
 srcs/volumes/django/transcendence/pong/test_files/
+srcs/volumes/django/transcendence/media/

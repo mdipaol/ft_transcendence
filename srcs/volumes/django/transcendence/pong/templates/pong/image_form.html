@@ -1,0 +1,11 @@
+<h1>Change Avatar</h1>
+<form method="post" action="{% url 'pong:image_upload' %}" enctype="multipart/form-data">
+{% csrf_token%}
+{% for field in form %}
+    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+    </div>
+    {% endfor %}
+    <input type="submit">Submit
+</form>
