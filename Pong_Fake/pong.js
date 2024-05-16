@@ -7,6 +7,8 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+import { Player, Ball, Match, World } from "./modules.js"
+
 //---------LOADERS----------
 var paddle = null;
 async function loadObject() {
@@ -33,6 +35,7 @@ async function loadObject() {
 await loadObject().then(() => {
 	console.log("oggetto caricato");
 });
+console.log(paddle);
 const loader = new FBXLoader();
 loader.load(
 		'pingpongtable.fbx',
@@ -132,7 +135,7 @@ window.addEventListener('resize', function()
 
 //---------OBJECTS----------
 var sphere = new THREE.SphereGeometry(0.8, 16, 32);
-var ballMaterial = new THREE.MeshPhongMaterial({color:0xf06400, emissive: 0xf06400,roughness: 1 ,metalness: 0.973});
+var ballMaterial = new THREE.MeshPhongMaterial({color:0xf06400, emissive: 0xf06400});
 var ball = new THREE.Mesh(sphere, ballMaterial);
 const ballLight = new THREE.PointLight(0xf06400, 5, 100, 1);
 ball.add(ballLight);
@@ -209,10 +212,9 @@ player1.position.x = -54;
 player2.position.x = 54;
 player1.position.z = -10;
 player2.position.z = -10;
-player1.rotation.z = 1.5708;//radianti
+player1.rotation.z = -1.5708;//radianti
 player2.rotation.z = 1.5708;
 ball.position.z = 10
-player1.rotation.z = 1.5708 * 3;
 
 
 //---------MOVEMENTS----------
