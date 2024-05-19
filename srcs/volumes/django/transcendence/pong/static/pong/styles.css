@@ -1,0 +1,374 @@
+body {
+	display: flex;
+	font-size: 2vw;
+	flex-direction: column;
+	min-height: 100vh;
+	margin: 0;
+	background-image: url('images/wall.jpg');
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+	font-family: "Vibur", sans-serif;
+}
+
+#textbox {
+	display: flex;
+	width: 80%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#header_root,
+#footer_root {
+	background-color: #f8f9fa;
+	padding: 20px;
+	background-image: url(images/wall.jpg);
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+}
+
+.flex-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.inner-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#page_root {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 1;
+	background-image: url(images/wall.jpg);
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+}
+
+#footer_root {
+	width: 100%;
+}
+
+nav {
+	background-image: url(images/wall.jpg);
+	background-size: 90%;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: center;
+}
+
+.navbar-toggler {
+	display: none;
+}
+
+.navbar-nav-mobile {
+	display: none;
+}
+
+.navbar-nav {
+	display: flex;
+	font-size: clamp(15px, 2.5vw, 30px);
+	font-family: "Tilt Neon", sans-serif;
+	gap: 20px;
+}
+
+@media (max-width: 767px) {
+	.navbar-toggler {
+		display: block;
+		cursor: pointer;
+		padding: 0.25rem 0.75rem;
+		font-size: 1.25rem;
+		line-height: 1;
+		position: relative;
+		background-color: transparent;
+		border: 1px solid transparent;
+		border-radius: 0.25rem;
+	}
+
+	.navbar-toggler-icon {
+		display: block;
+		width: 1.5em;
+		height: 1.5em;
+		content: "";
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 100%;
+	}
+
+	#navbar-toggle-checkbox {
+		display: none;
+	}
+
+	#navbar-toggle-checkbox:checked ~ .navbar-collapse {
+		display: block;
+		position: absolute;
+		top: calc(100% + 10px);
+		left: 0;
+		z-index: 1000;
+	}
+
+	.navbar-collapse {
+		display: none;
+		background-color: transparent;
+		padding: 0.5rem;
+		border-top: none;
+	}
+
+	.navbar-collapse.show {
+		display: flex;
+		position: absolute;
+		top: 70px;
+		right: -9px;
+		justify-content: end;
+	}
+
+	.navbar-nav {
+		display: none;
+	}
+
+	.navbar-nav-mobile {
+		display: block;
+	}
+
+	.navbar-nav li {
+		display: block;
+		padding: 0.5rem 1rem;
+	}
+
+	.navbar-nav li a {
+		display: block;
+		color: #000;
+		text-decoration: none;
+	}
+
+	/* questa cosa che mi ha fatto fare sasha va a prendere gli elementi che 
+	hanno la classe navbar--nav che sono dentro navbar-collapse.show */
+	.navbar-nav-mobile .nav-item {
+		display: block !important;
+		padding: 0;
+		font-size: clamp(15px, 2.5vw, 50px);
+		text-align: end;
+	}
+}
+
+.neonbar {
+	color: #fff;
+	text-shadow:
+		0 0 5px #fff,
+		0 0 10px #fff,
+		0 0 20px #fff,
+		0 0 40px #0ff,
+		0 0 80px #0ff,
+		0 0 90px #0ff,
+		0 0 100px #0ff,
+		0 0 150px #0ff;
+}
+
+.neonpink {
+	color: #e7e7e7;
+	text-shadow:
+		0 0 7px #fff,
+		0 0 10px #fff,
+		0 0 21px #fff,
+		0 0 42px #ff00e6,
+		0 0 85px #ff00e6,
+		0 0 90px #ff00e6;
+}
+
+.neongreen {
+	color: #e7e7e7;
+	text-shadow:
+		0 0 7px #fff,
+		0 0 10px #fff,
+		0 0 21px #fff,
+		0 0 42px #20d310,
+		0 0 85px #17a6df,
+		0 0 90px #7bcd17;
+}
+
+.neonblue {
+	color: #e7e7e7;
+	text-shadow:
+		0 0 7px #fff,
+		0 0 10px #fff,
+		0 0 21px #fff,
+		0 0 42px #0fcedc,
+		0 0 85px #0300bb,
+		0 0 90px #0033ff;
+}
+
+.neonbar.shadow
+{
+	text-shadow:
+		0 0 5px #fff,
+		0 0 10px #fff,
+		0 0 20px #fff,
+		0 0 40px #0ff,
+		0 0 80px #0ff,
+		0 0 90px none,
+		0 0 100px none,
+		0 0 150px none;
+}
+
+.neonbar.shadow
+{
+	animation: glow3 1s ease-in-out infinite alternate;
+}
+
+@media screen and (max-width: 300px) {
+	.neonbar,
+	.neonpink,
+	.neongreen,
+	.neonblue {
+		display: block;
+		width: 100%;
+		text-align: center;
+		margin: 10px 0;
+	}
+}
+
+.neonpink {
+	animation: glow3 1s ease-in-out infinite alternate;
+}
+
+.neongreen {
+	animation: glow2 1s ease-in-out infinite alternate;
+}
+
+.neonblue {
+	animation: glow1 1s ease-in-out infinite alternate;
+}
+
+h1 {
+	font-size: clamp(40px, 8vw, 80px);
+	color: #fff;
+	font-family: "Vibur", sans-serif;
+	text-align: center;
+}
+
+h3 {
+	font-size: clamp(20px, 4vw, 50px);
+	color: #fff;
+	font-family: "Vibur", sans-serif;
+	text-align: center;
+}
+
+h2 {
+	font-size: clamp(20px, 4vw, 60px);
+	text-align: center;
+	font-family: "Tilt Neon", sans-serif;
+	color: #fff;
+	animation: glow 1s ease-in-out infinite alternate;
+}
+
+h4 {
+	font-size: clamp(30px, 8vw, 50px);
+	color: #fff;
+	font-family: "Vibur", sans-serif;
+	text-align: center;
+}
+
+@keyframes glow1 {
+	from {
+		text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6, 0 0 25px #0073e6, 0 0 30px #0073e6, 0 0 35px #0073e6;
+	}
+	to {
+		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6, 0 0 50px #0073e6, 0 0 60px #0073e6, 0 0 70px #0073e6;
+	}
+}
+
+@keyframes glow2 {
+	from {
+		text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00e66f, 0 0 20px #12fa6b, 0 0 25px #00e608, 0 0 30px #00cfe6, 0 0 35px #0073e6;
+	}
+	to {
+		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00c7e6, 0 0 40px #0073e6, 0 0 50px #0073e6, 0 0 60px #0073e6, 0 0 70px #12e72e;
+	}
+}
+
+@keyframes glow3 {
+	from {
+		text-shadow: 0 0 5px #fff, 0 0 10px #ffadfa, 0 0 15px #ea54c2, 0 0 20px #e588e9, 0 0 25px #0073e6, 0 0 30px #dd6ae5, 0 0 35px #f643ed;
+	}
+	to {
+		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #eb45e5, 0 0 50px #0073e6, 0 0 60px #d142d6, 0 0 70px #cc39e0;
+	}
+}
+body{
+	background: #000;
+  }
+
+  .monoton-regular {
+	font-family: "Monoton", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+  }
+  
+  
+  .neon.flicker{
+	font-family: 'Monoton', cursive !important;
+	color: #3dd61f;
+	justify-content: center;
+	top: 50%;
+	font-weight: 100;
+	letter-spacing: 8px;
+	text-shadow: 1px 0px 4px #dcffd5, 2px 0px 4px #e1ffd5, 3px 0px 4px #dfffd5, 2px 0px 3px #00ff9d, 2px 3px 15px #7dff03, 2px 0px 15px, 5px 0px 125px, 20px 0vw 200px #452cd4,40px 0vw 200px #2c4bd4;
+  }
+  
+  .flicker-slow{
+	animation: flicker 3s linear infinite;
+  }
+  
+  .flicker-fast{
+	animation: flicker 1s linear infinite;
+  }
+  
+  @keyframes flicker {
+	  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+	  opacity: .99;
+		  
+	  }
+	  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+		  opacity: 0.4;
+	  }
+  }
+
+  .logo-text {
+	  position: relative;
+	  font-size: 20px;
+	  letter-spacing: 8px;
+	  color: rgb(235, 243, 242);
+	  padding-left: 10px;
+	  padding-top: 10px;
+	  text-transform: uppercase;
+	  width: 100%;
+	  text-align: center;
+	  -webkit-box-reflect: below 1px linear-gradient(transparent, rgba(0, 0, 0, 0.685));
+	  line-height: 0.70em;
+	  outline: none;
+	  animation: animate 5s linear infinite;
+  }
+
+  @keyframes animate{
+	  0%,18%,20%,50.1%,60%,65.1%,80%,90.1%,92%{
+		  color:rgb(0, 0, 0);
+		  box-shadow: none;
+	  }
+	  18.1%,20.1%,30%,50%,60.1%,65%,80.1%,90%,92.1%,100%{
+		  color: rgb(255, 255, 255) !important;
+		  text-shadow: 0 0 10px rgb(88, 227, 236),0 0 20px rgb(212, 241, 241),0 0 40px rgb(84, 235, 237),0 0 80px rgb(207, 231, 231),0 0 160px rgb(239, 255, 255);
+		  
+	  }
+  }

@@ -4,10 +4,12 @@ const Home = {
    */
   render: async () => {
     return /*html*/ `
-      <section>
-        <h1 class="text-center"><a href="#login">Sign in!</a></h1>
-        <h1 class="text-center">or</a></h1>
-        <h1 class="text-center"><a href="#register">Register!</a></h1>
+      <section class="flex-container">
+        <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
+        <h1 class="neonbar">OR</h1>
+        <h1><a class="neonpink" href="/#/">REGISTER!</a></h1>
+        <div class="neon-button-wrapper">
+    </div>
       </section>
     `;
   },
