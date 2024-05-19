@@ -1,6 +1,6 @@
-FROM python:slim-bullseye
+FROM python:3.9.19-alpine3.19
 
-RUN apt update && apt upgrade -y
+RUN apk update && apk upgrade
 
 WORKDIR /app
 
@@ -10,4 +10,4 @@ COPY ./conf/requirements.txt /
 RUN pip install --no-cache -r /requirements.txt && \
 	rm /requirements.txt
 
-CMD ["bash", "/entrypoint.sh"]
+CMD ["sh", "/entrypoint.sh"]

@@ -8,6 +8,9 @@ $(NAME): $(SRC)
 	@ bash $(SRC)/utils/volumes_check.sh
 	@ docker compose --project-directory $(SRC) up -d --build
 
+nodetatch:
+	@ docker compose --project-directory $(SRC) up --build
+
 start:
 	@ docker compose --project-directory $(SRC) start
 

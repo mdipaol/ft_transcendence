@@ -7,3 +7,7 @@ fi
 if ! [ -d srcs/volumes/static ]; then
 	mkdir -p srcs/volumes/static;
 fi
+
+if ! [ -d srcs/volumes/redis ]; then
+	mkdir -p srcs/volumes/redis;
+fi

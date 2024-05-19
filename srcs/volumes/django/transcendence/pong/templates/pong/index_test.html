@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="{% static 'pong/css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'pong/css/style.css' %}">
+	{% comment %} <script src="{% static 'pong/js/bootstrap/bootstrap.js'%}"></script> {% endcomment %}
+	<title>Transcendence</title>
+</head>
+
+<body>
+	<!-- Header content -->
+	<header>
+		<div>
+			{% if not user.is_authenticated %}
+				<a href="/registration/">Registration</a>
+				<a href="/login/">Log in</a>
+			{% else %}
+				<a href="/profile/">Profile</a>
+				<a href="/logout/">Logout</a>
+			{% endif %}
+		</div>
+	</header>
+
+	<!-- LOGIN -->
+	<!-- Main content -->
+	<main>
+		<!-- SPA container -->
+		<div>
+			{% if user.is_authenticated %}
+				<div>
+					<img src="{{image}}">
+					<a href="/image_upload/">Upload an image</a>
+				</div>
+				<h2>Friends<h2>
+				{% for item in friends%}
+					{{item}}
+				{% endfor %}
+				<br>
+				<h2>Requests<h2>
+				{% for item in friend_requests%}
+					{{item}}
+				{% endfor %}
+				<h2>Incoming<h2>
+				{% for item in incoming_requests%}
+					{{item}}
+				{% endfor %}
+			{% endif %}
+		</div>
+	</main>
+	<!-- Footer content -->
+	<footer>
+	</footer>
+	<script src="{% static 'pong/js/profile.js' %}"></script>
+	<script src="{% static 'pong/js/registration.js' %}"></script>
+	<script src="{% static 'pong/js/logged.js' %}"></script>
+	{% if user.is_authenticated %}
+		<script>
+			const socket = new WebSocket(
+				'wss://'
+				+ window.location.host
+				+ '/ws/online/'
+			);
+			socket.onerror = function(error) {
+  				alert(`[error] ${error.message}`);
+			};
+		</script>
+	{% endif %}
+</body>
+</html>

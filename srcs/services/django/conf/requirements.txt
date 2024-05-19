@@ -1,5 +1,11 @@
-django==5.0.3
-psycopg
-psycopg2-binary
-channels
-gunicorn
+django==4.2.11
+psycopg==3.1.18
+psycopg2-binary==2.9.9
+channels==4.0.0
+daphne==4.0.0
+password_strength==0.0.3.post2
+channels_redis==4.2.0
+requests==2.31.0
+oauthlib==3.2.2
+django-friendship
+Pillow

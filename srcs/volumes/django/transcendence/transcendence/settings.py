@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import mimetypes
+
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/html", ".html", True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,11 +32,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:38893']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'friendship',
 	'pong.apps.PongConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+MIDDLEWARE_CLASSES = (
+    'online_users.middleware.OnlineNowMiddleware',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,7 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'transcendence.wsgi.application'
-
+ASGI_APPLICATION = 'asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -87,6 +97,14 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -106,6 +124,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
 AUTH_USER_MODEL = 'pong.BaseUser'
 
 # Internationalization
@@ -119,16 +139,45 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = '/media/'
+
+# Logs monitoring using ELK stack
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'logstash': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.SocketHandler',
+#             'host': 'logstash',  # or the host where Logstash is running
+#             'port': 5000,         # the port Logstash is listening on
+#         },
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['logstash'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INTRA_OAUTH_CLIENT_ID = os.environ['INTRA_OAUTH_CLIENT_ID']
+
+INTRA_OAUTH_SECRET = os.environ['INTRA_OAUTH_SECRET']
