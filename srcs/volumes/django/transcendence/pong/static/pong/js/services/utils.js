@@ -17,7 +17,7 @@ export const parseRequestUrl = () => {
   };
 
   // Print it in the console.
-  console.log('(App) Parsed url:', request);
+  // console.log('(App) Parsed url:', request);
 
   // Return and object with params.
   return request;

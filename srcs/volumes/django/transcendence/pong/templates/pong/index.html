@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,12 +13,12 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     /> 
-    <link rel="stylesheet" href="./styles/button.css" />
-
-    <link rel="stylesheet" href="./styles/styles.css" />
-    <link rel="stylesheet" href="./styles/sliderstyle.css" />
-    <link rel="stylesheet" href="./styles/minipong.css" />
-    <script type="module" src="./index.js"></script>
+    <link rel="stylesheet" href="{% static 'pong/css/button.css'%}" />
+    <link rel="stylesheet" href="{%static 'pong/css/styles.css'%}" />
+    <link rel="stylesheet" href="{% static 'pong/css/sliderstyle.css'%}" />
+    <link rel="stylesheet" href="{% static 'pong/css/minipong.css' %}" />
+    {% comment %} <script type="module" src="./index.js"></script> {% endcomment %}
+    <script type="module" src="{% static 'pong/js/index.js' %}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">

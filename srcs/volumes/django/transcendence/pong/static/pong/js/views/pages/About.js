@@ -10,12 +10,12 @@ const About = {
     </div>
       <div id="slider">
 
-       <img src="../../styles/images/alegreci.jpeg" alt="Image 1">
-       <img src="../../styles/images/damia.jpeg" alt="Image 2">
-       <img src="../../styles/images/manue.png" alt="Image 3">
-       <img src="../../styles/images/vic.jpg" alt="Image 2">
-       <img src="../../styles/images/nelly.jpeg" alt="Image 5">
-       <img src="../../styles/images/fogli.jpeg" alt="Image 6">
+       <img src="static/pong/images/alegreci.jpeg" alt="Image 1">
+       <img src="static/pong/images/damia.jpeg" alt="Image 2">
+       <img src="static/pong/images/manue.png" alt="Image 3">
+       <img src="static/pong/images/vic.jpg" alt="Image 2">
+       <img src="static/pong/images/nelly.jpeg" alt="Image 5">
+       <img src="static/pong/images/fogli.jpeg" alt="Image 6">
       </div>
       <div id="textbox">
         <h3 class="neonbar shadow">Yo dude! Who do you think made this crazy, epic site?
@@ -35,3 +35,4 @@ const About = {
   after_render: async () => {}
 };
 export default About;
+

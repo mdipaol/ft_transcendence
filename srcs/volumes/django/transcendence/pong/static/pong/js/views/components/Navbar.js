@@ -47,7 +47,7 @@ const Navbar = {
   after_render: async () => {
     // document.addEventListener('DOMContentLoaded', function() {
       const navbarToggle = document.querySelector('.navbar-toggler');
-      console.log(navbarToggle);
+      // console.log(navbarToggle);
       const navbarCollapse = document.querySelector('.navbar-collapse');
 
       navbarToggle.addEventListener('click', function() {
