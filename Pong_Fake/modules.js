@@ -52,10 +52,13 @@ export class Match {
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
 		this.collision = false;
+		this.waitPowerup = 0;
+		this.activePowerUp = false;
 		this.player1.mesh.position.x = -54;
 		this.player2.mesh.position.x = 54;
 		this.player1.mesh.rotation.z = -Math.PI/2;
 		this.player2.mesh.rotation.z = Math.PI/2;
+		this.PowerUp = null;
     }
 
 	exchangesTextInit() {
@@ -92,28 +95,46 @@ export class Match {
 		return meshes;
 	}
 
+	addPowerUp() {
+		if (this.activePowerUp == false) {
+			this.world.PowerUp = this.world.randomPowerUp();
+			let z = null;
+			if (this.ball.direction.x > 0) {
+				z = this.ball.posCurve.getPointAt(0.5).z;
+			} 
+			else {
+				z = this.ball.negCurve.getPointAt(0.5).z;
+			}
+			const max = 27;
+			const min = -27;
+			const y = Math.floor(Math.random() * (max - min + 1)) + min;
+			this.world.PowerUp.position.set(0, y, z);
+			this.world.spotLight.position.set(0, y, 20);
+			this.world.scene.add(this.world.PowerUp);
+			this.activePowerUp = true;
+		}
+	}
+
 	updateExchanges() {
-		const geometry = new TextGeometry( (++this.exchanges).toString(), {
+		this.exchanges++;
+		this.waitPowerup++;
+
+		console.log("waitPowerUp: " + this.waitPowerup);
+
+		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
 			size: 8,
 			height: 1,
 		})
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
-		console.log(this.exchanges);
 		this.exchangesText[0].geometry = geometry;
 		this.exchangesText[1].geometry = geometry;
 		this.exchangesText[2].geometry = geometry;
-		/*
-		const tmpMesh = this.exchangesText;
-		const emissive_color = 0x4DE8FF;
-        const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
-		this.exchangesText = new THREE.Mesh( geometry, material);
-        this.exchangesText.rotation.set(Math.PI/2, Math.PI/2, 0);
-        this.exchangesText.position.set(-125, -5, 5);
-        this.world.add(this.exchangesText);
-        if (tmpMesh)
-            this.world.remove(tmpMesh);*/
+
+		if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
+			this.addPowerUp();
+		}
 	}
 
 
@@ -205,9 +226,55 @@ export class World {
 		this.fontLoader = fontLoader;
 		this.font = null;
 		//this.laodTable();
+		this.PowerUp = null;
 		this.skyboxInit();
 		this.posterInit();
 		this.loadObjects();
+		//gest cube powerup
+		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, 0.25, 1,  1);
+		spotLight.position.x = 0;
+		spotLight.position.y = 0;
+		spotLight.position.z = 20;
+		this.spotLight = spotLight;
+		this.add(this.spotLight);
+		// cube vik a modificato
+			//positive
+				const geometry_cube = new THREE.DodecahedronGeometry(3, 0); 
+				const material_cube = new THREE.MeshPhongMaterial( {color: 0x00ff00, emissiveIntensity:100} );//cube material
+				this.cube = new THREE.Mesh( geometry_cube, material_cube);
+			//negative
+				const geometry_cube_N = new THREE.DodecahedronGeometry(3, 0); 
+				const material_cube_N = new THREE.MeshPhongMaterial( {color: 0xDA2400, emissiveIntensity:100} );
+				this.cube_N = new THREE.Mesh( geometry_cube_N, material_cube_N);
+		// OctahedronGeometry // prisma
+			//positive
+				const geometry_prisma = new THREE.OctahedronGeometry(3,0);
+				const material_prisma = new THREE.MeshPhongMaterial({color: 0x00FFE6, emissiveIntensity:100});
+				this.prisma = new THREE.Mesh(geometry_prisma, material_prisma);
+			//negative
+				const geometry_prisma_N = new THREE.OctahedronGeometry(3,0);
+				const material_prisma_N = new THREE.MeshPhongMaterial({color: 0xDA2400, emissiveIntensity:100});
+				this.prisma_N = new THREE.Mesh(geometry_prisma_N, material_prisma_N);
+		//TorusKnotGeometry //nodo
+			//positive
+				const geometry_torusKnot = new THREE.TorusKnotGeometry( 1, 1, 100, 16 );
+				const material_torusKnot = new THREE.MeshPhongMaterial({color: 0xFFDD52, emissiveIntensity: 100 });
+				this.nodo = new THREE.Mesh(geometry_torusKnot, material_torusKnot);
+			//negative
+			const geometry_torusKnot_N = new THREE.TorusKnotGeometry( 1, 1, 100, 16 );
+			const material_torusKnot_N = new THREE.MeshPhongMaterial({color: 0xDA2400, emissiveIntensity: 100 });
+			this.nodo_N = new THREE.Mesh(geometry_torusKnot_N, material_torusKnot_N);
+			this.arrayPowerup = [
+				this.cube, this.cube_N, this.prisma, this.prisma_N, this.nodo, this.nodo_N
+			]
+		//end gest cube
+	}
+	/* vik a modificato */
+	randomPowerUp(){
+		const index = Math.floor(Math.random() * this.arrayPowerup.length);
+		const tmp = this.arrayPowerup[index];
+		this.PowerUp = tmp;
+		return this.PowerUp;
 	}
 
 	resize(width, height) {
@@ -259,7 +326,13 @@ export class World {
 			this.orbitControls.enabled = false;
 		this.orbitControls.update();
 	}
-
+	/* vik a modificato */
+	rotatePowerUp() {
+		if(this.PowerUp){
+			this.PowerUp.rotation.x += 0.01;
+			this.PowerUp.rotation.z -= 0.01;
+		}	
+	}
 
 	skyboxInit() {
 		const BOXSIZE = 250;

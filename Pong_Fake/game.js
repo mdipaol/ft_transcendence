@@ -14,7 +14,7 @@ import { Player, Ball, Match, World } from "./modules.js"
 //---------CONSTANTS----------
 const MOVSPEED = 0.7;
 const BALLSPEED = 0.5;
-const ACCELERATION = 1.1;
+const ACCELERATION = 2;
 const BOXSIZE = 250;
 
 //---------INIT----------
@@ -236,13 +236,14 @@ socket.addEventListener('message', function (event) {
 //---------UPDATE AND RENDER----------
 var update = function()
 {
-	updateMovements()
+	updateMovements();
+	world.rotatePowerUp();
 	ball.mesh.position.x += ball.speed * ball.direction.x;
 	ball.mesh.position.y += ball.speed * ball.direction.y;
 	if (checkCollision(player1.mesh, ball.mesh) && !match.collision)
 	{
-		if (ball.speed < 2)
-			ball.speed *= ACCELERATION;
+		/* if (ball.speed < 2)
+			ball.speed *= ACCELERATION; */
 		ball.direction.x *= -1;
 		ball.direction.y = (ball.mesh.position.y - player1.mesh.position.y)/10;
 		match.collision = true;
@@ -250,12 +251,18 @@ var update = function()
 	}
 	if (checkCollision(player2.mesh, ball.mesh) && !match.collision)
 	{
-		if (ball.speed  < 2)
-			ball.speed  *= ACCELERATION;
+		// if (ball.speed  < 2)
+		// 	ball.speed  *= ACCELERATION;
 		ball.direction.x *= -1;
 		ball.direction.y = (ball.mesh.position.y - player2.mesh.position.y)/10;
 		match.collision = true;
 		match.updateExchanges()
+	}
+	// PowerUp collision
+	if (world.PowerUp && checkCollision(ball.mesh, world.PowerUp)){
+		world.remove(world.PowerUp);
+		match.activePowerUp = false;
+		match.waitPowerup = 0;
 	}
 	if (wallCollision(ball))
 		ball.direction.y *= -1;
