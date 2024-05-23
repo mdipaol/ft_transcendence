@@ -150,47 +150,47 @@ function onKeyUp(event) {
 
 //---------MOVEMENTS----------
 
-function updateMovements()
-{
-	if (player1.moves.up && player1.mesh.position.y < 27)
-	{
-		player1.mesh.position.y += MOVSPEED;
-		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-	}
-	if (player1.moves.down && player1.mesh.position.y > -27)
-	{
-		player1.mesh.position.y -= MOVSPEED;
-		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-	}
-	if (player2.moves.up && player2.mesh.position.y < 27)
-	{
-		player2.mesh.position.y += MOVSPEED;
-		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-	}
-	if (player2.moves.down && player2.mesh.position.y > -27)
-	{
-		player2.mesh.position.y -= MOVSPEED;
-		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-	}
-}
+// function updateMovements()
+// {
+// 	if (player1.moves.up && player1.mesh.position.y < 27)
+// 	{
+// 		player1.mesh.position.y += MOVSPEED;
+// 		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+// 	}
+// 	if (player1.moves.down && player1.mesh.position.y > -27)
+// 	{
+// 		player1.mesh.position.y -= MOVSPEED;
+// 		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+// 	}
+// 	if (player2.moves.up && player2.mesh.position.y < 27)
+// 	{
+// 		player2.mesh.position.y += MOVSPEED;
+// 		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+// 	}
+// 	if (player2.moves.down && player2.mesh.position.y > -27)
+// 	{
+// 		player2.mesh.position.y -= MOVSPEED;
+// 		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+// 	}
+// }
 
 //---------COLLISIONS----------
 
 
-function wallCollision(ball)
-{
-	if (ball.mesh.position.y > 28  || ball.mesh.position.y < -28)
-		return true
-	else
-		return false
-}
+// function wallCollision(ball)
+// {
+// 	if (ball.mesh.position.y > 28  || ball.mesh.position.y < -28)
+// 		return true
+// 	else
+// 		return false
+// }
 
 
-function checkCollision(object1, object2) {
-    var box1 = new THREE.Box3().setFromObject(object1);
-    var box2 = new THREE.Box3().setFromObject(object2);
-    return box1.intersectsBox(box2);
-}
+// function checkCollision(object1, object2) {
+//     var box1 = new THREE.Box3().setFromObject(object1);
+//     var box2 = new THREE.Box3().setFromObject(object2);
+//     return box1.intersectsBox(box2);
+// }
 
 //---------SCENE ADD----------
 world.add(player1.mesh);
@@ -234,58 +234,58 @@ socket.addEventListener('message', function (event) {
 */
 
 //---------UPDATE AND RENDER----------
-var update = function()
-{
-	updateMovements();
-	world.rotatePowerUp();
-	ball.mesh.position.x += ball.speed * ball.direction.x;
-	ball.mesh.position.y += ball.speed * ball.direction.y;
-	if (checkCollision(player1.mesh, ball.mesh) && !match.collision)
-	{
-		/* if (ball.speed < 2)
-			ball.speed *= ACCELERATION; */
-		ball.direction.x *= -1;
-		ball.direction.y = (ball.mesh.position.y - player1.mesh.position.y)/10;
-		match.collision = true;
-		match.updateExchanges();
-	}
-	if (checkCollision(player2.mesh, ball.mesh) && !match.collision)
-	{
-		// if (ball.speed  < 2)
-		// 	ball.speed  *= ACCELERATION;
-		ball.direction.x *= -1;
-		ball.direction.y = (ball.mesh.position.y - player2.mesh.position.y)/10;
-		match.collision = true;
-		match.updateExchanges()
-	}
-	// PowerUp collision
-	if (world.PowerUp && checkCollision(ball.mesh, world.PowerUp)){
-		world.remove(world.PowerUp);
-		match.activePowerUp = false;
-		match.waitPowerup = 0;
-	}
-	if (wallCollision(ball))
-		ball.direction.y *= -1;
-	//Reset positions
-	if (ball.mesh.position.x > player2.mesh.position.x +5  || ball.mesh.position.x < player1.mesh.position.x - 5)
-		match.updateScore();
+// var update = function()
+// {
+// 	updateMovements();
+// 	world.rotatePowerUp();
+// 	ball.mesh.position.x += ball.speed * ball.direction.x;
+// 	ball.mesh.position.y += ball.speed * ball.direction.y;
+// 	if (checkCollision(player1.mesh, ball.mesh) && !match.collision)
+// 	{
+// 		/* if (ball.speed < 2)
+// 			ball.speed *= ACCELERATION; */
+// 		ball.direction.x *= -1;
+// 		ball.direction.y = (ball.mesh.position.y - player1.mesh.position.y)/10;
+// 		match.collision = true;
+// 		match.updateExchanges();
+// 	}
+// 	if (checkCollision(player2.mesh, ball.mesh) && !match.collision)
+// 	{
+// 		// if (ball.speed  < 2)
+// 		// 	ball.speed  *= ACCELERATION;
+// 		ball.direction.x *= -1;
+// 		ball.direction.y = (ball.mesh.position.y - player2.mesh.position.y)/10;
+// 		match.collision = true;
+// 		match.updateExchanges()
+// 	}
+// 	// PowerUp collision
+// 	if (world.PowerUp && checkCollision(ball.mesh, world.PowerUp)){
+// 		world.remove(world.PowerUp);
+// 		match.activePowerUp = false;
+// 		match.waitPowerup = 0;
+// 	}
+// 	if (wallCollision(ball))
+// 		ball.direction.y *= -1;
+// 	//Reset positions
+// 	if (ball.mesh.position.x > player2.mesh.position.x +5  || ball.mesh.position.x < player1.mesh.position.x - 5)
+// 		match.updateScore();
 
-	if (match.collision && ball.mesh.position.x > -10 && ball.mesh.position.x < 10)
-		match.collision = false;
-	ball.mesh.position.z = ball.getZ();
-}
+// 	if (match.collision && ball.mesh.position.x > -10 && ball.mesh.position.x < 10)
+// 		match.collision = false;
+// 	ball.mesh.position.z = ball.getZ();
+// }
 
-var render = function()
-{
-	// renderer.render(scene, camera);
-    world.renderer.render(world.scene, world.activeCamera);
-};
+// var render = function()
+// {
+// 	// renderer.render(scene, camera);
+//     world.renderer.render(world.scene, world.activeCamera);
+// };
 
 var gameLoop = function()
 {
 	requestAnimationFrame(gameLoop);
-	update();
-	render();
+	match.update();
+	match.render();
 };
 
 gameLoop();

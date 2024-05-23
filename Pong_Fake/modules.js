@@ -9,7 +9,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 //---------COSTANTS--------
 const MAXSCORE = 3;
-
+const MOVSPEED = 0.7;
+const STARTINGSPEED = 1;
+const ACCELERATION  = 2;
 //---------HELPERS----------
 function roundPos(pos)
 {
@@ -20,7 +22,33 @@ function roundPos(pos)
 	return pos;
 }
 
+function wallCollision(ball)
+{
+	if (ball.mesh.position.y > 28  || ball.mesh.position.y < -28)
+		return true
+	else
+		return false
+}
+
+function checkCollision(object1, object2) {
+    var box1 = new THREE.Box3().setFromObject(object1);
+    var box2 = new THREE.Box3().setFromObject(object2);
+    return box1.intersectsBox(box2);
+}
+
+function checkPowerUpCollision(ball, powerUp){
+	if (ball.position.x <= 3 && ball.position.x >= -3){
+		if (Math.abs(ball.position.y - powerUp.position.y) <= 3){
+			return true;
+		}
+	}
+	return false;
+}
+
 //---------CLASSES----------
+
+// region Player
+
 export class Player {
 
 	// static paddle = Player.loadPaddle();
@@ -35,14 +63,31 @@ export class Player {
 			down:false
 		}
 		this.mesh.position.z = -10;
+		this.powerUp = null;
 	}
 }
+
+export class PowerUp{
+	constructor(ball, player1, player2, World, Match){
+		this.activePowerUp = false;
+		this.ball = ball;
+		this.player1 = player1;
+		this.player2 = player2;
+		this.World = World;
+		this.Match = Match;
+		this.Match.PowerUp = Match.PowerUp;
+	}
+}
+
+// region Match
 
 export class Match {
     constructor(ball, player1, player2, world){
 		this.world = world;
         this.player1 = player1;
         this.player2 = player2;
+		// this.powerVector1 = []
+		// this.powerVector2 = []
         this.ball = ball;
 		this.maxScore = MAXSCORE;
         this.score1 = 0;
@@ -52,13 +97,13 @@ export class Match {
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
 		this.collision = false;
-		this.waitPowerup = 0;
-		this.activePowerUp = false;
 		this.player1.mesh.position.x = -54;
 		this.player2.mesh.position.x = 54;
 		this.player1.mesh.rotation.z = -Math.PI/2;
 		this.player2.mesh.rotation.z = Math.PI/2;
-		this.PowerUp = null;
+		this.waitPowerup = 0;
+		this.activePowerUp = false;
+		this.meshPowerUp = null;
     }
 
 	exchangesTextInit() {
@@ -97,46 +142,37 @@ export class Match {
 
 	addPowerUp() {
 		if (this.activePowerUp == false) {
+
+			this.activePowerUp = true;
+
 			this.world.PowerUp = this.world.randomPowerUp();
-			let z = null;
-			if (this.ball.direction.x > 0) {
-				z = this.ball.posCurve.getPointAt(0.5).z;
-			} 
-			else {
-				z = this.ball.negCurve.getPointAt(0.5).z;
-			}
+			// console.log(this.world.PowerUp);
+			const z = 15;
 			const max = 27;
 			const min = -27;
-			const y = Math.floor(Math.random() * (max - min + 1)) + min;
+			//const y = Math.floor(Math.random() * (max - min + 1)) + min;
+			const y = 3.0;
 			this.world.PowerUp.position.set(0, y, z);
 			this.world.spotLight.position.set(0, y, 20);
+			this.world.spotLight.position.set(this.world.PowerUp.position.x, this.world.PowerUp.position.y, 20);
 			this.world.scene.add(this.world.PowerUp);
-			this.activePowerUp = true;
 		}
 	}
 
 	updateExchanges() {
 		this.exchanges++;
-		this.waitPowerup++;
-
-		console.log("waitPowerUp: " + this.waitPowerup);
 
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
 			size: 8,
 			height: 1,
-		})
+		});
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 		this.exchangesText[0].geometry = geometry;
 		this.exchangesText[1].geometry = geometry;
 		this.exchangesText[2].geometry = geometry;
-
-		if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
-			this.addPowerUp();
-		}
 	}
-
 
 	scoreTextInit() {
 		const geometry = new TextGeometry( "0 - 0", {
@@ -186,14 +222,127 @@ export class Match {
 		this.ball.mesh.position.z = 0;
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
-		this.ball.speed = 0.5;
+		this.ball.speed = 1.5;
 		this.ball.direction.x = 1;
 		this.ball.direction.y = 0;
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
 	}
 
+	updateMovements() {
+		if (this.player1.moves.up && this.player1.mesh.position.y < 27)
+		{
+			this.player1.mesh.position.y += MOVSPEED;
+			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+		}
+		if (this.player1.moves.down && this.player1.mesh.position.y > -27)
+		{
+			this.player1.mesh.position.y -= MOVSPEED;
+			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+		}
+		if (this.player2.moves.up && this.player2.mesh.position.y < 27)
+		{
+			this.player2.mesh.position.y += MOVSPEED;
+			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+		}
+		if (this.player2.moves.down && this.player2.mesh.position.y > -27)
+		{
+			this.player2.mesh.position.y -= MOVSPEED;
+			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+		}
+	}
 
+	startPowerUp(){
+		if(this.ball.direction.x > 0 )// player1
+		{
+			if(this.world.PowerUp == this.world.arrayPowerup[0]){
+				if(this.ball.position.x >= -5)
+					this.ball.speed += 5;
+				else if(this.ball.position.x <= 5){
+					this.ball.speed = 0.5;
+				}
+			}	
+		}
+		else if(this.ball.direction.x < 0) // player2
+		{
+			if(this.world.PowerUp == this.world.arrayPowerup[0]){
+				if(this.ball.position.x <= -5)
+					this.ball.speed += 5;
+				else if(this.ball.position.x >= 5){
+					this.ball.speed = 0.5;
+				}
+			}
+		}
+	}
+
+	// powerUpActivate() {
+		
+	// }
+
+	// region update()
+	update() {
+		this.updateMovements();
+		this.world.rotatePowerUp();
+		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
+		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
+		this.ball.mesh.position.z = this.ball.getZ();
+		if (checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
+		{
+			/* if (ball.speed < 2)
+				ball.speed *= ACCELERATION; */
+			this.ball.direction.x *= -1;
+			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
+			this.collision = true;
+			this.updateExchanges();
+			if (this.player1.powerUp == "speed")
+				this.ball.speed *= 2;
+			else
+				this.ball.speed = STARTINGSPEED
+			this.waitPowerup++;
+			if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
+				this.addPowerUp();
+			}
+		}
+		if (checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
+		{
+			// if (ball.speed  < 2)
+			// 	ball.speed  *= ACCELERATION;
+			this.ball.direction.x *= -1;
+			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+			this.collision = true;
+			this.updateExchanges();
+			this.waitPowerup++;
+			if (this.player2.powerUp == "speed")
+				this.ball.speed *= 2;
+			else
+				this.ball.speed = STARTINGSPEED
+			if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
+				this.addPowerUp();
+			}
+		}
+		// PowerUp collision
+		if (this.activePowerUp == true && checkPowerUpCollision(this.ball.mesh, this.world.PowerUp)){
+			this.world.remove(this.world.PowerUp);
+			this.activePowerUp = false;
+			this.waitPowerup = 0;
+			//nuova funzione per gestire i powerup
+			//if()
+			startPowerUp();
+		}
+		
+		if (wallCollision(this.ball))
+			this.ball.direction.y *= -1;
+		//Reset positions
+		if (this.ball.mesh.position.x > this.player2.mesh.position.x +5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
+			this.updateScore();
+
+		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
+			this.collision = false;
+	}
+
+	render() {
+    	this.world.renderer.render(this.world.scene, this.world.activeCamera);
+	}
 
 	gameEnd() {
 		if (this.score1 > this.score2)
@@ -206,6 +355,7 @@ export class Match {
 	}
 }
 
+// region World
 
 export class World {
 	constructor(fbxLoader, objLoader, mtlLoader, fontLoader){
@@ -231,50 +381,70 @@ export class World {
 		this.posterInit();
 		this.loadObjects();
 		//gest cube powerup
-		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, 0.25, 1,  1);
-		spotLight.position.x = 0;
-		spotLight.position.y = 0;
-		spotLight.position.z = 20;
+		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, Math.PI/2, 1,  1);
 		this.spotLight = spotLight;
-		this.add(this.spotLight);
-		// cube vik a modificato
-			//positive
-				const geometry_cube = new THREE.DodecahedronGeometry(3, 0); 
-				const material_cube = new THREE.MeshPhongMaterial( {color: 0x00ff00, emissiveIntensity:100} );//cube material
-				this.cube = new THREE.Mesh( geometry_cube, material_cube);
-			//negative
-				const geometry_cube_N = new THREE.DodecahedronGeometry(3, 0); 
-				const material_cube_N = new THREE.MeshPhongMaterial( {color: 0xDA2400, emissiveIntensity:100} );
-				this.cube_N = new THREE.Mesh( geometry_cube_N, material_cube_N);
-		// OctahedronGeometry // prisma
-			//positive
-				const geometry_prisma = new THREE.OctahedronGeometry(3,0);
-				const material_prisma = new THREE.MeshPhongMaterial({color: 0x00FFE6, emissiveIntensity:100});
-				this.prisma = new THREE.Mesh(geometry_prisma, material_prisma);
-			//negative
-				const geometry_prisma_N = new THREE.OctahedronGeometry(3,0);
-				const material_prisma_N = new THREE.MeshPhongMaterial({color: 0xDA2400, emissiveIntensity:100});
-				this.prisma_N = new THREE.Mesh(geometry_prisma_N, material_prisma_N);
-		//TorusKnotGeometry //nodo
-			//positive
-				const geometry_torusKnot = new THREE.TorusKnotGeometry( 1, 1, 100, 16 );
-				const material_torusKnot = new THREE.MeshPhongMaterial({color: 0xFFDD52, emissiveIntensity: 100 });
-				this.nodo = new THREE.Mesh(geometry_torusKnot, material_torusKnot);
-			//negative
-			const geometry_torusKnot_N = new THREE.TorusKnotGeometry( 1, 1, 100, 16 );
-			const material_torusKnot_N = new THREE.MeshPhongMaterial({color: 0xDA2400, emissiveIntensity: 100 });
-			this.nodo_N = new THREE.Mesh(geometry_torusKnot_N, material_torusKnot_N);
-			this.arrayPowerup = [
-				this.cube, this.cube_N, this.prisma, this.prisma_N, this.nodo, this.nodo_N
-			]
+		this.arrayPowerup = this.powerUpsInit();
 		//end gest cube
+	}
+	powerUpsInit(){
+		const posColor = 0x00ff00;
+		const negColor = 0xff0000;
+		const posLineColor = 0x03c03c;
+		const negLineColor = 0xa2231d;
+		const cubeGeometry = new THREE.DodecahedronGeometry(3, 0); 
+		const cubeMaterial = new THREE.MeshPhongMaterial( {color: posColor, emissive:posColor, emissiveIntensity:0.7} );//cube material
+		const cube = new THREE.Mesh( cubeGeometry, cubeMaterial);
+		const cubeEdgesGeometry = new THREE.EdgesGeometry(cubeGeometry);
+		const cubeLineMaterial = new THREE.LineBasicMaterial({ color: posLineColor});
+		const cubeEdges = new THREE.LineSegments(cubeEdgesGeometry, cubeLineMaterial);
+		cube.add(cubeEdges);
+		cube.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
+		//negative
+		const cubeMaterial_N = new THREE.MeshPhongMaterial( {color: negColor, emissive:negColor, emissiveIntensity:0.7} );
+		const cube_N = new THREE.Mesh( cubeGeometry, cubeMaterial_N);
+		const lineMaterial_N = new THREE.LineBasicMaterial({ color: negLineColor});
+		const cubeEdges_N = new THREE.LineSegments(cubeEdgesGeometry, lineMaterial_N);
+		cube_N.add(cubeEdges_N);
+		cube_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+		
+		// OctahedronGeometry // prisma
+		//positive
+		const prismGeometry = new THREE.OctahedronGeometry(3,0);
+		const prismMaterial = new THREE.MeshPhongMaterial({color: posColor, emissive:posColor, emissiveIntensity:0.7});
+		const prism = new THREE.Mesh(prismGeometry, prismMaterial);
+		const prismEdgesGeometry = new THREE.EdgesGeometry(prismGeometry);
+		const prismLineMaterial = new THREE.LineBasicMaterial({ color: posLineColor});
+		const prismEdges = new THREE.LineSegments(prismEdgesGeometry, prismLineMaterial);
+		prism.add(prismEdges);
+		prism.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
+		//negative
+		const prismMaterial_N = new THREE.MeshPhongMaterial({color: negColor, emissive:negColor, emissiveIntensity:0.7});
+		const prism_N = new THREE.Mesh(prismGeometry,prismMaterial_N);
+		const prismLineMaterial_N = new THREE.LineBasicMaterial({ color: negLineColor});
+		const prismEdges_N = new THREE.LineSegments(prismEdgesGeometry, prismLineMaterial_N);
+		prism_N.add(prismEdges_N);
+		prism_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+
+		//TorusGeometry //donut
+		//positivedonut
+		const donutGeometry = new THREE.TorusGeometry(3, 1.5);
+		const donutMaterial = new THREE.MeshPhongMaterial({color: posColor, emissive:posColor, emissiveIntensity: 0.7 });
+		const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+		donut.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
+		//negativedonut
+		const donutMaterial_N = new THREE.MeshPhongMaterial({color: negColor, emissive:negColor, emissiveIntensity: 0.7 });
+		const donut_N = new THREE.Mesh(donutGeometry, donutMaterial_N);
+		donut_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+		
+		const arrayPowerup = [
+			cube, cube_N, prism, prism_N, donut, donut_N
+		]
+		return arrayPowerup;
 	}
 	/* vik a modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
-		const tmp = this.arrayPowerup[index];
-		this.PowerUp = tmp;
-		return this.PowerUp;
+		return this.arrayPowerup[0];
 	}
 
 	resize(width, height) {
@@ -329,8 +499,8 @@ export class World {
 	/* vik a modificato */
 	rotatePowerUp() {
 		if(this.PowerUp){
-			this.PowerUp.rotation.x += 0.01;
-			this.PowerUp.rotation.z -= 0.01;
+			this.PowerUp.rotation.x += 0.05;
+			this.PowerUp.rotation.y += 0.05;
 		}	
 	}
 
@@ -346,8 +516,8 @@ export class World {
 		})()})
 
 		const wood = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("wood.png"), side: THREE.DoubleSide});
-		const cubeMaterials =[rotatedWall, rotatedWall, wall, wall, wood, wood]
-		const cube = new THREE.Mesh(box, cubeMaterials);
+		const cubeMaterial =[rotatedWall, rotatedWall, wall, wall, wood, wood]
+		const cube = new THREE.Mesh(box, cubeMaterial);
 		cube.position.set(0, 0, 102)
 		this.add(cube);
 	}
@@ -472,6 +642,8 @@ export class World {
 	}
 }
 
+// region Ball
+
 export class Ball {
 	constructor(){
 		this.mesh = new THREE.Mesh(
@@ -479,7 +651,7 @@ export class Ball {
             new THREE.MeshPhongMaterial({color:0xf06400, emissive: 0xf06400})
         );
 		this.mesh.add(new THREE.PointLight(0xf06400, 5, 100, 1))
-		this.speed = 0.5;
+		this.speed = STARTINGSPEED;
 		this.mesh.position.z = 10;
 		this.direction = {
 			x: 1,
@@ -489,16 +661,16 @@ export class Ball {
 			[
 				new THREE.Vector3( -45, 0, 10 ),
 				new THREE.Vector3( 0, 0, 15 ),
-				new THREE.Vector3( 25, 0, -0.1 ),
+				new THREE.Vector3( 25, 0, -0.1),
 				new THREE.Vector3( 54, 0, 8 ),
 				new THREE.Vector3(65, 0, 12)
 			]
 		);
 		this.negCurve = new THREE.CatmullRomCurve3(
 			[
-				new THREE.Vector3( 45, 0, 10 ),
+				new THREE.Vector3( 45, 0, 10),
 				new THREE.Vector3( 0, 0, 15 ),
-				new THREE.Vector3( -25, 0, -1 ),
+				new THREE.Vector3( -25, 0, -1),
 				new THREE.Vector3( -54, 0, 8 ),
 				new THREE.Vector3(-65, 0, 12)
 			]
