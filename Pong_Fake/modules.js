@@ -12,6 +12,7 @@ const MAXSCORE = 3;
 const MOVSPEED = 0.7;
 const STARTINGSPEED = 1;
 const ACCELERATION  = 2;
+const POWERUPDURATION = 3;
 //---------HELPERS----------
 function roundPos(pos)
 {
@@ -56,7 +57,7 @@ export class Player {
 	constructor(paddle) {
 		this.mesh = paddle.clone();
 		// console.log(this.mesh)
-
+		this.speed = MOVSPEED;
         this.name = "Undefined";
 		this.moves = {
 			up: false,
@@ -67,15 +68,14 @@ export class Player {
 	}
 }
 
+// region PowerUp
+
 export class PowerUp{
-	constructor(ball, player1, player2, World, Match){
-		this.activePowerUp = false;
-		this.ball = ball;
-		this.player1 = player1;
-		this.player2 = player2;
-		this.World = World;
-		this.Match = Match;
-		this.Match.PowerUp = Match.PowerUp;
+	constructor(name, mesh, type) {
+		this.name = name;
+		this.mesh = mesh;
+		this.type = type;
+		this.duration = POWERUPDURATION;
 	}
 }
 
@@ -138,25 +138,6 @@ export class Match {
 		this.world.add(mirrored2);
 		const meshes = [mesh, mirrored, mirrored2];
 		return meshes;
-	}
-
-	addPowerUp() {
-		if (this.activePowerUp == false) {
-
-			this.activePowerUp = true;
-
-			this.world.PowerUp = this.world.randomPowerUp();
-			// console.log(this.world.PowerUp);
-			const z = 15;
-			const max = 27;
-			const min = -27;
-			//const y = Math.floor(Math.random() * (max - min + 1)) + min;
-			const y = 3.0;
-			this.world.PowerUp.position.set(0, y, z);
-			this.world.spotLight.position.set(0, y, 20);
-			this.world.spotLight.position.set(this.world.PowerUp.position.x, this.world.PowerUp.position.y, 20);
-			this.world.scene.add(this.world.PowerUp);
-		}
 	}
 
 	updateExchanges() {
@@ -222,8 +203,11 @@ export class Match {
 		this.ball.mesh.position.z = 0;
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
-		this.ball.speed = 1.5;
-		this.ball.direction.x = 1;
+		this.player1.powerUp = null;
+		this.player2.powerUp = null;
+		this.player1.speed = MOVSPEED;
+		this.player2.speed = MOVSPEED;
+		this.ball.speed = STARTINGSPEED;
 		this.ball.direction.y = 0;
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
@@ -232,22 +216,22 @@ export class Match {
 	updateMovements() {
 		if (this.player1.moves.up && this.player1.mesh.position.y < 27)
 		{
-			this.player1.mesh.position.y += MOVSPEED;
+			this.player1.mesh.position.y += this.player1.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
 		if (this.player1.moves.down && this.player1.mesh.position.y > -27)
 		{
-			this.player1.mesh.position.y -= MOVSPEED;
+			this.player1.mesh.position.y -= this.player1.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
 		if (this.player2.moves.up && this.player2.mesh.position.y < 27)
 		{
-			this.player2.mesh.position.y += MOVSPEED;
+			this.player2.mesh.position.y += this.player2.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
 		if (this.player2.moves.down && this.player2.mesh.position.y > -27)
 		{
-			this.player2.mesh.position.y -= MOVSPEED;
+			this.player2.mesh.position.y -= this.player2.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
 	}
@@ -261,7 +245,7 @@ export class Match {
 				else if(this.ball.position.x <= 5){
 					this.ball.speed = 0.5;
 				}
-			}	
+			}
 		}
 		else if(this.ball.direction.x < 0) // player2
 		{
@@ -276,8 +260,55 @@ export class Match {
 	}
 
 	// powerUpActivate() {
-		
+
 	// }
+
+	addPowerUp() {
+
+		this.waitPowerup++;
+		if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0) && (!this.player1.powerUp && !this.player2.powerUp)){
+			if (this.activePowerUp == false) {
+
+				this.activePowerUp = true;
+
+				this.world.powerUp = this.world.randomPowerUp();
+				this.world.powerUp.duration = POWERUPDURATION;
+				// console.log(this.world.PowerUp);
+				const z = 15;
+				const max = 27;
+				const min = -27;
+				//const y = Math.floor(Math.random() * (max - min + 1)) + min;
+				const y = 3.0;
+				this.world.powerUp.mesh.position.set(0, y, z);
+				this.world.scene.add(this.world.powerUp.mesh);
+			}
+		}
+	}
+
+	handlePowerUp(player) {
+		if (!player.powerUp){
+			this.ball.speed = STARTINGSPEED;
+			return;
+		}
+		if (player.powerUp.name == "speed") {
+			this.ball.speed = STARTINGSPEED;
+			this.ball.speed *= 2;
+			// else
+			// 	this.ball.speed = STARTINGSPEED
+			player.powerUp.duration--;
+		}
+		else if (player.powerUp.name == "triple") {
+		}
+		else if (player.powerUp.name == "slowness") {
+			player.powerUp.duration--;
+		}
+		if (player.powerUp.duration == 0) {
+			player.powerUp = null;
+			// p = player ===?<valore1>:<valore2></valore2>
+			const opp = (player === this.player1) ? this.player2 : this.player1;
+			opp.speed = MOVSPEED;
+		}
+	}
 
 	// region update()
 	update() {
@@ -294,14 +325,9 @@ export class Match {
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
 			this.collision = true;
 			this.updateExchanges();
-			if (this.player1.powerUp == "speed")
-				this.ball.speed *= 2;
-			else
-				this.ball.speed = STARTINGSPEED
-			this.waitPowerup++;
-			if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
-				this.addPowerUp();
-			}
+
+			this.handlePowerUp(this.player1);
+			this.addPowerUp()
 		}
 		if (checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
@@ -311,25 +337,35 @@ export class Match {
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
 			this.collision = true;
 			this.updateExchanges();
-			this.waitPowerup++;
-			if (this.player2.powerUp == "speed")
-				this.ball.speed *= 2;
-			else
-				this.ball.speed = STARTINGSPEED
-			if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0)){
-				this.addPowerUp();
-			}
+
+			this.handlePowerUp(this.player2);
+			this.addPowerUp();
 		}
 		// PowerUp collision
-		if (this.activePowerUp == true && checkPowerUpCollision(this.ball.mesh, this.world.PowerUp)){
-			this.world.remove(this.world.PowerUp);
+		if (this.activePowerUp == true && checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
+
+			this.world.remove(this.world.powerUp.mesh);
 			this.activePowerUp = false;
 			this.waitPowerup = 0;
-			//nuova funzione per gestire i powerup
-			//if()
-			startPowerUp();
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
+				this.player2.powerUp = this.world.powerUp;
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
+				this.player1.powerUp = this.world.powerUp;
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
+				this.player1.powerUp = this.world.powerUp;
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
+				this.player2.powerUp = this.world.powerUp;
+
+			// slowness check
+			if (this.player1.powerUp && this.player1.powerUp.name == "slowness")
+				this.player2.speed = 0.3;
+			if (this.player2.powerUp && this.player2.powerUp.name == "slowness")
+				this.player1.speed = 0.3;
+
 		}
-		
+
+
+
 		if (wallCollision(this.ball))
 			this.ball.direction.y *= -1;
 		//Reset positions
@@ -376,7 +412,7 @@ export class World {
 		this.fontLoader = fontLoader;
 		this.font = null;
 		//this.laodTable();
-		this.PowerUp = null;
+		this.powerUp = null;
 		this.skyboxInit();
 		this.posterInit();
 		this.loadObjects();
@@ -391,7 +427,7 @@ export class World {
 		const negColor = 0xff0000;
 		const posLineColor = 0x03c03c;
 		const negLineColor = 0xa2231d;
-		const cubeGeometry = new THREE.DodecahedronGeometry(3, 0); 
+		const cubeGeometry = new THREE.DodecahedronGeometry(3, 0);
 		const cubeMaterial = new THREE.MeshPhongMaterial( {color: posColor, emissive:posColor, emissiveIntensity:0.7} );//cube material
 		const cube = new THREE.Mesh( cubeGeometry, cubeMaterial);
 		const cubeEdgesGeometry = new THREE.EdgesGeometry(cubeGeometry);
@@ -406,7 +442,7 @@ export class World {
 		const cubeEdges_N = new THREE.LineSegments(cubeEdgesGeometry, lineMaterial_N);
 		cube_N.add(cubeEdges_N);
 		cube_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
-		
+
 		// OctahedronGeometry // prisma
 		//positive
 		const prismGeometry = new THREE.OctahedronGeometry(3,0);
@@ -435,16 +471,21 @@ export class World {
 		const donutMaterial_N = new THREE.MeshPhongMaterial({color: negColor, emissive:negColor, emissiveIntensity: 0.7 });
 		const donut_N = new THREE.Mesh(donutGeometry, donutMaterial_N);
 		donut_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
-		
+
 		const arrayPowerup = [
-			cube, cube_N, prism, prism_N, donut, donut_N
+			new PowerUp("speed", cube, "positive") ,
+			new PowerUp("speed", cube_N, "negative") ,
+			new PowerUp("slowness", prism, "positive"),
+			new PowerUp("slowness", prism_N, "negative"),
+			new PowerUp("triple", donut, "positive"),
+			new PowerUp("triple", donut_N, "negative"),
 		]
 		return arrayPowerup;
 	}
-	/* vik a modificato */
+	/* vik ha modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
-		return this.arrayPowerup[0];
+		return this.arrayPowerup[3];
 	}
 
 	resize(width, height) {
@@ -498,10 +539,10 @@ export class World {
 	}
 	/* vik a modificato */
 	rotatePowerUp() {
-		if(this.PowerUp){
-			this.PowerUp.rotation.x += 0.05;
-			this.PowerUp.rotation.y += 0.05;
-		}	
+		if(this.powerUp){
+			this.powerUp.mesh.rotation.x += 0.05;
+			this.powerUp.mesh.rotation.y += 0.05;
+		}
 	}
 
 	skyboxInit() {
