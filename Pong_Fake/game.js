@@ -18,7 +18,7 @@ const ACCELERATION = 2;
 const BOXSIZE = 250;
 
 //---------INIT----------
-const ball = new Ball();
+const ball = new Ball(0xf06400);
 const world = new World(new FBXLoader(), new OBJLoader(), new MTLLoader(), new FontLoader());
 console.log(world.ready);
 console.log(world.paddle);

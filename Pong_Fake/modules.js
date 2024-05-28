@@ -13,7 +13,11 @@ const MOVSPEED = 0.7;
 const STARTINGSPEED = 1;
 const ACCELERATION  = 2;
 const POWERUPDURATION = 3;
+
+// region HELPERSs
+
 //---------HELPERS----------
+
 function roundPos(pos)
 {
 	if (pos > 1)
@@ -21,6 +25,50 @@ function roundPos(pos)
 	if (pos < 0)
 		return 0;
 	return pos;
+}
+
+function rotateVector(x, y, angle) {
+  const radians = angle * (Math.PI / 180);
+  
+  const cosTheta = Math.cos(radians);
+  const sinTheta = Math.sin(radians);
+  
+  // Rotation matrix
+  const newX = x * cosTheta - y * sinTheta;
+  const newY = x * sinTheta + y * cosTheta;
+  
+  return { x: newX, y: newY };
+}
+
+function normalizeVector(vector) {
+    const [x, y] = vector;
+    
+    // Calculate the magnitude of the vector
+    const magnitude = Math.sqrt((x * x) + (y * y));
+    
+    // Avoid division by zero
+    if (magnitude === 0) {
+        throw new Error("Cannot normalize a zero vector");
+    }
+
+	// console.log("Magnitude: " + magnitude);
+
+	// console.log("Input vector: " + [x, y]);
+
+    // Normalize each component of the vector
+    const normalizedVector = [
+        x / magnitude,
+        y / magnitude,
+    ];
+
+	// console.log("Output vector: " + normalizedVector);
+	// console.log("Output magnitude: " + Math.sqrt(
+	// 		(normalizedVector[0] * normalizedVector[0]) + 
+	// 		(normalizedVector[1] * normalizedVector[1])
+	// 		)
+	// 	);
+    
+    return normalizedVector;
 }
 
 function wallCollision(ball)
@@ -101,10 +149,30 @@ export class Match {
 		this.player2.mesh.position.x = 54;
 		this.player1.mesh.rotation.z = -Math.PI/2;
 		this.player2.mesh.rotation.z = Math.PI/2;
+
+		// PowerUps
 		this.waitPowerup = 0;
 		this.activePowerUp = false;
 		this.meshPowerUp = null;
-    }
+		this.triple_enabled = false;
+		this.fake_balls = [new Ball(0xff0000), new Ball(0x0000ff)]
+
+		// this.fake_balls[0].mesh.material.color.r = 0;
+		// this.fake_balls[0].mesh.material.color.g = 0;
+		// this.fake_balls[0].mesh.material.color.b = 0;
+
+		// this.fake_balls[0].mesh.children[0].color.r = 0;
+		// this.fake_balls[0].mesh.children[0].color.g = 0;
+		// this.fake_balls[0].mesh.children[0].color.b = 0;
+
+		// this.fake_balls[1].mesh.material.color.r = 1;
+		// this.fake_balls[1].mesh.material.color.g = 0;
+		// this.fake_balls[1].mesh.material.color.b = 1;
+
+		// this.fake_balls[1].mesh.children[0].color.r = 1;
+		// this.fake_balls[1].mesh.children[0].color.g = 0;
+		// this.fake_balls[1].mesh.children[0].color.b = 1;
+	}
 
 	exchangesTextInit() {
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1] && this.exchangesText[2]) {
@@ -209,6 +277,14 @@ export class Match {
 		this.player2.speed = MOVSPEED;
 		this.ball.speed = STARTINGSPEED;
 		this.ball.direction.y = 0;
+
+		// Triple Ball
+		this.fake_balls[0].speed = STARTINGSPEED;
+		this.fake_balls[1].speed = STARTINGSPEED;
+		this.fake_balls[0].direction.y = 0;
+		this.fake_balls[1].direction.y = 0;
+
+		// Exchanges
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
 	}
@@ -285,6 +361,66 @@ export class Match {
 		}
 	}
 
+	add_triple() {
+		this.triple_enabled = true;
+
+		const b1 = this.fake_balls[0];
+		const b2 = this.fake_balls[1];
+
+		b1.mesh.position.x = this.ball.mesh.position.x;
+		b1.mesh.position.y = this.ball.mesh.position.y;
+		b1.mesh.position.z = this.ball.mesh.position.z;
+		b1.speed = this.ball.speed;
+
+		b2.mesh.position.x = this.ball.mesh.position.x;
+		b2.mesh.position.y = this.ball.mesh.position.y;
+		b2.mesh.position.z = this.ball.mesh.position.z;
+		b2.speed = this.ball.speed;
+
+		b1.direction = rotateVector(this.ball.direction.x, this.ball.direction.y, 20);
+		b2.direction = rotateVector(this.ball.direction.x, this.ball.direction.y, -20);
+		
+		const real = Math.round(Math.random() * 2);
+
+		const dir = this.ball.direction;
+
+		if (real == 0) {
+			this.ball.direction = b1.direction;
+			b1.direction = dir;
+		}
+		else if (real == 1) {
+			this.ball.direction = b2.direction;
+			b2.direction = dir;
+		}
+
+		this.world.add(b1.mesh);
+		this.world.add(b2.mesh);
+	}
+
+
+	remove_triple() {
+		this.triple_enabled = false;
+
+		this.world.remove(this.fake_balls[0].mesh);
+		this.world.remove(this.fake_balls[1].mesh);
+	}
+
+	powerUpTaken() {
+		const player = (this.player1.powerUp) ? this.player1 : this.player2;
+		const opp = (player === this.player1) ? this.player2 : this.player1;
+ 
+		// slowness check
+		if (this.player1.powerUp && this.player1.powerUp.name == "slowness")
+			this.player2.speed = 0.3;
+		if (this.player2.powerUp && this.player2.powerUp.name == "slowness")
+			this.player1.speed = 0.3;
+
+		// Triple check
+		if (player.powerUp.name == "triple") {
+			this.add_triple();
+		}
+	}
+
 	handlePowerUp(player) {
 		if (!player.powerUp){
 			this.ball.speed = STARTINGSPEED;
@@ -293,15 +429,13 @@ export class Match {
 		if (player.powerUp.name == "speed") {
 			this.ball.speed = STARTINGSPEED;
 			this.ball.speed *= 2;
-			// else
-			// 	this.ball.speed = STARTINGSPEED
-			player.powerUp.duration--;
 		}
 		else if (player.powerUp.name == "triple") {
+			this.add_triple();
 		}
 		else if (player.powerUp.name == "slowness") {
-			player.powerUp.duration--;
 		}
+		player.powerUp.duration--;
 		if (player.powerUp.duration == 0) {
 			player.powerUp = null;
 			// p = player ===?<valore1>:<valore2></valore2>
@@ -314,15 +448,37 @@ export class Match {
 	update() {
 		this.updateMovements();
 		this.world.rotatePowerUp();
+
 		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 		this.ball.mesh.position.z = this.ball.getZ();
+
+		// Triple ball update
+		if (this.triple_enabled) {
+			const ball1 = this.fake_balls[0];
+			const ball2 = this.fake_balls[1];
+
+			ball1.mesh.position.x += ball1.speed * ball1.direction.x;
+			ball1.mesh.position.y += ball1.speed * ball1.direction.y;
+			ball1.mesh.position.z = ball1.getZ();
+
+			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
+			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
+			ball2.mesh.position.z = ball2.getZ();
+			
+			// console.log(ball1.mesh.position);
+		}
+
 		if (checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
 			/* if (ball.speed < 2)
 				ball.speed *= ACCELERATION; */
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
+			const normalizedVector = normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+			this.ball.direction.x = normalizedVector[0];
+			this.ball.direction.y = normalizedVector[1];
+
 			this.collision = true;
 			this.updateExchanges();
 
@@ -335,6 +491,10 @@ export class Match {
 			// 	ball.speed  *= ACCELERATION;
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+			const normalizedVector = normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+			this.ball.direction.x = normalizedVector[0];
+			this.ball.direction.y = normalizedVector[1];
+
 			this.collision = true;
 			this.updateExchanges();
 
@@ -347,6 +507,12 @@ export class Match {
 			this.world.remove(this.world.powerUp.mesh);
 			this.activePowerUp = false;
 			this.waitPowerup = 0;
+			
+			// Powerup assignment
+
+			this.player1.powerUp = null;
+			this.player2.powerUp = null;
+
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
 				this.player2.powerUp = this.world.powerUp;
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
@@ -356,21 +522,35 @@ export class Match {
 			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
 				this.player2.powerUp = this.world.powerUp;
 
-			// slowness check
-			if (this.player1.powerUp && this.player1.powerUp.name == "slowness")
-				this.player2.speed = 0.3;
-			if (this.player2.powerUp && this.player2.powerUp.name == "slowness")
-				this.player1.speed = 0.3;
-
+			this.powerUpTaken();
 		}
 
 
 
 		if (wallCollision(this.ball))
 			this.ball.direction.y *= -1;
+
 		//Reset positions
-		if (this.ball.mesh.position.x > this.player2.mesh.position.x +5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
+		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
 			this.updateScore();
+
+		// If triple ball is enabled
+		if (this.triple_enabled) {
+			const b1 = this.fake_balls[0];
+			const b2 = this.fake_balls[1];
+
+			// Triple ball wall collision
+			if (wallCollision(b1))
+				b1.direction.y *= -1;
+			if (wallCollision(b2))
+				b2.direction.y *= -1;
+
+			// Triple ball table limit
+			if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
+				this.world.remove(b1.mesh);
+			if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
+				this.world.remove(b2.mesh);
+		}
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
@@ -485,7 +665,7 @@ export class World {
 	/* vik ha modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
-		return this.arrayPowerup[3];
+		return this.arrayPowerup[4];
 	}
 
 	resize(width, height) {
@@ -666,13 +846,48 @@ export class World {
 		});
 	}
 
+	// loadMesh() {
+    //     const loader = new FBXLoader();
+    //     loader.load('vaso_vikfbx.fbx', (object) => {
+			
+	// 		// Imposta la posizione dell'oggetto
+			
+    //         // Rotazione di 90 gradi sull'asse Y
+    //         object.rotation.x = Math.PI/2;
+    //         object.position.set(-90, 90, -10);
+    //         object.scale.multiplyScalar(10);
+			
+	// 		//addObject(object, new THREE.Vector3(-90,90,-10));
+    //         this.add(object);
+	// 		const object1 = object.clone();
+	// 		const object2 = object.clone();
+	// 		const object3 = object.clone();
+	// 		object1.position.set(-90,-90,-10);
+	// 		object2.position.set(90,90,-10);
+	// 		object3.position.set(90,-90,-10);
+	// 		this.add(object1);
+	// 		this.add(object2);
+	// 		this.add(object3);
+			
+    //     }, undefined, (error) => {
+    //         console.error('Errore nel caricamento dell\'oggetto FBX:', error);
+    //     });
+	// 	const loader1 = new FBXLoader();
+	// 	loader1.load('door.fbx', (object) => {
+	// 		object.rotation.x = Math.PI/2;
+	// 		object.rotation.y = Math.PI;
+	// 		object.position.set(0,-120,28);
+	// 		object.scale.multiplyScalar(20);
+	// 		this.add(object);
+	// 	})
+    // }
 
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
 		this.loadPaddle(),
 		this.loadTable(),
-		this.loadFonts()
+		this.loadFonts(),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
@@ -686,12 +901,12 @@ export class World {
 // region Ball
 
 export class Ball {
-	constructor(){
+	constructor(color){
 		this.mesh = new THREE.Mesh(
             new THREE.SphereGeometry(0.8, 16, 32),
-            new THREE.MeshPhongMaterial({color:0xf06400, emissive: 0xf06400})
+            new THREE.MeshPhongMaterial({color: color, emissive: color})
         );
-		this.mesh.add(new THREE.PointLight(0xf06400, 5, 100, 1))
+		this.mesh.add(new THREE.PointLight(color, 5, 100, 1))
 		this.speed = STARTINGSPEED;
 		this.mesh.position.z = 10;
 		this.direction = {
