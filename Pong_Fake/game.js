@@ -7,15 +7,14 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-import { Player, Ball, Match, World } from "./modules.js"
+// import { Player, Ball, Match, World } from "./modules.js"
+import { Player } from './Player.js';
+import { Ball } from './Ball.js';
+import { Match } from './Match.js';
+import { World } from './World.js';
 
 // region MAIN
 
-//---------CONSTANTS----------
-const MOVSPEED = 0.7;
-const BALLSPEED = 0.5;
-const ACCELERATION = 2;
-const BOXSIZE = 250;
 
 //---------INIT----------
 const ball = new Ball(0xf06400);
@@ -86,8 +85,6 @@ window.addEventListener('resize', function()
 {
 	world.resize(window.innerWidth, window.innerHeight);
 })
-
-
 //---------KEYBOARD INPUT----------
 
 document.addEventListener("keydown", onKeyDown, false);

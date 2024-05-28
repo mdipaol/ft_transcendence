@@ -29,23 +29,23 @@ function roundPos(pos)
 
 function rotateVector(x, y, angle) {
   const radians = angle * (Math.PI / 180);
-  
+
   const cosTheta = Math.cos(radians);
   const sinTheta = Math.sin(radians);
-  
+
   // Rotation matrix
   const newX = x * cosTheta - y * sinTheta;
   const newY = x * sinTheta + y * cosTheta;
-  
+
   return { x: newX, y: newY };
 }
 
 function normalizeVector(vector) {
     const [x, y] = vector;
-    
+
     // Calculate the magnitude of the vector
     const magnitude = Math.sqrt((x * x) + (y * y));
-    
+
     // Avoid division by zero
     if (magnitude === 0) {
         throw new Error("Cannot normalize a zero vector");
@@ -63,11 +63,11 @@ function normalizeVector(vector) {
 
 	// console.log("Output vector: " + normalizedVector);
 	// console.log("Output magnitude: " + Math.sqrt(
-	// 		(normalizedVector[0] * normalizedVector[0]) + 
+	// 		(normalizedVector[0] * normalizedVector[0]) +
 	// 		(normalizedVector[1] * normalizedVector[1])
 	// 		)
 	// 	);
-    
+
     return normalizedVector;
 }
 
@@ -118,14 +118,14 @@ export class Player {
 
 // region PowerUp
 
-export class PowerUp{
+/* export class PowerUp{
 	constructor(name, mesh, type) {
 		this.name = name;
 		this.mesh = mesh;
 		this.type = type;
 		this.duration = POWERUPDURATION;
 	}
-}
+} */
 
 // region Match
 
@@ -379,7 +379,7 @@ export class Match {
 
 		b1.direction = rotateVector(this.ball.direction.x, this.ball.direction.y, 20);
 		b2.direction = rotateVector(this.ball.direction.x, this.ball.direction.y, -20);
-		
+
 		const real = Math.round(Math.random() * 2);
 
 		const dir = this.ball.direction;
@@ -408,7 +408,7 @@ export class Match {
 	powerUpTaken() {
 		const player = (this.player1.powerUp) ? this.player1 : this.player2;
 		const opp = (player === this.player1) ? this.player2 : this.player1;
- 
+
 		// slowness check
 		if (this.player1.powerUp && this.player1.powerUp.name == "slowness")
 			this.player2.speed = 0.3;
@@ -465,7 +465,7 @@ export class Match {
 			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
 			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
 			ball2.mesh.position.z = ball2.getZ();
-			
+
 			// console.log(ball1.mesh.position);
 		}
 
@@ -507,7 +507,7 @@ export class Match {
 			this.world.remove(this.world.powerUp.mesh);
 			this.activePowerUp = false;
 			this.waitPowerup = 0;
-			
+
 			// Powerup assignment
 
 			this.player1.powerUp = null;
@@ -665,7 +665,7 @@ export class World {
 	/* vik ha modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
-		return this.arrayPowerup[4];
+		return this.arrayPowerup[index];
 	}
 
 	resize(width, height) {
@@ -849,14 +849,14 @@ export class World {
 	// loadMesh() {
     //     const loader = new FBXLoader();
     //     loader.load('vaso_vikfbx.fbx', (object) => {
-			
+
 	// 		// Imposta la posizione dell'oggetto
-			
+
     //         // Rotazione di 90 gradi sull'asse Y
     //         object.rotation.x = Math.PI/2;
     //         object.position.set(-90, 90, -10);
     //         object.scale.multiplyScalar(10);
-			
+
 	// 		//addObject(object, new THREE.Vector3(-90,90,-10));
     //         this.add(object);
 	// 		const object1 = object.clone();
@@ -868,7 +868,7 @@ export class World {
 	// 		this.add(object1);
 	// 		this.add(object2);
 	// 		this.add(object3);
-			
+
     //     }, undefined, (error) => {
     //         console.error('Errore nel caricamento dell\'oggetto FBX:', error);
     //     });
