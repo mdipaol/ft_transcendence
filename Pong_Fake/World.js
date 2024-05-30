@@ -1,12 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 
 import * as UTILS from './Utils.js';
 import { PowerUp } from './PowerUp.js';
 
 export class World {
-	constructor(fbxLoader, objLoader, mtlLoader, fontLoader){
+	constructor(){
 		this.paddle = null;
 		this.table = null;
 		this.ready = new Promise(function(resolve, reject) {});
@@ -18,10 +22,10 @@ export class World {
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.orbitControls = new OrbitControls( this.mainCamera, this.renderer.domElement);
-		this.fbxLoader = fbxLoader;
-		this.objLoader = objLoader;
-		this.mtlLoader = mtlLoader;
-		this.fontLoader = fontLoader;
+		this.fbxLoader = new FBXLoader();
+		this.objLoader = new OBJLoader();
+		this.mtlLoader = new MTLLoader();
+		this.fontLoader = new FontLoader();
 		this.font = null;
 		//this.laodTable();
 		this.powerUp = null;

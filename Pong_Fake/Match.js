@@ -3,15 +3,16 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 import { Ball } from "./Ball.js"
 import * as UTILS from './Utils.js';
+import { Player } from './Player.js';
 
 export class Match {
-    constructor(ball, player1, player2, world){
+    constructor(world){
 		this.world = world;
-        this.player1 = player1;
-        this.player2 = player2;
+        this.player1 = new Player(world.paddle);
+        this.player2 = new Player(world.paddle);
 		// this.powerVector1 = []
 		// this.powerVector2 = []
-        this.ball = ball;
+        this.ball = new Ball(0xf06400);
 		this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
         this.score2 = 0;
@@ -29,24 +30,8 @@ export class Match {
 		this.waitPowerup = 0;
 		this.activePowerUp = false;
 		this.meshPowerUp = null;
-		this.triple_enabled = false;
-		this.fake_balls = [new Ball(0xff0000), new Ball(0x0000ff)]
-
-		// this.fake_balls[0].mesh.material.color.r = 0;
-		// this.fake_balls[0].mesh.material.color.g = 0;
-		// this.fake_balls[0].mesh.material.color.b = 0;
-
-		// this.fake_balls[0].mesh.children[0].color.r = 0;
-		// this.fake_balls[0].mesh.children[0].color.g = 0;
-		// this.fake_balls[0].mesh.children[0].color.b = 0;
-
-		// this.fake_balls[1].mesh.material.color.r = 1;
-		// this.fake_balls[1].mesh.material.color.g = 0;
-		// this.fake_balls[1].mesh.material.color.b = 1;
-
-		// this.fake_balls[1].mesh.children[0].color.r = 1;
-		// this.fake_balls[1].mesh.children[0].color.g = 0;
-		// this.fake_balls[1].mesh.children[0].color.b = 1;
+		this.tripleEnabled = false;
+		this.fakeBalls = [new Ball(0xff0000), new Ball(0x0000ff)]
 	}
 
 	exchangesTextInit() {
@@ -242,10 +227,10 @@ export class Match {
 	}
 
 	add_triple() {
-		this.triple_enabled = true;
+		this.tripleEnabled = true;
 
-		const b1 = this.fake_balls[0];
-		const b2 = this.fake_balls[1];
+		const b1 = this.fakeBalls[0];
+		const b2 = this.fakeBalls[1];
 
 		b1.mesh.position.x = this.ball.mesh.position.x;
 		b1.mesh.position.y = this.ball.mesh.position.y;
@@ -279,10 +264,10 @@ export class Match {
 
 
 	remove_triple() {
-		this.triple_enabled = false;
+		this.tripleEnabled = false;
 
-		this.world.remove(this.fake_balls[0].mesh);
-		this.world.remove(this.fake_balls[1].mesh);
+		this.world.remove(this.fakeBalls[0].mesh);
+		this.world.remove(this.fakeBalls[1].mesh);
 	}
 
 	powerUpTaken() {
@@ -346,9 +331,9 @@ export class Match {
 		this.ball.mesh.position.z = this.ball.getZ();
 
 		// Triple ball update
-		if (this.triple_enabled) {
-			const ball1 = this.fake_balls[0];
-			const ball2 = this.fake_balls[1];
+		if (this.tripleEnabled) {
+			const ball1 = this.fakeBalls[0];
+			const ball2 = this.fakeBalls[1];
 
 			ball1.mesh.position.x += ball1.speed * ball1.direction.x;
 			ball1.mesh.position.y += ball1.speed * ball1.direction.y;
@@ -427,9 +412,9 @@ export class Match {
 			this.updateScore();
 
 		// If triple ball is enabled
-		if (this.triple_enabled) {
-			const b1 = this.fake_balls[0];
-			const b2 = this.fake_balls[1];
+		if (this.tripleEnabled) {
+			const b1 = this.fakeBalls[0];
+			const b2 = this.fakeBalls[1];
 
 			// Triple ball wall collision
 			if (UTILS.wallCollision(b1))
