@@ -5,6 +5,8 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 import * as UTILS from './Utils.js';
 import { PowerUp } from './PowerUp.js';
@@ -26,6 +28,12 @@ export class World {
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();
 		this.fontLoader = new FontLoader();
+		this.gltfLoader = new GLTFLoader();
+		this.dracoLoader = new DRACOLoader();
+		// 'https://www.gstatic.com/draco/v1/decoders/'
+		this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+		this.dracoLoader.setDecoderConfig({type: 'js'});
+		this.gltfLoader.setDRACOLoader(this.dracoLoader);
 		this.font = null;
 		//this.laodTable();
 		this.powerUp = null;
@@ -200,21 +208,92 @@ export class World {
 		this.add(poster);
 	}
 
+	/*
+		       // Basic setup for the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Draco loader
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/'); // Use CDN for decoder
+
+        // Desired width
+        const desiredWidth = 2; // Set the desired width in units
+
+        // Load Draco compressed model
+        dracoLoader.load('path/to/your/model.drc', function (geometry) {
+            const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+            const mesh = new THREE.Mesh(geometry, material);
+
+            // Compute bounding box to get the current width
+            geometry.computeBoundingBox();
+            const boundingBox = geometry.boundingBox;
+            const currentWidth = boundingBox.max.x - boundingBox.min.x;
+
+            // Calculate scaling factor
+            const scaleFactor = desiredWidth / currentWidth;
+
+            // Apply scaling factor to match the desired width
+            mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            scene.add(mesh);
+            animate();
+        });
+	*/
+
+	loadPlant(){
+		return new Promise((resolve, reject) =>{
+			this.gltfLoader.load(
+				'pianta_vik.glb',
+				(object)=>{
+					console.log(object);
+					const threeObj = object.scene.children[0];
+					threeObj.rotation.set(Math.PI / 2, 0, 0);
+					threeObj.scale.multiplyScalar(13);
+					threeObj.position.set(-90, 90, -10);
+					const object1 = threeObj.clone();
+					object1.position.set(-90, -90, -10);
+					const object2 = threeObj.clone();
+					object2.position.set(90, 90, -10);
+					const object3 = threeObj.clone();
+					object3.position.set(90, -90, -10);
+					const all_object = [threeObj, object1, object2, object3];
+					this.add(all_object[0]);
+					this.add(all_object[1]);
+					this.add(all_object[2]);
+					this.add(all_object[3]);
+					
+					resolve();
+				}
+			)
+
+			});
+	}
+
 	loadTable() {
 		return new Promise((resolve, reject) => {
-		this.fbxLoader.load(
-			'pingpongtable.fbx',
+		this.gltfLoader.load(
+			'ping_pong_table.glb',
 			(object)=>{
-				object.children[0].visible = false;
-				object.children[2].visible = false;
-				object.children[5].visible = false;
-				object.children[3].visible = false;
-				object.scale.set(0.08,0.09,0.09);
-				object.rotation.set(Math.PI / 2, 0, 0);
-				object.position.set(0, 0, -23.5);
-				console.log(object);
-				this.table = object;
-				this.add(this.table);
+
+				const threeObj = object.scene.children[0];
+				
+				const geometry = threeObj.children[0].geometry;
+				const desiredWidth = 104;
+				geometry.computeBoundingBox();
+				const boundingBox = geometry.boundingBox;
+				const currentWidth = boundingBox.max.x - boundingBox.min.x;
+				const scaleFactor = desiredWidth / currentWidth;
+		
+				threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
+				threeObj.rotation.set(Math.PI / 2, 0, 0);
+				threeObj.position.set(0, 0, -23.5);
+	
+				// this.table = object.scene;
+				this.add(object.scene);
 				resolve();
 			},
 			(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% table loaded'),
@@ -222,6 +301,7 @@ export class World {
 			)
 		});
 	}
+
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
 
@@ -333,6 +413,7 @@ export class World {
 		this.ready = new Promise((resolve) => {
 		const proms = [
 		this.loadPaddle(),
+		this.loadPlant(),
 		this.loadTable(),
 		this.loadFonts(),
 		];

@@ -289,9 +289,10 @@ export class Match {
 			this.player1.mesh.scale.multiplyScalar(0.7);
 		}
 		// Triple check
-		if (player.powerUp.name == "triple") {
+		if (this.player1.powerUp && this.player1.powerUp.name == "triple" && this.ball.direction.x > 0)
 			this.add_triple();
-		}
+		if (this.player2.powerUp && this.player2.powerUp.name == "triple" && this.ball.direction.x < 0)
+			this.add_triple();
 	}
 
 	handlePowerUp(player) {
