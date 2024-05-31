@@ -6,7 +6,7 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 
-import * as UTILS from './Utils.js';
+import * as UTILS from './utils.js';
 import { PowerUp } from './PowerUp.js';
 
 export class World {

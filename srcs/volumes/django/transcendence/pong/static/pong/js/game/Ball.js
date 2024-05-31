@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import * as UTILS from './Utils.js';
+import * as UTILS from './utils.js';
 
 export class Ball {
 	constructor(color){

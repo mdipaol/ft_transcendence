@@ -1,4 +1,4 @@
-import * as UTILS from './Utils.js';
+import * as UTILS from './utils.js';
 
 export class PowerUp{
 	constructor(name, mesh, type) {

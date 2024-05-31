@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 import { Ball } from "./Ball.js"
-import * as UTILS from './Utils.js';
+import * as UTILS from './utils.js';
 import { Player } from './Player.js';
 
 export class Match {
