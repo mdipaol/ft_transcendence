@@ -105,7 +105,7 @@ class Match:
 
     def get_task(self):
         return self.task
-    
+
     def set_task(self, task):
         self.task = task
 
@@ -244,7 +244,10 @@ async def game_loop(match):
                 }
         )
     await channel_layer.group_send(
-            match.id, {"type": "game_end", "message": match.get_state()}
+            match.id, {
+                "type": "game_end",
+                "message": match.get_state()
+            }
     )
 
 class MatchManager:

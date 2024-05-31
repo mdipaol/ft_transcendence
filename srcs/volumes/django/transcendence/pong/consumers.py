@@ -52,7 +52,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({"type": "game_message", "match_id": event["match_id"], "message": message}))
 
-    async def game_end(self, event):    
+    async def game_end(self, event):
 
         await self.send(text_data=json.dumps({"type": "game_end"}))
 
@@ -102,7 +102,7 @@ class OnlineConsumer(WebsocketConsumer):
         user = self.scope['user']
         self.add_connection(user)
         self.accept()
-    
+
     def disconnect(self, status_code):
         user = self.scope['user']
         self.del_connection(user)

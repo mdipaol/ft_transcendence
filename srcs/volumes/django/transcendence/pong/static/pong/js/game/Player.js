@@ -15,5 +15,7 @@ export class Player {
 		}
 		this.mesh.position.z = -10;
 		this.powerUp = null;
+		this.upKey = null;
+		this.downKey = null;
 	}
 }

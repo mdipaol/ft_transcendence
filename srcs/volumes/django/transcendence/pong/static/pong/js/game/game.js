@@ -8,6 +8,7 @@ import { Player } from './Player.js';
 import { Ball } from './Ball.js';
 import { Match } from './Match.js';
 import { World } from './World.js';
+import { OnlineMatch } from './OnlineMatch.js';
 
 // region MAIN
 
@@ -21,7 +22,7 @@ world.ready.then(() => {
 
 	//---------OBJECTS----------
 
-	const match = new Match(world);
+	const match = new OnlineMatch(world);
 
 	document.body.appendChild(world.renderer.domElement);
 
@@ -31,8 +32,8 @@ world.ready.then(() => {
 
 	//---------KEYBOARD INPUT----------
 
-	document.addEventListener("keydown", onKeyDown, false);
-	document.addEventListener("keyup", onKeyUp, false);
+	document.addEventListener("keydown", match.onKeyDown.bind(match), false);
+	document.addEventListener("keyup", match.onKeyUp.bind(match), false);
 
 	let P1upKey = 87;
 	let P1downKey = 83;
@@ -224,9 +225,9 @@ world.ready.then(() => {
 
 	var gameLoop = function()
 	{
-		requestAnimationFrame(gameLoop);
-		match.update();
-		match.render();
+			requestAnimationFrame(gameLoop);
+			match.update();
+			match.render();
 	};
 
 	gameLoop();

@@ -10,6 +10,7 @@ export class Match {
 		this.world = world;
         this.player1 = new Player(world.paddle);
         this.player2 = new Player(world.paddle);
+		console.log(this.player1)
 		// this.powerVector1 = []
 		// this.powerVector2 = []
         this.ball = new Ball(0xf06400);
@@ -25,6 +26,10 @@ export class Match {
 		this.player2.mesh.position.x = 54;
 		this.player1.mesh.rotation.z = -Math.PI/2;
 		this.player2.mesh.rotation.z = Math.PI/2;
+		this.player1.upKey = UTILS.W;
+		this.player1.downKey = UTILS.S;
+		this.player2.upKey = UTILS.ARROWUP;
+		this.player2.downKey = UTILS.ARROWDOWN;
 
 		// PowerUps
 		this.waitPowerup = 0;
@@ -152,6 +157,57 @@ export class Match {
 		// Exchanges
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
+	}
+
+
+	onKeyDown(event) {
+		console.log(this.player1)
+		if (event.which == this.player1.upKey) //w key
+			this.player1.moves.up = true;
+		if (event.which == this.player1.downKey) //s key
+			this.player1.moves.down = true;
+		if (event.which == this.player2.upKey) //up arrow
+			this.player2.moves.up = true;
+		if (event.which == this.player2.downKey) //down arrow
+			this.player2.moves.down = true;
+
+		if (event.which == UTILS.TWO)//first person with '2' key
+		{
+			this.world.setCamera(this.world.player2Camera);
+			this.player1.upKey = UTILS.D;
+			this.player1.downKey = UTILS.A;
+			this.player2.upKey = UTILS.ARROWRIGHT;
+			this.player2.downKey = UTILS.ARROWLEFT;
+		}
+		if (event.which == UTILS.ONE)//first person with '1' key
+		{
+			this.world.setCamera(this.world.player1Camera);
+			this.player1.upKey = UTILS.A;
+			this.player1.downKey = UTILS.D;
+			this.player2.upKey = UTILS.ARROWLEFT;
+			this.player2.downKey = UTILS.ARROWRIGHT;
+		}
+		if (event.which == UTILS.SPACE)
+		{
+			this.world.setCamera(this.world.mainCamera);
+			this.world.mainCamera.position.set(0, -10, 70);
+			this.world.mainCamera.lookAt(0, 0, 0);
+			this.player1.upKey = UTILS.W;
+			this.player1.downKey = UTILS.S;
+			this.player2.upKey = UTILS.ARROWUP;
+			this.player2.downKey = UTILS.ARROWDOWN;
+		}
+	}
+
+	onKeyUp(event) {
+		if (event.which == this.player1.upKey)
+			this.player1.moves.up = false;
+		if (event.which == this.player1.downKey)
+			this.player1.moves.down = false;
+		if (event.which == this.player2.upKey)
+			this.player2.moves.up = false;
+		if (event.which == this.player2.downKey)
+			this.player2.moves.down = false;
 	}
 
 	updateMovements() {

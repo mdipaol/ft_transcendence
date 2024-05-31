@@ -1,14 +1,20 @@
 import { Match } from './Match.js'
+import * as UTILS from './utils.js'
 
-class OnlineMatch extends Match {
+
+export class OnlineMatch extends Match {
     constructor(world) {
         super(world);
 
         this.socket = new WebSocket(
             "wss://"
             + window.location.host
-            + "ws/game/"
+            + "/ws/game/"
         );
+
+		this.superPlayer = null;
+
+		this.started = false;
 
         this.socket.addEventListener("open", (event) => this.onOpen(event) );
         this.socket.addEventListener("close", (event) => this.onClose(event) );
@@ -19,27 +25,98 @@ class OnlineMatch extends Match {
     onOpen(event) {
         console.log("Connected to the server");
     }
-    
+
+	onClose(event) {
+        console.log("Connection closed");
+    }
+
+	onMessage(event) {
+        console.log("Message recieved");
+		const msg = JSON.parse(event.data);
+		if (msg.type == "game_message")
+		{
+			this.player1.mesh.position.y = msg.message.player_one.y;
+			this.player2.mesh.position.y = msg.message.player_two.y;
+			this.ball.mesh.position.x = msg.message.ball.x;
+			this.ball.mesh.position.y = msg.message.ball.y;
+		}
+		else if (msg.type == "game_start")
+		{
+			console.log("game started")
+			console.log(msg.player)
+			if (msg.player == "player_one")
+				this.superPlayer = this.player1;
+			else if (msg.player == "player_two")
+				this.superPlayer = this.player2;
+			this.started = true;
+		}
+		else if (msg.type == "game_end")
+		{
+			console.log(msg)
+			if (msg.message.player_one.score > msg.message.player_two.score)
+				alert("Player One WINS")
+			else
+				alert("Player Two WINS")
+			this.started = false;
+		}
+    }
+
+	onError(event) {
+        console.log(event);
+    }
+
+	onKeyDown(event) {
+		console.log(this.player1)
+		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
+			this.superPlayer.moves.up = true;
+		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
+			this.superPlayer.moves.down = true;
+
+		if (event.which == UTILS.TWO)//first person with '2' key
+		{
+			this.world.setCamera(this.world.player2Camera);
+			this.player1.upKey = UTILS.D;
+			this.player1.downKey = UTILS.A;
+			this.player2.upKey = UTILS.ARROWRIGHT;
+			this.player2.downKey = UTILS.ARROWLEFT;
+		}
+		if (event.which == UTILS.ONE)//first person with '1' key
+		{
+			this.world.setCamera(this.world.player1Camera);
+			this.player1.upKey = UTILS.A;
+			this.player1.downKey = UTILS.D;
+			this.player2.upKey = UTILS.ARROWLEFT;
+			this.player2.downKey = UTILS.ARROWRIGHT;
+		}
+		if (event.which == UTILS.SPACE)
+		{
+			this.world.setCamera(this.world.mainCamera);
+			this.world.mainCamera.position.set(0, -10, 70);
+			this.world.mainCamera.lookAt(0, 0, 0);
+			this.player1.upKey = UTILS.W;
+			this.player1.downKey = UTILS.S;
+			this.player2.upKey = UTILS.ARROWUP;
+			this.player2.downKey = UTILS.ARROWDOWN;
+		}
+	}
+
+	onKeyUp(event) {
+		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
+			this.superPlayer.moves.up = false;
+		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
+			this.superPlayer.moves.down = false;
+	}
+
     updateMovements() {
-		if (this.player1.moves.up && this.player1.mesh.position.y < 27)
+		if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
 		{
-			this.player1.mesh.position.y += this.player1.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+			//this.player1.mesh.position.y += this.player1.speed;
+			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
-		if (this.player1.moves.down && this.player1.mesh.position.y > -27)
+		if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
 		{
-			this.player1.mesh.position.y -= this.player1.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-		}
-		if (this.player2.moves.up && this.player2.mesh.position.y < 27)
-		{
-			this.player2.mesh.position.y += this.player2.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-		}
-		if (this.player2.moves.down && this.player2.mesh.position.y > -27)
-		{
-			this.player2.mesh.position.y -= this.player2.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+			// this.player1.mesh.position.y -= this.player1.speed;
+			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
 	}
 
@@ -47,8 +124,8 @@ class OnlineMatch extends Match {
 		this.updateMovements();
 		this.world.rotatePowerUp();
 
-		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
-		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
+		//this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
+		//this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 		this.ball.mesh.position.z = this.ball.getZ();
 
 		// Triple ball update
@@ -152,5 +229,11 @@ class OnlineMatch extends Match {
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
+	}
+
+	render() {
+		console.log(this.started);
+		if (this.started)
+    		this.world.renderer.render(this.world.scene, this.world.activeCamera);
 	}
 }

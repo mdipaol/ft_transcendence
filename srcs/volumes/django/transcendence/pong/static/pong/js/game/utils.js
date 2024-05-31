@@ -8,6 +8,18 @@ export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
 export const BOXSIZE = 250;
 
+export const ARROWUP = 38;
+export const ARROWDOWN = 40;
+export const ARROWLEFT = 37;
+export const ARROWRIGHT = 39;
+export const W = 87;
+export const S = 83;
+export const A = 65;
+export const D = 68;
+export const SPACE = 32;
+export const ONE = 49;
+export const TWO = 50;
+
 // region HELPERSs
 
 //---------HELPERS----------
