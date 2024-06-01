@@ -15,11 +15,13 @@ export class World {
 	constructor(){
 		this.paddle = null;
 		this.table = null;
+		this.door = null;
 		this.ready = new Promise(function(resolve, reject) {});
 		this.scene = new THREE.Scene();
 		this.mainCamera = this.getMainCamera();
 		this.player1Camera = this.getPlayer1Camera();
 		this.player2Camera = this.getPlayer2Camera();
+		this.DoorExit = this.getExitDoor();
 		this.activeCamera = this.mainCamera;
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -165,6 +167,14 @@ export class World {
 		return camera;
 	}
 
+	getExitDoor(){
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.set(0, 40, 30);
+		camera.lookAt(0,0,0);
+		camera.rotateOnAxis(new THREE.Vector3(0,0,1), 1.57);
+		return(camera);
+	}
+
 	setCamera(camera) {
 		this.activeCamera = camera;
 		if (this.activeCamera === this.mainCamera)
@@ -253,13 +263,13 @@ export class World {
 					const threeObj = object.scene.children[0];
 					threeObj.rotation.set(Math.PI / 2, 0, 0);
 					threeObj.scale.multiplyScalar(13);
-					threeObj.position.set(-90, 90, -10);
+					threeObj.position.set(-100, 90, -10);
 					const object1 = threeObj.clone();
-					object1.position.set(-90, -90, -10);
+					object1.position.set(-100, -90, -10);
 					const object2 = threeObj.clone();
-					object2.position.set(90, 90, -10);
+					object2.position.set(100, 90, -10);
 					const object3 = threeObj.clone();
-					object3.position.set(90, -90, -10);
+					object3.position.set(100, -90, -10);
 					const all_object = [threeObj, object1, object2, object3];
 					this.add(all_object[0]);
 					this.add(all_object[1]);
@@ -271,6 +281,76 @@ export class World {
 			)
 
 			});
+	}
+
+	loadNeon_angular(){
+		return new Promise((resolve, reject) => {
+			const geometry = new THREE.CylinderGeometry(5, 5, 600, 32); 
+			const material = new THREE.MeshBasicMaterial({ color: 0xFF4E4E }); 
+			const cylinder = new THREE.Mesh(geometry, material);
+			cylinder.position.set(-120, 120 , 110);
+			cylinder.rotation.x = Math.PI / 2;
+			cylinder.scale.multiplyScalar(0.4);
+			cylinder.add(new THREE.PointLight(0xFF4E4E, 5, 500, 0.6));
+			// Correzione: ottenere la geometria del cilindro da utilizzare per gli spigoli
+			const cylinderEdgesGeometry = new THREE.EdgesGeometry(geometry);
+			const cylinderLineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+			const cylinderEdges = new THREE.LineSegments(cylinderEdgesGeometry, cylinderLineMaterial);
+
+			
+			const geometry1= new THREE.CylinderGeometry(5, 5, 600, 32); 
+			const material1 = new THREE.MeshBasicMaterial({ color: 0x9B4EFF}); 
+			const cylinder1 = new THREE.Mesh(geometry1, material1);
+			cylinder1.rotation.x = Math.PI / 2;
+			cylinder1.position.set(120, 120, 110);
+			cylinder1.add(new THREE.PointLight(0x9B4EFF, 5, 500, 0.6));
+			cylinder1.scale.multiplyScalar(0.4);
+			
+			
+			const geometry2 = new THREE.CylinderGeometry(5, 5, 600, 32); 
+			const material2 = new THREE.MeshBasicMaterial({ color: 0x6CFF4E }); 
+			const cylinder2 = new THREE.Mesh(geometry2, material2);
+			cylinder2.rotation.x = Math.PI / 2;
+			cylinder2.position.set(-120, -120, 110);
+			cylinder2.scale.multiplyScalar(0.4);
+			cylinder2.add(new THREE.PointLight(0x6CFF4E, 5, 500, 0.6));
+			
+
+
+			const geometry3= new THREE.CylinderGeometry(5, 5, 600, 32); 
+			const material3 = new THREE.MeshBasicMaterial({ color: 0xFFC662 }); 
+			const cylinder3 = new THREE.Mesh(geometry3, material3);
+			cylinder3.position.set(120, -120, 110);
+			cylinder3.rotation.x = Math.PI / 2;
+			cylinder3.scale.multiplyScalar(0.4);
+			cylinder3.add(new THREE.PointLight(0xFFC662, 5, 500, 0.6));
+			
+			
+			this.add(cylinder);
+			this.add(cylinder1); 
+			this.add(cylinder2);
+			this.add(cylinder3);
+			resolve();
+		});
+	}
+
+	loadPort(){
+		return new Promise((resolve, reject)=>{
+			this.gltfLoader.load(
+				'boor_2.glb',
+				(object)=>{
+					const threeObj = object.scene;
+					this.door = object.scene.children[0];
+					threeObj.rotation.x = Math.PI/2;
+					threeObj.rotation.y = Math.PI;
+					threeObj.position.set(-15, -117, -22);
+					threeObj.scale.multiplyScalar(25);
+					//this.door.position.x = -2;
+					this.add(object.scene);
+					resolve();
+				}
+			)
+		})
 	}
 
 	loadTable() {
@@ -299,6 +379,27 @@ export class World {
 			(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% table loaded'),
 			(error) => reject(error)
 			)
+		});
+	}
+	
+
+	loadPolletto() {
+		return new Promise((resolve, reject) => {
+			const textureLoader = new THREE.TextureLoader();
+			textureLoader.load(
+				'polletto.jpeg',
+				(texture) => {
+					const material = new THREE.MeshBasicMaterial({ map: texture });
+					const geometry = new THREE.PlaneGeometry(1, 2); // Dimensioni del piano
+					const mesh = new THREE.Mesh(geometry, material);
+					mesh.rotation.x = Math.PI/2;
+					mesh.rotation.y = Math.PI;
+					mesh.position.set(-35, -120, 40);
+					mesh.scale.multiplyScalar(60);
+					this.add(mesh);
+					resolve();
+				}
+			);
 		});
 	}
 
@@ -414,8 +515,11 @@ export class World {
 		const proms = [
 		this.loadPaddle(),
 		this.loadPlant(),
+		this.loadPort(),
+		this.loadNeon_angular(),
 		this.loadTable(),
 		this.loadFonts(),
+		this.loadPolletto()
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

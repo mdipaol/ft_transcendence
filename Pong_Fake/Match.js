@@ -439,12 +439,33 @@ export class Match {
 	}
 
 	gameEnd() {
-		if (this.score1 > this.score2)
+		/* if (this.score1 > this.score2)
 			alert("Player 1 wins!");
 		else
-			alert("Player 2 wins!");
+			alert("Player 2 wins!"); */
+			this.world.setCamera(this.world.DoorExit);
+			this.world.DoorExit.position.set(0, 10, 50);
+			
+			this.world.DoorExit.lookAt(0,-20,50);
+		 	this.world.DoorExit.rotation.z += THREE.MathUtils.degToRad(180);
+		
+			function animateDoor() {
+				if (this.world.door.position.x > -2) {
+					this.world.door.position.x -= 0.05; // Velocità di spostamento della porta
+					requestAnimationFrame(animateDoor.bind(this));
+				}
+				else{
+					this.score1 = 0;
+					this.score2 = 0;
+					this.updateScoreText();
+				} 
+			}
+			animateDoor.call(this);
+			/* while(this.world.door.position.x > -2){
+			this.world.door.position.x -= 0.000001;
+		}
 		this.score1 = 0;
 		this.score2 = 0;
-		this.updateScoreText();
+		this.updateScoreText(); */
 	}
 }

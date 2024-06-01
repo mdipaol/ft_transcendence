@@ -78,6 +78,13 @@ world.ready.then(() => {
 			P2upKey = 38;
 			P2downKey = 40;
 		}
+		if(event.which == 51){
+			world.setCamera(world.DoorExit);
+			world.DoorExit.position.set(0, 10, 50);
+			
+			world.DoorExit.lookAt(0,-20,50);
+			world.DoorExit.rotation.z += THREE.MathUtils.degToRad(180);
+		}
 	}
 
 	function onKeyUp(event) {
