@@ -50,7 +50,11 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
     async def game_message(self, event):
         message = event["message"]
 
-        await self.send(text_data=json.dumps({"type": "game_message", "match_id": event["match_id"], "message": message}))
+        await self.send(text_data=json.dumps({
+            "type": "game_message",
+            "event" : event["event"],
+            "message": message}
+            ))
 
     async def game_end(self, event):
 

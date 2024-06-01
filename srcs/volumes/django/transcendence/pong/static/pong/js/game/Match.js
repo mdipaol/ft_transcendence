@@ -11,8 +11,6 @@ export class Match {
         this.player1 = new Player(world.paddle);
         this.player2 = new Player(world.paddle);
 		console.log(this.player1)
-		// this.powerVector1 = []
-		// this.powerVector2 = []
         this.ball = new Ball(0xf06400);
 		this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
@@ -74,7 +72,6 @@ export class Match {
 	}
 
 	updateExchanges() {
-		this.exchanges++;
 
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
@@ -413,8 +410,9 @@ export class Match {
 			this.ball.direction.y = normalizedVector[1];
 
 			this.collision = true;
+			this.exchanges++;
 			this.updateExchanges();
-
+			
 			this.handlePowerUp(this.player1);
 			this.addPowerUp()
 		}
@@ -429,6 +427,7 @@ export class Match {
 			this.ball.direction.y = normalizedVector[1];
 
 			this.collision = true;
+			this.exchanges++;
 			this.updateExchanges();
 
 			this.handlePowerUp(this.player2);

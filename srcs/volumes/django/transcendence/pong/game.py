@@ -85,6 +85,7 @@ class BallController:
 
 class Match:
     def __init__(self):
+        self.channel_layer = get_channel_layer()
         self.state = copy.deepcopy(constants.INITIAL_STATE)
         self.id = str(uuid.uuid4())
         self.lock = asyncio.Lock()
@@ -96,6 +97,8 @@ class Match:
         self.update_time = time.time()
         self.end = False
         self.winner = None
+
+        self.exchanges : int = 0
 
     def __str__(self):
         return self.id + ' ' + str(id(self.state))
@@ -142,6 +145,15 @@ class Match:
             self.task.cancel()
             self.taks = None
 
+    async def send_message(self, type, event, obj):
+        await self.channel_layer.group_send(
+            self.id, {
+                "type": type,
+                "event" : event,
+                "message": obj,
+            }
+        )
+
     def get_winner(self):
         return self.winner
 
@@ -160,9 +172,11 @@ class Match:
             return None
         if self.state["ball"]["x"] <= constants.MIN_WIDTH:
             if  self.state["ball"]["y"] >= self.state["player_one"]["y"] - constants.PADDLE_HALF and self.state["ball"]["y"] <= self.state["player_one"]["y"] + constants.PADDLE_HALF:
+                self.exchanges += 1
                 return "player_one"
         elif self.state["ball"]["x"] >= constants.MAX_WIDTH:
             if  self.state["ball"]["y"] >= self.state["player_two"]["y"] - constants.PADDLE_HALF and self.state["ball"]["y"] <= self.state["player_two"]["y"] + constants.PADDLE_HALF:
+                self.exchanges += 1
                 return "player_two"
         return None
 
@@ -175,6 +189,7 @@ class Match:
             self.state["ball"]["dirY"] *= -1
 
     async def check_point(self):
+
         if self.state["ball"]["x"] <= constants.MIN_WIDTH -5 or self.state["ball"]["x"] >= constants.MAX_WIDTH + 5:
             if self.state["ball"]["x"] < 0:
                 self.state["player_two"]["score"] += 1
@@ -187,7 +202,12 @@ class Match:
             self.state["ball"]["x"] = 0
             self.state["player_one"]["y"] = 0
             self.state["player_two"]["y"] = 0
-            print(self.state)
+            self.exchanges = 0
+            # print(self.state)
+            await self.send_message("game_message", "score", {
+                "player_one" : self.state["player_one"]["score"],
+                "player_two" : self.state["player_two"]["score"],
+            })
             if self.state["player_one"]["score"] == constants.MAX_SCORE or self.state["player_two"]["score"] == constants.MAX_SCORE:
                 self.match_end()
             else:
@@ -200,16 +220,30 @@ class Match:
         if now - self.update_time < constants.REFRESH_RATE:
             await asyncio.sleep(constants.REFRESH_RATE - ( now - self.update_time))
 
+        # Update game state
         self.state["ball"]["x"] += self.state["ball"]["speed"] * self.state["ball"]["dirX"]
         self.state["ball"]["y"] += self.state["ball"]["speed"] * self.state["ball"]["dirY"]
+
+        # Bot logic
+        ...
+
+        # Powerup collision
+        ...
+
+        # Player - ball collision
         bam = self.check_collision()
         if bam:
+            await self.send_message("game_message", "exchanges", {
+                    "exchanges" : self.exchanges,
+            })
             self.state["ball"]["dirX"] *= -1
             self.state["ball"]["dirY"] = (self.state["ball"]["y"] - self.state[bam]["y"]) / 10
             self.collision = True
+        # Ball - wall collision
         self.wall_collision()
         if self.collision and self.state["ball"]["x"] > -constants.SCREEN_CENTER and self.state["ball"]["x"] < constants.SCREEN_CENTER:
             self.collision = False
+
         await self.check_point()
 
         self.update_time = time.time()
@@ -228,7 +262,7 @@ class Match:
     def get_state(self):
         return self.state
 
-async def game_loop(match):
+async def game_loop(match : Match):
 
     channel_layer = get_channel_layer()
 
@@ -236,13 +270,17 @@ async def game_loop(match):
 
         # Logica gioco
         await match.ball_move()
+
+        # Send game state
         await channel_layer.group_send(
             match.id, {
                 "type": "game_message",
+                "event" : "state",
                 "match_id": match.id,
-                "message": match.get_state()
+                "message": match.get_state(),
                 }
         )
+    # Send game end
     await channel_layer.group_send(
             match.id, {
                 "type": "game_end",

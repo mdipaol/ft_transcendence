@@ -1,7 +1,7 @@
 import { Match } from './Match.js'
 import * as UTILS from './utils.js'
 
-
+// exchanges
 export class OnlineMatch extends Match {
     constructor(world) {
         super(world);
@@ -22,6 +22,11 @@ export class OnlineMatch extends Match {
         this.socket.addEventListener("error", (event) => this.onError(event) );
     }
 
+
+	gameMessage() {
+		
+	}
+
     onOpen(event) {
         console.log("Connected to the server");
     }
@@ -31,14 +36,18 @@ export class OnlineMatch extends Match {
     }
 
 	onMessage(event) {
-        console.log("Message recieved");
 		const msg = JSON.parse(event.data);
 		if (msg.type == "game_message")
 		{
-			this.player1.mesh.position.y = msg.message.player_one.y;
-			this.player2.mesh.position.y = msg.message.player_two.y;
-			this.ball.mesh.position.x = msg.message.ball.x;
-			this.ball.mesh.position.y = msg.message.ball.y;
+			if (msg.event == "state")
+				this.updateState(msg);
+			else if(msg.event == "exchanges"){
+				console.log(msg)
+				this.exchanges = msg.message.exchanges;
+				this.updateExchanges();
+			}
+			else if (msg.event == "score")
+				this.updateScore(msg);
 		}
 		else if (msg.type == "game_start")
 		{
@@ -57,6 +66,7 @@ export class OnlineMatch extends Match {
 				alert("Player One WINS")
 			else
 				alert("Player Two WINS")
+			this.gameEnd();
 			this.started = false;
 		}
     }
@@ -66,7 +76,8 @@ export class OnlineMatch extends Match {
     }
 
 	onKeyDown(event) {
-		console.log(this.player1)
+		if (!this.started)
+			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
 			this.superPlayer.moves.up = true;
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
@@ -101,6 +112,8 @@ export class OnlineMatch extends Match {
 	}
 
 	onKeyUp(event) {
+		if (!this.started)
+			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
 			this.superPlayer.moves.up = false;
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
@@ -108,6 +121,8 @@ export class OnlineMatch extends Match {
 	}
 
     updateMovements() {
+		if (!this.started)
+			return;
 		if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
 		{
 			//this.player1.mesh.position.y += this.player1.speed;
@@ -118,6 +133,35 @@ export class OnlineMatch extends Match {
 			// this.player1.mesh.position.y -= this.player1.speed;
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
+	}
+	updateState(msg)
+	{
+		this.player1.mesh.position.y = msg.message.player_one.y;
+			this.player2.mesh.position.y = msg.message.player_two.y;
+			this.ball.mesh.position.x = msg.message.ball.x;
+			this.ball.mesh.position.y = msg.message.ball.y;
+	}
+	
+	updateScore(msg){
+		this.score1 = msg.message.player_one;
+		this.score2 = msg.message.player_two;
+		this.updateScoreText();
+		this.player1.mesh.position.z = -10;
+		this.player2.mesh.position.z = -10;
+		this.player1.powerUp = null;
+		this.player2.powerUp = null;
+		this.player1.mesh.scale.set(1, 1, 1);
+		this.player2.mesh.scale.set(1, 1, 1);
+		//---------------------------
+		// Reset direction
+		//const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+		//this.ball.direction.x = normalized[0];
+
+		// Triple Ball
+		this.remove_triple();
+		// Exchanges
+		this.exchanges = 0;
+		this.exchangesText = this.exchangesTextInit();
 	}
 
     update() {
@@ -232,7 +276,7 @@ export class OnlineMatch extends Match {
 	}
 
 	render() {
-		console.log(this.started);
+		// console.log(this.started);
 		if (this.started)
     		this.world.renderer.render(this.world.scene, this.world.activeCamera);
 	}
