@@ -333,9 +333,9 @@ export class World {
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
-		this.loadPaddle(),
-		this.loadTable(),
-		this.loadFonts(),
+			this.loadPaddle(),
+			this.loadTable(),
+			this.loadFonts(),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

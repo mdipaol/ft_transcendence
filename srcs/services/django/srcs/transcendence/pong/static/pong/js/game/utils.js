@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 //---------COSTANTS--------
 export const MAXSCORE = 3;
-export const MOVSPEED = 1;
+export const MOVSPEED = 1.3;
 export const STARTINGSPEED = 1;
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;

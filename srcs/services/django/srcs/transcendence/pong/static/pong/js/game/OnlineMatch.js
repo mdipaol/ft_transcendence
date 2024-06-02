@@ -24,7 +24,7 @@ export class OnlineMatch extends Match {
 
 
 	gameMessage() {
-		
+
 	}
 
     onOpen(event) {
@@ -48,6 +48,14 @@ export class OnlineMatch extends Match {
 			}
 			else if (msg.event == "score")
 				this.updateScore(msg);
+			else if (msg.event == "powerUpSpawn") {
+				console.log(msg);
+				this.world.powerUp = this.world.arrayPowerup[msg.message.powerUp];
+				this.world.powerUp.mesh.position.x = msg.message.x;
+				this.world.powerUp.mesh.position.y = msg.message.y;
+				this.world.powerUp.mesh.position.z = 10;
+				this.world.add(this.world.powerUp.mesh);
+			}
 		}
 		else if (msg.type == "game_start")
 		{
@@ -125,11 +133,13 @@ export class OnlineMatch extends Match {
 			return;
 		if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
 		{
-			//this.player1.mesh.position.y += this.player1.speed;
+			this.superPlayer.mesh.position.y += this.superPlayer.speed;
+			// this.player1.mesh.position.y += this.player1.speed;
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
 		if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
 		{
+			this.superPlayer.mesh.position.y -= this.superPlayer.speed;
 			// this.player1.mesh.position.y -= this.player1.speed;
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
@@ -141,7 +151,7 @@ export class OnlineMatch extends Match {
 			this.ball.mesh.position.x = msg.message.ball.x;
 			this.ball.mesh.position.y = msg.message.ball.y;
 	}
-	
+
 	updateScore(msg){
 		this.score1 = msg.message.player_one;
 		this.score2 = msg.message.player_two;
@@ -167,112 +177,116 @@ export class OnlineMatch extends Match {
     update() {
 		this.updateMovements();
 		this.world.rotatePowerUp();
-
-		//this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
-		//this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 		this.ball.mesh.position.z = this.ball.getZ();
+		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
+		// this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 
-		// Triple ball update
-		if (this.tripleEnabled) {
-			const ball1 = this.fakeBalls[0];
-			const ball2 = this.fakeBalls[1];
+		// this.world.rotatePowerUp();
 
-			ball1.mesh.position.x += ball1.speed * ball1.direction.x;
-			ball1.mesh.position.y += ball1.speed * ball1.direction.y;
-			ball1.mesh.position.z = ball1.getZ();
+		// //this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
+		// //this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 
-			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
-			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
-			ball2.mesh.position.z = ball2.getZ();
+		// // Triple ball update
+		// if (this.tripleEnabled) {
+		// 	const ball1 = this.fakeBalls[0];
+		// 	const ball2 = this.fakeBalls[1];
 
-			// console.log(ball1.mesh.position);
-		}
+		// 	ball1.mesh.position.x += ball1.speed * ball1.direction.x;
+		// 	ball1.mesh.position.y += ball1.speed * ball1.direction.y;
+		// 	ball1.mesh.position.z = ball1.getZ();
 
-		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
-		{
-			/* if (ball.speed < 2)
-				ball.speed *= ACCELERATION; */
-			this.ball.direction.x *= -1;
-			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
-			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-			this.ball.direction.x = normalizedVector[0];
-			this.ball.direction.y = normalizedVector[1];
+		// 	ball2.mesh.position.x += ball2.speed * ball2.direction.x;
+		// 	ball2.mesh.position.y += ball2.speed * ball2.direction.y;
+		// 	ball2.mesh.position.z = ball2.getZ();
 
-			this.collision = true;
-			this.updateExchanges();
+		// 	// console.log(ball1.mesh.position);
+		// }
 
-			this.handlePowerUp(this.player1);
-			this.addPowerUp()
-		}
-		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
-		{
-			// if (ball.speed  < 2)
-			// 	ball.speed  *= ACCELERATION;
-			this.ball.direction.x *= -1;
-			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
-			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-			this.ball.direction.x = normalizedVector[0];
-			this.ball.direction.y = normalizedVector[1];
+		// if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
+		// {
+		// 	/* if (ball.speed < 2)
+		// 		ball.speed *= ACCELERATION; */
+		// 	this.ball.direction.x *= -1;
+		// 	this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
+		// 	const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+		// 	this.ball.direction.x = normalizedVector[0];
+		// 	this.ball.direction.y = normalizedVector[1];
 
-			this.collision = true;
-			this.updateExchanges();
+		// 	this.collision = true;
+		// 	this.updateExchanges();
 
-			this.handlePowerUp(this.player2);
-			this.addPowerUp();
-		}
-		// PowerUp collision
-		if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
+		// 	this.handlePowerUp(this.player1);
+		// 	this.addPowerUp()
+		// }
+		// if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
+		// {
+		// 	// if (ball.speed  < 2)
+		// 	// 	ball.speed  *= ACCELERATION;
+		// 	this.ball.direction.x *= -1;
+		// 	this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+		// 	const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+		// 	this.ball.direction.x = normalizedVector[0];
+		// 	this.ball.direction.y = normalizedVector[1];
 
-			this.world.remove(this.world.powerUp.mesh);
-			this.activePowerUp = false;
-			this.waitPowerup = 0;
+		// 	this.collision = true;
+		// 	this.updateExchanges();
 
-			// Powerup assignment
+		// 	this.handlePowerUp(this.player2);
+		// 	this.addPowerUp();
+		// }
+		// // PowerUp collision
+		// if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
 
-			this.player1.powerUp = null;
-			this.player2.powerUp = null;
+		// 	this.world.remove(this.world.powerUp.mesh);
+		// 	this.activePowerUp = false;
+		// 	this.waitPowerup = 0;
 
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
-				this.player2.powerUp = this.world.powerUp;
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
-				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
-				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
-				this.player2.powerUp = this.world.powerUp;
+		// 	// Powerup assignment
 
-			this.powerUpTaken();
-		}
+		// 	this.player1.powerUp = null;
+		// 	this.player2.powerUp = null;
+
+		// 	if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
+		// 		this.player2.powerUp = this.world.powerUp;
+		// 	if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
+		// 		this.player1.powerUp = this.world.powerUp;
+		// 	if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
+		// 		this.player1.powerUp = this.world.powerUp;
+		// 	if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
+		// 		this.player2.powerUp = this.world.powerUp;
+
+		// 	this.powerUpTaken();
+		// }
 
 
 
-		if (UTILS.wallCollision(this.ball))
-			this.ball.direction.y *= -1;
+		// if (UTILS.wallCollision(this.ball))
+		// 	this.ball.direction.y *= -1;
 
-		//Reset positions
-		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
-			this.updateScore();
+		// //Reset positions
+		// if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
+		// 	this.updateScore();
 
-		// If triple ball is enabled
-		if (this.tripleEnabled) {
-			const b1 = this.fakeBalls[0];
-			const b2 = this.fakeBalls[1];
+		// // If triple ball is enabled
+		// if (this.tripleEnabled) {
+		// 	const b1 = this.fakeBalls[0];
+		// 	const b2 = this.fakeBalls[1];
 
-			// Triple ball wall collision
-			if (UTILS.wallCollision(b1))
-				b1.direction.y *= -1;
-			if (UTILS.wallCollision(b2))
-				b2.direction.y *= -1;
+		// 	// Triple ball wall collision
+		// 	if (UTILS.wallCollision(b1))
+		// 		b1.direction.y *= -1;
+		// 	if (UTILS.wallCollision(b2))
+		// 		b2.direction.y *= -1;
 
-			// Triple ball table limit
-			if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
-				this.world.remove(b1.mesh);
-			if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
-				this.world.remove(b2.mesh);
-		}
+		// 	// Triple ball table limit
+		// 	if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
+		// 		this.world.remove(b1.mesh);
+		// 	if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
+		// 		this.world.remove(b2.mesh);
+		// }
 
-		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
-			this.collision = false;
+		// if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
+		// 	this.collision = false;
 	}
 
 	render() {

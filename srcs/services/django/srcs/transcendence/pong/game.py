@@ -1,5 +1,5 @@
 
-import time, asyncio, uuid, re, copy
+import time, asyncio, uuid, re, copy, random
 from . import constants
 from .models import Match
 from channels.layers import get_channel_layer
@@ -83,6 +83,15 @@ class BallController:
 
             self.time = time.time()
 
+class Player:
+    def __init__(self):
+        self.speed : int = 0
+        self.name : str = "Undefined"
+        self.powerUp = {
+            "name" : None,
+            "type" : None,
+        }
+
 class Match:
     def __init__(self):
         self.channel_layer = get_channel_layer()
@@ -99,6 +108,23 @@ class Match:
         self.winner = None
 
         self.exchanges : int = 0
+
+        # PowerUp
+        self.activePowerUp = False
+        self.waitPowerUp : int = 0
+        self.powerUp : int = 0
+        self.powerUpId : int = 0
+
+        self.arrayPowerUp = {
+            0 : "triple",
+            1 : "slowness",
+            2 : "scale",
+            3 : "triple",
+            4 : "slowness",
+            5 : "scale",
+            6 : "triple",
+            7 : "slowness",
+        }
 
     def __str__(self):
         return self.id + ' ' + str(id(self.state))
@@ -166,6 +192,63 @@ class Match:
             self.winner = self.player_one
         elif self.state["player_two"]["score"] == constants.MAX_SCORE:
             self.winner = self.player_two
+
+    async def addPowerUp(self):
+        self.waitPowerUp += 1
+        if (self.waitPowerUp >= 5 and self.exchanges % 5 == 0 and self.powerUp == 0):
+            if (self.activePowerUp == False):
+                self.activePowerUp = True
+                x = 0
+                y = random.randint(constants.MIN_PADDLE_Y, constants.MAX_PADDLE_Y)
+                self.waitPowerUp = 0
+                self.powerUpId = random.randint(0, 7)
+                await self.send_message("game_message", "powerUpSpawn", {
+                    "powerUp" : self.powerUpId,
+                    "x" : x,
+                    "y" : y
+                })
+
+    # async def powerUpTaken(self):
+    #     if (self.activePowerUp == True):
+    #         self.activePowerUp = False
+
+    #         self.powerUp = 2
+    #         if self.state["ball"]["dirX"] > 0:
+    #             self.powerUp = 1
+
+    #         match self.powerUpId:
+    #             case 0:
+    #                 this.player1.powerUp = {
+    #                     name : "triple",
+    #                     type : this.powerUp
+    #                 }
+    #             case 1:
+    #                 this.player1.powerUp = {
+    #                     name : "slowness",
+    #                     type : this.powerUp
+    #                 }
+    #             case 2:
+    #                 this.player1.powerUp = {
+    #                     name : "scale",
+    #                     type : this.powerUp
+    #                 }
+    #             # if (this.player1.powerUp && this.player1.powerUp.name == "slowness"):
+    #             #     this.player2.speed = 0.3
+    #             # if (this.player2.powerUp && this.player2.powerUp.name == "slowness"):
+    #             #     this.player1.speed = 0.3
+
+    #             # if (this.player1.powerUp && this.player1.powerUp.name ==  "scale"):
+    #             #     this.player2.mesh.position.z = -6
+    #             #     this.player2.mesh.scale.multiplyScalar(0.7)
+
+    #             # if (this.player2.powerUp && this.player2.powerUp.name ==  "scale"):
+    #             #     this.player1.mesh.position.z = -6
+    #             #     this.player1.mesh.scale.multiplyScalar(0.7)
+
+    #             # if (player.powerUp.name == "triple"):
+    #             #     this.add_triple()
+
+    #         await self.send_message("game_message", "powerUpTaken", {})
 
     def check_collision(self):
         if self.collision:
@@ -236,6 +319,7 @@ class Match:
             await self.send_message("game_message", "exchanges", {
                     "exchanges" : self.exchanges,
             })
+            await self.addPowerUp()
             self.state["ball"]["dirX"] *= -1
             self.state["ball"]["dirY"] = (self.state["ball"]["y"] - self.state[bam]["y"]) / 10
             self.collision = True

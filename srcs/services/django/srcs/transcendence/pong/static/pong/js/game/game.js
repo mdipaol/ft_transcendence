@@ -43,8 +43,7 @@ world.ready.then(() => {
 	var gameLoop = function()
 	{
 			requestAnimationFrame(gameLoop);
-			// match.update();
-			match.updateMovements();
+			match.update();
 			match.render();
 	};
 
