@@ -5,7 +5,6 @@ SRC = srcs
 all: $(NAME)
 
 $(NAME): $(SRC)
-	@ bash $(SRC)/utils/volumes_check.sh
 	@ docker compose --project-directory $(SRC) up -d --build
 
 nodetatch:
