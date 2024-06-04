@@ -2,8 +2,8 @@
 import uuid, json, pdb, asyncio
 from asgiref.sync import sync_to_async
 
-from . import constants
-from .game import MatchManager, Match
+from .game_class import Match
+from .match_manager import MatchManager
 from .models import BaseUser
 
 from django.db.models import F
@@ -16,8 +16,8 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
     def __init__(self):
         super().__init__(self)
-        self.username : str = 'Anonymous'
-        self.player_id : str = str(uuid.uuid4())
+        self.username: str = 'Anonymous'
+        self.player_id: str = str(uuid.uuid4())
         self.match: Match = None
 
     async def connect(self):
@@ -27,34 +27,39 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
 
-        await MatchManager.add_player(self)
+        self.match =  await MatchManager.add_player(self)
 
         await self.accept()
 
     async def disconnect(self, close_code):
 
         # Game logic
-        await MatchManager.delete_player(self)
+        # await MatchManager.delete_player(self)
+        ...
 
 
     async def receive(self, text_data):
 
         direction = json.loads(text_data).get("direction")
-        async with self.match.get_lock():
-            self.match.paddle_move(self.player_id, direction)
+        # self.match.paddle_move(self.player_id, direction)
+        self.match.move(self, direction)
+
+    # Channel layers message handlers
 
     async def game_start(self, event):
 
-        await self.send(text_data=json.dumps({"type": "game_start", "player": self.match.who_player(self.player_id)}))
+        await self.send(text_data=json.dumps({
+            "type": "game_start",
+            "player": event['player']
+            }))
 
     async def game_message(self, event):
-        message = event["message"]
 
         await self.send(text_data=json.dumps({
             "type": "game_message",
             "event" : event["event"],
-            "message": message}
-            ))
+            "message": event['message']
+            }))
 
     async def game_end(self, event):
 

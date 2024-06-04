@@ -66,7 +66,8 @@ services:
 
   redis:
     container_name: redis
-    image: "redis:7"
+    build:
+      context: ./services/redis
     volumes:
       - redis-volume:/data
     networks:
@@ -100,14 +101,6 @@ networks:
     name: transcendence-network
 
 volumes:
-  # django-volume:
-  #   name: django-volume
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device: ./volumes/django/
-  #     o: bind
-
   static-files:
   postgres-volume:
   redis-volume:
