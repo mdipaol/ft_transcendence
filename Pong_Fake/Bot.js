@@ -59,42 +59,57 @@ export class MatchBot extends Match {
         let directionX = this.ball.direction.x;
         let directionY = this.ball.direction.y;
         let startPosition = [this.ball.mesh.position.x + 54, this.ball.mesh.position.y + 27];//ci greppiamo la posizione della palla
-        let destinationY = 0;
-        let alpha = 0;
-
-        let firstDeltaX = 0;
-        let deltaX = 0;
-        let lastDeltaX = 0;
-
-        let sumX = 0;
-        let iterHeight = 0;
-        let iteration = 0;
-
+        
         if (directionY == 0)
             return (startPosition[1] - 27);
-        alpha = UTILS.angleBetweenVectors([Math.abs(directionX), Math.abs(directionY)], [1, 0]);
+        
+        let alpha = UTILS.angleBetweenVectors([Math.abs(directionX), Math.abs(directionY)], [1, 0]);
+        
+        let firstDeltaX = 0;
+        let midDeltaX = 0;
+        let iterator = startPosition[0];
         
         if (directionY > 0)
-            firstDeltaX = (54 - startPosition[1]) * Math.sin( (Math.PI / 2 ) - alpha )
+            firstDeltaX = (54 - startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
         else
-            firstDeltaX = (startPosition[1]) * Math.sin( (Math.PI / 2 ) - alpha )
+            firstDeltaX = (startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
 
-        deltaX = 54 * Math.sin( (Math.PI / 2 ) - alpha )
+        midDeltaX = 54 * Math.sin( (Math.PI / 2 ) - alpha )
 
-        if (startPosition[0] + firstDeltaX > 108){
-            console.log("No collision");
-            let xFinal = 108 - startPosition[0];
-            let destinationY = (108 - startPosition[0]) * Math.sin(alpha);
+        iterator = startPosition[0] + firstDeltaX;
+        let collisions = false;
+        let numberOfCollisions = 0;
+        while(iterator < 108){
+            iterator += midDeltaX;
+            collisions = true;
+            numberOfCollisions++;
+        }
+
+        if (collisions){
+            console.log("collisions detected");
+            iterator -= midDeltaX;
+            numberOfCollisions--;
+            let finalDirectionSign = 1;
+            if (numberOfCollisions % 2)
+                finalDirectionSign = directionY * (-1);
+            let destinationY = (108 - iterator) * Math.tan(alpha);
+            if (finalDirectionSign > 0)
+                return (startPosition[1] + destinationY) - 27;
+            else
+                return (startPosition[1] - destinationY) - 27;
+        }
+        else {
+            console.log("no collisions");
+            iterator -= firstDeltaX;
+            numberOfCollisions = 0;
+            let destinationY = (108 - iterator) * Math.tan(alpha);
             if (directionY > 0)
                 return (startPosition[1] + destinationY) - 27;
             else
                 return (startPosition[1] - destinationY) - 27;
         }
         
-        console.log("ANGOLO IN GRADI : " + (alpha * 180) / Math.PI)
-
-
-
+        console.log("FINE");
         return(0);
     }
     
@@ -110,13 +125,15 @@ export class MatchBot extends Match {
 			this.player1.mesh.position.y -= this.player1.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
         }
-        if (this.bot2.mesh.position.y < this.bot2.destinationY){
-            console.log("moveUP");
+        if (this.bot2.mesh.position.y < this.bot2.destinationY && this.bot2.mesh.position.y < UTILS.MAX_SIZEY){
             this.bot2.mesh.position.y += this.bot2.speed;
+            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
+                this.bot2.mesh.position.y = this.bot2.destinationY;
         }
-        else if (this.bot2.mesh.position.y > this.bot2.destinationY){
-            console.log("muveDown dajeeeeeee");
+        else if (this.bot2.mesh.position.y > this.bot2.destinationY  && this.bot2.mesh.position.y > UTILS.MIN_SIZEY){
             this.bot2.mesh.position.y -= this.bot2.speed;
+            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
+                this.bot2.mesh.position.y = this.bot2.destinationY;
         }
 	}
 
@@ -143,7 +160,7 @@ export class MatchBot extends Match {
         //     }
         // }
 
-        if (((new Date()) - this.time_update) < 50)
+        if (((new Date()) - this.time_update) < 1000)
             return ;
 
         this.time_update = new Date();
@@ -155,7 +172,7 @@ export class MatchBot extends Match {
 
         // this.bot2.destinationY = this.ball.mesh.position.y;
 
-        this.bot2.destinationY = this.pointPrediction();
+        this.bot2.destinationY = (this.pointPrediction());
         console.log("destination: " + this.bot2.destinationY);
 
         // const distance = Math.abs(this.bot2.mesh.position.y - this.ball.mesh.position.y)
