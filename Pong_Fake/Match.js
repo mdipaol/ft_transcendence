@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-
 import { Ball } from "./Ball.js"
 import * as UTILS from './Utils.js';
 import { Player } from './Player.js';
+//import { Bot } from './Bot.js';
+//import { MatchBot } from './MatchBot.js';
 
 export class Match {
     constructor(world){
@@ -155,22 +156,22 @@ export class Match {
 	}
 
 	updateMovements() {
-		if (this.player1.moves.up && this.player1.mesh.position.y < 27)
+		if (this.player1.moves.up && this.player1.mesh.position.y < UTILS.MAX_SIZEY)
 		{
 			this.player1.mesh.position.y += this.player1.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
-		if (this.player1.moves.down && this.player1.mesh.position.y > -27)
+		if (this.player1.moves.down && this.player1.mesh.position.y > UTILS.MIN_SIZEY)
 		{
 			this.player1.mesh.position.y -= this.player1.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
-		if (this.player2.moves.up && this.player2.mesh.position.y < 27)
+		if (this.player2.moves.up && this.player2.mesh.position.y < UTILS.MAX_SIZEY)
 		{
 			this.player2.mesh.position.y += this.player2.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
-		if (this.player2.moves.down && this.player2.mesh.position.y > -27)
+		if (this.player2.moves.down && this.player2.mesh.position.y > UTILS.MIN_SIZEY)
 		{
 			this.player2.mesh.position.y -= this.player2.speed;
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
@@ -356,12 +357,13 @@ export class Match {
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
 			this.ball.direction.x = normalizedVector[0];
 			this.ball.direction.y = normalizedVector[1];
-
+			
 			this.collision = true;
 			this.updateExchanges();
 
 			this.handlePowerUp(this.player1);
-			this.addPowerUp()
+			this.addPowerUp();
+			//test funzione
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{

@@ -8,6 +8,9 @@ import { Player } from './Player.js';
 import { Ball } from './Ball.js';
 import { Match } from './Match.js';
 import { World } from './World.js';
+import { MatchBot } from './Bot.js';
+//import { Bot } from './Bot.js';
+//import { MatchBot } from './Bot.js';
 
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
@@ -15,6 +18,7 @@ import { World } from './World.js';
 
 //---------INIT----------
 const world = new World();
+//const bot = new MatchBot(world);
 console.log(world.ready);
 console.log(world.paddle);
 world.ready.then(() => {
@@ -23,7 +27,8 @@ world.ready.then(() => {
 
 	//---------OBJECTS----------
 
-	const match = new Match(world);
+	const match = new MatchBot(world);
+	
 
 	document.body.appendChild(world.renderer.domElement);
 
@@ -47,10 +52,10 @@ world.ready.then(() => {
 			match.player1.moves.up = true;
 		if (event.which == P1downKey) //s key
 			match.player1.moves.down = true;
-		if (event.which == P2upKey) //up arrow
-			match.player2.moves.up = true;
-		if (event.which == P2downKey) //down arrow
-			match.player2.moves.down = true;
+		// if (event.which == P2upKey) //up arrow
+		// 	match.player2.moves.up = true;
+		// if (event.which == P2downKey) //down arrow
+		// 	match.player2.moves.down = true;
 
 		if (event.which == 50)//first person with '2' key
 		{
@@ -78,13 +83,24 @@ world.ready.then(() => {
 			P2upKey = 38;
 			P2downKey = 40;
 		}
-		if(event.which == 51){
+		if(event.which == 51){// telecamera che punta verso la porta di uscita
 			world.setCamera(world.DoorExit);
 			world.DoorExit.position.set(0, 10, 50);
-			
 			world.DoorExit.lookAt(0,-20,50);
 			world.DoorExit.rotation.z += THREE.MathUtils.degToRad(180);
 		}
+		/* if(event.which == 52){// tasto 4, per attivare il bot1 
+			if(match.activeBot1 == false)//condizione per attivare e disattivare il bot
+				match.activeBot1 = true;
+			else
+				match.activeBot1 = false;
+		}
+		if(event.which == 53){//il tasto 5 per tattivare il bot2
+			if(match.activeBot1 == false)//condizione per attivare e disattivare il bot
+				match.activeBot2 = true;
+			else
+				match.activeBot2 = false;
+		} */
 	}
 
 	function onKeyUp(event) {
@@ -92,10 +108,10 @@ world.ready.then(() => {
 			match.player1.moves.up = false;
 		if (event.which == P1downKey)
 			match.player1.moves.down = false;
-		if (event.which == P2upKey)
-			match.player2.moves.up = false;
-		if (event.which == P2downKey)
-			match.player2.moves.down = false;
+		// if (event.which == P2upKey)
+		// 	match.player2.moves.up = false;
+		// if (event.which == P2downKey)
+		// 	match.player2.moves.down = false;
 	}
 
 	//---------MOVEMENTS----------
@@ -234,6 +250,7 @@ world.ready.then(() => {
 	var gameLoop = function()
 	{
 		requestAnimationFrame(gameLoop);
+		match.updateMovementsBot();
 		match.update();
 		match.render();
 	};

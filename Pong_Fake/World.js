@@ -30,6 +30,8 @@ export class World {
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();
 		this.fontLoader = new FontLoader();
+		//this.nikNameloader1 = new FontLoader();
+		//this.nikNameloader2 = new FontLoader();
 		this.gltfLoader = new GLTFLoader();
 		this.dracoLoader = new DRACOLoader();
 		// 'https://www.gstatic.com/draco/v1/decoders/'
@@ -346,6 +348,8 @@ export class World {
 					threeObj.position.set(-15, -117, -22);
 					threeObj.scale.multiplyScalar(25);
 					//this.door.position.x = -2;
+					this.door.material.emissive = new THREE.Color(0x808080); // Colore emissivo (verde in questo caso)
+                    this.door.material.emissiveIntensity = 0.025;
 					this.add(object.scene);
 					resolve();
 				}
@@ -431,7 +435,7 @@ export class World {
 	loadFonts() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'Beauty.json',
+				'Font/404font.json',
 				(font) => {
 					this.font = font;
 					const geometry = new TextGeometry( 'PONG', {
@@ -446,16 +450,17 @@ export class World {
 					geometry.computeBoundingBox();
 					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 					text.rotation.set (Math.PI/2, Math.PI/2, 0);
-					text.position.set(-125, 0, 47)
+					text.scale.multiplyScalar(1/1.7);
+					text.position.set(-125, 0, 50)
 					const neonLight = new THREE.PointLight(emissive_color, 15, 100000000, 0.6);
-					neonLight.position.set(-110, 0, 47);
+					neonLight.position.set(-110, 0, 50);
 
 					const neon2 = neonLight.clone()
 					const text2 = text.clone()
 					text2.scale.x = -text2.scale.x;
 					text2.position.set(0,0,0);
-					text2.position.set(124, 0, 47)
-					neon2.position.set(110, 0, 47);
+					text2.position.set(124, 0, 50)
+					neon2.position.set(110, 0, 50);
 
 
 					this.add(neonLight);
@@ -471,6 +476,183 @@ export class World {
 				(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% font loaded'),
 				(error) => reject(error)
 			)
+		});
+	}
+
+	loadNickName_1() {
+		return new Promise((resolve, reject) => {
+			this.fontLoader.load(
+				'Font/Dark Underground_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'NickName 1', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0x6AE258, emissive: 0x6AE258, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					//text.add(new THREE.PointLight(0x6AE258, 5, 100000000, 0.6));
+					text.rotation.set (Math.PI/2, Math.PI/2, 0);
+					text.position.set(-124, -70, 55);
+					text.scale.multiplyScalar(1 / 2);
+					const text2 = text.clone();
+					text2.position.set(124, 70, 55);
+					text2.scale.x = -text2.scale.x;
+					const text3 = text.clone();
+					text3.rotation.set(0, 0 ,0);
+					text3.scale.multiplyScalar(1 / 2);
+					text3.position.set(-30,50, -22);
+					this.add(text3);
+					this.add(text);
+					this.add(text2);
+					resolve();
+			});
+		}),
+		(error)=> reject(error);
+	}
+
+	loadNickName_2() {
+		return new Promise((resolve, reject) => {
+			this.fontLoader.load(
+				'Font/Dark Underground_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'NickName 2', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					//text.add(new THREE.PointLight(0xB92727, 5, 100000000, 0.6));
+					text.rotation.set (Math.PI/2, Math.PI/2, 0);
+					text.position.set(-124, 70, 55);
+					text.scale.multiplyScalar(1 / 2);
+					const text2 = text.clone();
+					text2.position.set(124, -70, 55);
+					text2.scale.x = -text2.scale.x;
+					const text3 = text.clone();
+					text3.rotation.set(0, 0 ,0);
+					text3.scale.multiplyScalar(1 / 2);
+					text3.position.set(30,50, -22);
+					this.add(text3);
+					this.add(text);
+					this.add(text2);
+					resolve();
+			});
+		}),
+		(error)=> reject(error);
+	}
+
+	loadNameTeem(){
+		return new Promise((resolve, reject)=>{
+			this.fontLoader.load(//viktor
+				'Font/Underground NF_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'Vguidoni', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const emissiv_color = 0x000000;
+					const material = new THREE.MeshPhongMaterial( { color: emissiv_color, emissive: emissiv_color, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, 0, Math.PI/6);
+					text.position.set(80, 124, 90);
+					text.scale.multiplyScalar(1 / 2);
+					this.add(text);
+			})
+			this.fontLoader.load(//ivana
+				'Font/Dark Underground_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'Ivana', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, 0, 0);
+					text.position.set(0, 124, 0);
+					text.scale.multiplyScalar(1 / 1.5);
+					this.add(text);
+				})
+			this.fontLoader.load(//ale
+				'Font/Sportrop_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'AleGreci', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, 0, -Math.PI/6);
+					text.position.set(-80, 124, 90);
+					text.scale.multiplyScalar(1 / 2);
+					this.add(text);
+				})
+			this.fontLoader.load(//manuel
+				'Font/Chicago_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'Manuel', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, 0, -Math.PI/6);
+					text.position.set(65, 124, 45);
+					text.scale.multiplyScalar(1 / 2);
+					this.add(text);
+				})
+			this.fontLoader.load(//damiano
+				'Font/Polentical Neon_Bold.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'dcolucci', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0x56D6DF, emissive: 0x56D6DF, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, 0, Math.PI/10);
+					text.position.set(-75, 124, 45);
+					text.scale.multiplyScalar(1 / 2.5);
+					this.add(text);
+				})
+			this.fontLoader.load(//questo per il nome del teem
+				'Font/Sportrop_Regular.json',
+				(font)=>{
+					const geometry = new TextGeometry( 'POLLETTI', {
+						font: font,
+						size: 22,
+						height: 1,
+					});
+					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
+					const text = new THREE.Mesh( geometry, material );
+					geometry.computeBoundingBox();
+					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
+					text.rotation.set (Math.PI/2, Math.PI, 0);
+					text.position.set(0, -124, 110);
+					text.scale.multiplyScalar(1);
+					this.add(text);
+				})
+			resolve();
 		});
 	}
 
@@ -519,7 +701,11 @@ export class World {
 		this.loadNeon_angular(),
 		this.loadTable(),
 		this.loadFonts(),
-		this.loadPolletto()
+		this.loadNickName_1(),
+		this.loadNickName_2(),
+		this.loadNameTeem()
+
+		//this.loadPolletto()
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
