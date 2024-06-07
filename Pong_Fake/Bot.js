@@ -74,7 +74,7 @@ export class MatchBot extends Match {
         else
             firstDeltaX = (startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
 
-        midDeltaX = 54 * Math.sin( (Math.PI / 2 ) - alpha )
+        midDeltaX = 54 * Math.tan( (Math.PI / 2 ) - alpha )
 
         iterator = startPosition[0] + firstDeltaX;
         let collisions = false;
@@ -86,17 +86,24 @@ export class MatchBot extends Match {
         }
 
         if (collisions){
-            console.log("collisions detected");
+            // console.log("collisions detected");
+            // iterator -= midDeltaX;
+            // let finalDirY = (!(numberOfCollisions % 2)) ? Math.sign(directionY) : -Math.sign(directionY) ;
+            // let destinationY = (108 - iterator) * Math.tan(alpha);
+            // if (finalDirY > 0)
+            //     return (destinationY -27)
+            // else
+            //     return (108 - destinationY - 27)
             iterator -= midDeltaX;
-            numberOfCollisions--;
-            let finalDirectionSign = 1;
-            if (numberOfCollisions % 2)
-                finalDirectionSign = directionY * (-1);
             let destinationY = (108 - iterator) * Math.tan(alpha);
-            if (finalDirectionSign > 0)
-                return (startPosition[1] + destinationY) - 27;
-            else
-                return (startPosition[1] - destinationY) - 27;
+            if (directionY > 0 && !(numberOfCollisions % 2))
+                return (destinationY - 27);
+            else if (directionY > 0 && (numberOfCollisions % 2))
+                return (54 - destinationY - 27);
+            else if (directionY < 0 && !(numberOfCollisions % 2))
+                return (54 - destinationY -27);
+            else if (directionY < 0 && (numberOfCollisions % 2))
+                return (destinationY- 27);
         }
         else {
             console.log("no collisions");
@@ -108,9 +115,7 @@ export class MatchBot extends Match {
             else
                 return (startPosition[1] - destinationY) - 27;
         }
-        
-        console.log("FINE");
-        return(0);
+        return (0);
     }
     
     updateMovements() {
@@ -127,40 +132,21 @@ export class MatchBot extends Match {
         }
         if (this.bot2.mesh.position.y < this.bot2.destinationY && this.bot2.mesh.position.y < UTILS.MAX_SIZEY){
             this.bot2.mesh.position.y += this.bot2.speed;
+            // this.bot2.mesh.position.y = this.bot2.destinationY;
             if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
                 this.bot2.mesh.position.y = this.bot2.destinationY;
         }
         else if (this.bot2.mesh.position.y > this.bot2.destinationY  && this.bot2.mesh.position.y > UTILS.MIN_SIZEY){
             this.bot2.mesh.position.y -= this.bot2.speed;
+            // this.bot2.mesh.position.y = this.bot2.destinationY;
             if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
                 this.bot2.mesh.position.y = this.bot2.destinationY;
         }
 	}
 
     updateMovementsBot(){
-        //formula per calcorare la direzione della pallina all'estremità del tavolo  
-        // if(this.time_end == true){
-        //     if(this.bot1 && this.activeBot1 == true){
-        //         if(this.bot1.position.mesh.y > this.ball.position.mesh.y){
-        //             this.bot1.position.mesh.y -= UTILS.MOVSPEED;
-        //         }
-        //         else if(this.bot1.position.mesh.y < this.ball.position.mesh.y){
-        //             this.bot1.position.mesh.y += UTILS.MOVSPEED;
-        //         }
-        //     }
-        //     if(this.bot2 && this.activeBot2 == true){
-        //         if(this.bot2.position.mesh.y > this.ball.position.mesh.y){
-                    
-        //             this.bot2.position.mesh.y -= UTILS.MOVSPEED;
-        //         }
-        //         else if(this.bot2.position.mesh.y < this.ball.position.mesh.y){
-                    
-        //             this.bot2.position.mesh.y += UTILS.MOVSPEED;
-        //         }
-        //     }
-        // }
 
-        if (((new Date()) - this.time_update) < 1000)
+        if (((new Date()) - this.time_update) < 1700)
             return ;
 
         this.time_update = new Date();
@@ -174,69 +160,162 @@ export class MatchBot extends Match {
 
         this.bot2.destinationY = (this.pointPrediction());
         console.log("destination: " + this.bot2.destinationY);
-
-        // const distance = Math.abs(this.bot2.mesh.position.y - this.ball.mesh.position.y)
-
-        // if (this.bot2.mesh.position.y - this.ball.mesh.position.y < 0 && (distance > 0.1))
-        // {
-        //     this.bot2.moves.up = true
-        //     this.bot2.moves.down = falses
-        // }
-        // else if (this.bot2.mesh.position.y - this.ball.mesh.position.y > 0 && (distance > 0.1))
-        // {
-        //     this.bot2.moves.up = false
-        //     this.bot2.moves.down = true
-        // }
-        // else
-        // {
-        //     this.bot2.moves.up = false
-        //     this.bot2.moves.down = false
-        // }
-
-/*         if(!UTILS.checkCollision(this.bot2.mesh, this.ball.mesh) && this.collision){
-            if(this.bot2.mesh.position.y > 0){
-                this.bot2.moves.down = true;
-            }
-            else if(this.bot2.mesh.position.y < 0){
-                this.bot2.moves.up = true;
-            }
-            else{
-                this.bot2.moves.down = false;
-                this.bot2.moves.up = false;
-            }
-        } */
-        /* if(!UTILS.checkCollision(this.bot1.mesh, this.ball.mesh) && this.collision){
-            if(this.bot1.position.y > 0){
-                this.bot1.position.y -= UTILS.MOVSPEED;
-            }
-            else if(this.bot1.position.y < 0){
-                this.bot1.position.y += UTILS.MOVSPEED;
-            }
-        } */
-/*         if(UTILS.checkCollision(this.bot1, this.ball) && !this.collision){
-            this.ball.direction.x *= -1;
-			this.ball.direction.y = (this.ball.mesh.position.y - this.bot1.mesh.position.y)/10;
-			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-			this.ball.direction.x = normalizedVector[0];
-			this.ball.direction.y = normalizedVector[1];
-			this.collision = true;
-			this.updateExchanges();
-			this.handlePowerUp(this.bot1);
-			this.addPowerUp();
-            this.timer_start = 0;
-        }
-        if(UTILS.checkCollision(this.bot2.mesh, this.ball.mesh) && !this.collision){
-            this.ball.direction.x *= -1;
-			this.ball.direction.y = (this.ball.mesh.position.y - this.bot2.mesh.position.y)/10;
-			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-			this.ball.direction.x = normalizedVector[0];
-			this.ball.direction.y = normalizedVector[1];
-			this.collision = true;
-			this.updateExchanges();
-			this.handlePowerUp(this.bot2);
-			this.addPowerUp();
-            this.timer_start = 0;
-        } */
     }
+
+    updateScore() {
+		if (this.ball.mesh.position.x < 0)
+			this.score2++;
+		else
+			this.score1++;
+		this.updateScoreText();
+		if (this.score1 == this.maxScore || this.score2 == this.maxScore)
+			this.gameEnd();
+		this.ball.mesh.position.x = 0;
+		this.ball.mesh.position.y = 0;
+		this.ball.mesh.position.z = 0;
+		this.player1.mesh.position.y = 0;
+		this.player2.mesh.position.y = 0;
+		this.player1.mesh.position.z = -10;
+		this.player2.mesh.position.z = -10;
+		this.player1.powerUp = null;
+		this.player2.powerUp = null;
+		this.player1.speed = UTILS.MOVSPEED;
+		this.player2.speed = UTILS.MOVSPEED;
+		this.ball.speed = UTILS.STARTINGSPEED;
+		this.player1.mesh.scale.set(1, 1, 1);
+		this.player2.mesh.scale.set(1, 1, 1);
+		// Reset direction
+		this.ball.direction.y = 0;
+		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+		this.ball.direction.x = normalized[0];
+
+		// Triple Ball
+		this.remove_triple();
+
+
+        // Reset bot destination
+        this.bot2.destinationY = 0;
+
+		// Exchanges
+		this.exchanges = 0;
+		this.exchangesText = this.exchangesTextInit();
+	}
+
+    // region update()
+
+    update() {
+		this.updateMovements();
+		this.world.rotatePowerUp();
+
+		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
+		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
+		this.ball.mesh.position.z = this.ball.getZ();
+
+		// Triple ball update
+		if (this.tripleEnabled) {
+			const ball1 = this.fakeBalls[0];
+			const ball2 = this.fakeBalls[1];
+
+			ball1.mesh.position.x += ball1.speed * ball1.direction.x;
+			ball1.mesh.position.y += ball1.speed * ball1.direction.y;
+			ball1.mesh.position.z = ball1.getZ();
+
+			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
+			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
+			ball2.mesh.position.z = ball2.getZ();
+
+			// console.log(ball1.mesh.position);
+		}
+
+		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
+		{
+			/* if (ball.speed < 2)
+				ball.speed *= ACCELERATION; */
+			this.ball.direction.x *= -1;
+			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
+			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+			this.ball.direction.x = normalizedVector[0];
+			this.ball.direction.y = normalizedVector[1];
+			
+			this.collision = true;
+			this.updateExchanges();
+
+			this.handlePowerUp(this.player1);
+			this.addPowerUp();
+			//test funzione
+		}
+		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
+		{
+			// if (ball.speed  < 2)
+			// 	ball.speed  *= ACCELERATION;
+			this.ball.direction.x *= -1;
+			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+			this.ball.direction.x = normalizedVector[0];
+			this.ball.direction.y = normalizedVector[1];
+
+			this.collision = true;
+			this.updateExchanges();
+
+			this.handlePowerUp(this.player2);
+			this.addPowerUp();
+            this.bot2.destinationY = 0;
+		}
+        // Bot movements
+        this.updateMovementsBot();
+		// PowerUp collision
+		if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
+
+			this.world.remove(this.world.powerUp.mesh);
+			this.activePowerUp = false;
+			this.waitPowerup = 0;
+
+			// Powerup assignment
+
+			this.player1.powerUp = null;
+			this.player2.powerUp = null;
+
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
+				this.player2.powerUp = this.world.powerUp;
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
+				this.player1.powerUp = this.world.powerUp;
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
+				this.player1.powerUp = this.world.powerUp;
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
+				this.player2.powerUp = this.world.powerUp;
+
+			this.powerUpTaken();
+		}
+
+
+
+		if (UTILS.wallCollision(this.ball))
+			this.ball.direction.y *= -1;
+
+		//Reset positions
+		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
+			this.updateScore();
+
+		// If triple ball is enabled
+		if (this.tripleEnabled) {
+			const b1 = this.fakeBalls[0];
+			const b2 = this.fakeBalls[1];
+
+			// Triple ball wall collision
+			if (UTILS.wallCollision(b1))
+				b1.direction.y *= -1;
+			if (UTILS.wallCollision(b2))
+				b2.direction.y *= -1;
+
+			// Triple ball table limit
+			if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
+				this.world.remove(b1.mesh);
+			if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
+				this.world.remove(b2.mesh);
+		}
+
+		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
+			this.collision = false;
+	}
 }
 

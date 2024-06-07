@@ -250,7 +250,7 @@ world.ready.then(() => {
 	var gameLoop = function()
 	{
 		requestAnimationFrame(gameLoop);
-		match.updateMovementsBot();
+		// match.updateMovementsBot();
 		match.update();
 		match.render();
 	};
