@@ -26,6 +26,8 @@ urlpatterns = [
 	path('is_authenticated/', views.is_authenticated, name='is_authenticated'),
     path('send_friend/<str:username>/', views.sendFriendRequest, name='send_friend'),
     path('image_upload/', views.ImageUpload.as_view(), name='image_upload'),
+	path('item_show/', views.item_show, name='item_show'),
+	path('home/', views.home, name='home'),
 ]
 
 # To serve media files in development, because they are not server by default in development

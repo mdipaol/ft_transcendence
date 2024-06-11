@@ -1,0 +1,14 @@
+{% load static %}
+
+<section class="container-md" style="width: 20rem;">
+    <div class="card">
+        {% comment %} <img src=${img} class="card-img-top" alt=${name} id="characterImage"> {% endcomment %}
+        <div class="card-body">
+            <h5 class="card-title">{{nickname}}</h5>
+            <p class="card-text">Known as ${nickname}.</p>
+            <p class="card-text">Score ${score}.</p>
+            <p class="card-text">Level ${level}.</p>
+            <a href="/#/items" class="btn btn-dark">Go Back</a>
+        </div>
+    </div>
+</section>

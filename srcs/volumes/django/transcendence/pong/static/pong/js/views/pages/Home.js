@@ -1,17 +1,19 @@
+import { parseRequestUrl } from '../../services/utils.js';
+
 const Home = {
   /**
    * Render the page content.
    */
   render: async () => {
-    return /*html*/ `
-      <section class="flex-container">
-        <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
-        <h1 class="neonbar">OR</h1>
-        <h1><a class="neonpink" href="/#/">REGISTER!</a></h1>
-        <div class="neon-button-wrapper">
-    </div>
-      </section>
-    `;
+    const params = parseRequestUrl();
+    // Get destructured data from API based on id provided.
+    // const { name, nickname, img, score, level } = await getItem(
+    //   params.id
+    // );
+    const response = await fetch(`https://${window.location.host}/home/`)
+    console.log(response);
+    console.log(response.text);
+    return response.text();
   },
  /**
    * All DOM related interactions and controls are typically put in place once the DOM 

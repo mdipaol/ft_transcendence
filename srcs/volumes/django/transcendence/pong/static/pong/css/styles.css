@@ -46,7 +46,7 @@ body {
 }
 
 #page_root {
-	display: flex;
+	/* display: flex; */
 	justify-content: center;
 	align-items: center;
 	flex-grow: 1;

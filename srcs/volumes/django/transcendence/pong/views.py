@@ -251,3 +251,14 @@ def is_authenticated(request):
 
 def personal_profile(request):
 	return HttpResponseRedirect(reverse('pong:profile/' + request.user.get_username()))
+
+def home(request):
+	if request.method == 'GET':
+		return render(request, 'pong/home.html')
+
+def item_show(request):
+	if request.method == 'GET':
+		context = {
+			"nickname" : request.user.get_username(),
+		}
+		return render(request, 'pong/item_show.html', context)

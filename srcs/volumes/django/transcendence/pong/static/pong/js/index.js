@@ -2,13 +2,12 @@
 import Home from './views/pages/Home.js';
 import About from './views/pages/About.js';
 import Tournament from './views/pages/Tournament.js';
-import ItemShow from './views/pages/ItemShow.js';
+import ItemShow from './views/pages/ItemShow.js'
 import Account from './views/pages/Account.js';
 import Error404 from './views/pages/Error404.js';
 import Pong from './views/pages/Pong.js';
 import Register from './views/pages/Register.js';
 import Login from './views/pages/Login.js';
-
 import Navbar from './views/components/Navbar.js';
 import Footer from './views/components/Footer.js';
 
