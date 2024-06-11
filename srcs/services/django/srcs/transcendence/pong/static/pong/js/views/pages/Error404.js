@@ -5,7 +5,10 @@ const Error404 = {
   render: async () => {
     return /*html*/ `
       <section>
-        <h1 class="text-center">Error 404. Page not found.</h1>
+        <button class="neon-button">
+        <div class="glow"></div>
+        <span class="inner-button black">404 o 104?</span>
+    </button>
       </section>
     `;
   },

@@ -1,7 +1,7 @@
 // Import pages, components and helper functions.
 import Home from './views/pages/Home.js';
 import About from './views/pages/About.js';
-import Items from './views/pages/Items.js';
+import Tournament from './views/pages/Tournament.js';
 import ItemShow from './views/pages/ItemShow.js';
 import Account from './views/pages/Account.js';
 import Error404 from './views/pages/Error404.js';
@@ -20,7 +20,7 @@ const routes = {
   '/home': Home,
   '/pong': Pong,
   '/aboutus': About,
-  '/items': Items,
+  '/tournament': Tournament,
   '/items/:id': ItemShow,
   '/account': Account,
   '/login': Login,
