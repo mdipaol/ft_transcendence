@@ -1,0 +1,207 @@
+/* ----- general -----*/
+body {
+	display: flex;
+	height: 100vh;
+	box-sizing: border-box;
+	background: black;
+}
+
+.field {
+	margin: auto auto;
+	width: 170px;
+	height: 40px;
+	position: relative;
+    right: 10%;
+	
+	.net {
+		width: 0;
+		height: 95%;
+		
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		
+		border-width: 3px;
+		border-style: dotted;
+		border-color: white;
+	}
+	
+	.ping, .pong {
+		width: 4px;
+		height: 16px;
+		border-radius: 20%;
+		position: absolute;
+        left: 10;
+		background: rgba(118, 206, 92, 0.863);
+        filter: brightness(200%) drop-shadow(0 0 10px cyan);
+        animation: neon 1s ease-in-out infinite alternate;
+	}
+	
+	.ping {
+        left: 6%;
+        animation-name: ping, glow1;
+        animation-duration: 6s, 1s;
+        animation-timing-function: linear, ease-in-out;
+        animation-iteration-count: infinite, infinite;
+    }
+    
+    .pong {
+        right: 6%;
+        animation-name: pong, glow1;
+        animation-duration: 6s, 1s;
+        animation-timing-function: linear, ease-in-out;
+        animation-iteration-count: infinite, infinite;
+    }
+    
+	
+	.ball {
+		width: 5px;
+		height: 5px;
+		
+		position: absolute;
+		background: rgb(148, 182, 138);
+        border-radius: 50%;
+		animation-name: glow1;
+		animation: ball 6s infinite linear;
+	}
+}
+
+/* ----- keyframes ------*/
+
+@keyframes glow1 {
+	from {
+		text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6, 0 0 25px #0073e6, 0 0 30px #0073e6, 0 0 35px #0073e6;
+	}
+	to {
+		text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6, 0 0 50px #0073e6, 0 0 60px #0073e6, 0 0 70px #0073e6;
+	}
+}
+
+@keyframes ball {
+	0% { 
+		top: 34%;
+		left: 52%;
+	}
+	8.3% { 
+		top: 52%;
+		left: 90%;
+	}
+	24.9% { 
+		top: 85%;
+		left: 8%;
+	}
+	30% {
+		top: 98%;
+		left: 27%;
+	}
+	41.5% { 
+		top: 70%;
+		left: 90%;
+	}
+	58.1% { 
+		top: 55%;
+		left: 8%;
+	}
+	74.7% { 
+		top: 13%;
+		left: 90%;
+	}
+	79% {
+		top: 1%;
+		left: 70%;
+	}
+	91.3% { 
+		top: 22%;
+		left: 8%;
+	}
+	100% { 
+		top: 34%;
+		left: 52%;
+	}
+}
+/* left player*/
+@keyframes ping { 
+	0% {
+		top: 10%;
+	}
+	5% {
+		top: 10%;
+	}
+	9% {
+		top: 24%;
+	}
+	13% {
+		top: 17%;
+	}
+	24.9% { 
+		top: 82%;
+	}
+	47% {
+		top: 37%;
+	}
+	52% {
+		top: 41%;
+	}
+	56% {
+		top: 64%;
+	}
+	58.1% { 
+		top: 54%;
+	}
+	70% {
+		top: 74%;
+	}
+	84% {
+		top: 12%;
+	}
+	91.3% { 
+		top: 18%;
+	}
+	100% {
+		top: 10%;
+	}
+}
+
+/*right player*/
+@keyframes pong { 
+	0% {
+		top: 90%;
+	}
+	8.3% { 
+		top: 51%;
+	}
+	20% {
+		top: 60%;
+	}
+	25% {
+		top: 40%;
+	}
+	41.5% { 
+		top: 80%;
+	}
+	46% {
+		top: 36%;
+	}
+	52% {
+		top: 18%;
+	}
+	58.1% {
+		top: 53%;
+	}
+	66% {
+		top: 14%;
+	}
+	70% {
+		top: 20%;
+	}
+	74.7% {
+		top: 10%;
+	}
+	91.3% { 
+		top: 10%;
+	}
+	100% {
+		top: 90%;
+	}
+}
