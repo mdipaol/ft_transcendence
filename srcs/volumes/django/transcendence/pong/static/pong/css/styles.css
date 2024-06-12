@@ -4,7 +4,8 @@ body {
 	flex-direction: column;
 	min-height: 100vh;
 	margin: 0;
-	background-image: url('https://i.ibb.co/9nccbN4/wall.jpg');
+	/* background-image: url('https://i.ibb.co/9nccbN4/wall.jpg'); */
+	background-color: #000;
 	background-size: 90%;
 	background-repeat: repeat;
 	background-attachment: fixed;
@@ -22,9 +23,9 @@ body {
 
 #header_root,
 #footer_root {
-	background-color: #f8f9fa;
 	padding: 20px;
-	background-image: url('https://i.ibb.co/9nccbN4/wall.jpg');
+	/* background-image: url('https://i.ibb.co/9nccbN4/wall.jpg'); */
+	background-color: #000;
 	background-size: 90%;
 	background-repeat: repeat;
 	background-attachment: fixed;
@@ -50,7 +51,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	flex-grow: 1;
-	background-image: url('https://i.ibb.co/9nccbN4/wall.jpg');
+	/* background-image: url('https://i.ibb.co/9nccbN4/wall.jpg'); */
 	background-size: 90%;
 	background-repeat: repeat;
 	background-attachment: fixed;
@@ -62,7 +63,8 @@ body {
 }
 
 nav {
-	background-image: url('https://i.ibb.co/9nccbN4/wall.jpg');
+	/* background-image: url('https://i.ibb.co/9nccbN4/wall.jpg'); */
+	background-color: #000;
 	background-size: 90%;
 	background-repeat: repeat;
 	background-attachment: fixed;

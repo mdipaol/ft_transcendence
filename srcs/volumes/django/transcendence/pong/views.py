@@ -136,7 +136,7 @@ class LoginCustomView(View):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			form.save(request)
-			return HttpResponse("Succesfull login")
+			return render(request, 'pong/home.html')
 		return render(request, 'pong/login.html', {'form': form})
 
 
@@ -262,3 +262,7 @@ def item_show(request):
 			"nickname" : request.user.get_username(),
 		}
 		return render(request, 'pong/item_show.html', context)
+
+def account(request):
+	if request.method == 'GET':
+		return render(request, 'pong/account.html')

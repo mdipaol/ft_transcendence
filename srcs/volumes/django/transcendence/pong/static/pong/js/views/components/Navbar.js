@@ -14,7 +14,7 @@ const Navbar = {
       )
       .join('\n');
     return `
-      <nav class="navbar navbar-expand-md navbar-light bg-white">
+      <nav class="navbar navbar-expand-md navbar-light">
         <a class="navbar-brand" href="/#">
         <div class="field">
         <div class="ping"></div>

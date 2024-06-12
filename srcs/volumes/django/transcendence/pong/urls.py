@@ -28,6 +28,7 @@ urlpatterns = [
     path('image_upload/', views.ImageUpload.as_view(), name='image_upload'),
 	path('item_show/', views.item_show, name='item_show'),
 	path('home/', views.home, name='home'),
+	path('account/', views.account, name='account'),
 ]
 
 # To serve media files in development, because they are not server by default in development
