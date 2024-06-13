@@ -11,8 +11,6 @@ const Register = {
     //   params.id
     // );
     const response = await fetch(`https://${window.location.host}/registration/`)
-    console.log(response);
-    console.log(response.text);
     return response.text();
   },
   /**

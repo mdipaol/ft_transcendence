@@ -1,5 +1,21 @@
 import { parseRequestUrl } from '../../services/utils.js';
 
+function triggerHashChange(hash) {
+  // Store the current hash
+  var currentHash = window.location.hash;
+
+  // If the current hash is the same as the desired hash, temporarily change it
+  if (currentHash === `#${hash}`) {
+    window.location.hash = '';  // Clear the hash
+    setTimeout(function() {
+      window.location.hash = '#' + hash;  // Set the desired hash
+    }, 0);  // Delay is 0 to ensure the change is noticed
+  } else {
+    // If the current hash is different, simply set the desired hash
+    window.location.hash = '#' + hash;
+  }
+}
+
 const Home = {
   /**
    * Render the page content.
@@ -11,8 +27,6 @@ const Home = {
     //   params.id
     // );
     const response = await fetch(`https://${window.location.host}/home/`)
-    console.log(response);
-    console.log(response.text);
     return response.text();
   },
  /**
@@ -20,6 +34,9 @@ const Home = {
    * is fully loaded. This is because any manipulations or interactions with the DOM elements 
    * must be done after these elements have been fully rendered on the page.
    */
+
+ 
+
   after_render: async () => 
     {
       const button = document.getElementById("logout-button");
@@ -28,8 +45,10 @@ const Home = {
           try {
             const response = await fetch(`https://${window.location.host}/logout/`);
             if (response.ok) {
-             window.location.hash = '#/home/';
-            //  await Home.renderContent();
+          //  window.location.hash = '#/';
+            triggerHashChange('/home/');
+            console.log(response);
+            //await Home.renderContent();
             } else {
               console.error('Logout failed.');
             }

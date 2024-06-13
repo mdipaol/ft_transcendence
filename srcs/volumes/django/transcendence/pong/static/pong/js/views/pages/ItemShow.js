@@ -37,9 +37,7 @@ const ItemShow = {
     // const { name, nickname, img, score, level } = await getItem(
     //   params.id
     // );
-    const response = await fetch(`https://${window.location.host}/item_show/`)
-    console.log(response);
-    console.log(response.text);
+    const response = await fetch(`https://${window.location.host}/item_show/`);
     return response.text();
     // /*html*/ `
     //   <section class="container-md" style="width: 20rem;">

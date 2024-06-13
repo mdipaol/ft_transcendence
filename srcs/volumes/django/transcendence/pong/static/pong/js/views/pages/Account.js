@@ -11,8 +11,6 @@ const Home = {
     //   params.id
     // );
     const response = await fetch(`https://${window.location.host}/account/`)
-    console.log(response);
-    console.log(response.text);
     return response.text();
   },
  /**

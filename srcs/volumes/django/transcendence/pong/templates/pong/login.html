@@ -1,6 +1,6 @@
 
 <h2>Login</h2>
-<form action="{% url 'pong:login' %}" method="post">
+<form action="{% url 'pong:login' %}" method="post" id="login-form">
 	{% csrf_token %}
 	{% for field in form %}
 	<div>
@@ -10,3 +10,4 @@
 	{% endfor %}
 	<input type="submit" value="Submit">
 </form>
+<div id="error-message"></div>
