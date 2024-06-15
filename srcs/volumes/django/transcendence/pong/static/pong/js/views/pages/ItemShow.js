@@ -26,34 +26,31 @@ const getItem = async id => {
   }
 };
 
-const ItemShow = {
-  /**
-   * Render the page content.
-   */
-  render: async () => {
-    // Get current URL params.
-    const params = parseRequestUrl();
-    // Get destructured data from API based on id provided.
-    // const { name, nickname, img, score, level } = await getItem(
-    //   params.id
-    // );
-    const response = await fetch(`https://${window.location.host}/item_show/`);
-    return response.text();
-    // /*html*/ `
-    //   <section class="container-md" style="width: 20rem;">
-    //     <div class="card">
-    //       <img src=${img} class="card-img-top" alt=${name} id="characterImage">
-    //       <div class="card-body">
-    //         <h5 class="card-title">${name}</h5>
-    //         <p class="card-text">Known as ${nickname}.</p>
-    //         <p class="card-text">Score ${score}.</p>
-    //         <p class="card-text">Level ${level}.</p>
-    //         <a href="/#/items" class="btn btn-dark">Go Back</a>
-    //       </div>
-    //     </div>
-    //   </section>
-    // `;
-  },
+// const ItemShow = {
+//   /**
+//    * Render the page content.
+//    */
+//   render: async () => {
+//     // Get current URL params.
+//     const params = parseRequestUrl();
+//     // Get destructured data from API based on id provided.
+//     const { name, nickname, img, wins, level } = await getItem(params.id);
+    
+//     return `
+//       <section class="container-md" style="width: 20rem;">
+//         <div class="card">
+//           <img src="${img}" class="card-img-top" alt="${name}" id="characterImage">
+//           <div class="card-body">
+//             <h5 class="card-title">${name}</h5>
+//             <p class="card-text">Known as ${nickname}.</p>
+//             <p class="card-text">Wins ${wins}.</p>
+//             <p class="card-text">Level ${level}.</p>
+//             <a href="/#/home" class="btn btn-dark">Go Back</a>
+//           </div>
+//         </div>
+//       </section> 
+//     `;
+//   // },
   /**
    * All DOM related interactions and controls are typically put in place once the DOM 
    * is fully loaded. This is because any manipulations or interactions with the DOM elements 
@@ -65,6 +62,6 @@ const ItemShow = {
       .querySelector('#characterImage')
       .addEventListener('click', () => alert('stocazzo, stocazzo, stocazzone!'));
   }
-};
+;
 
 export default ItemShow;

@@ -265,4 +265,13 @@ def item_show(request):
 
 def account(request):
 	if request.method == 'GET':
-		return render(request, 'pong/account.html')
+		user = request.user
+		context = {}
+		if user.is_authenticated:
+			context = {
+				'nickname' : user.username,
+				'img' : user.image,
+				'email' : user.email,
+				'level' : user.level,
+			}
+		return render(request, 'pong/account.html', context)

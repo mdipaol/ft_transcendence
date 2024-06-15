@@ -22,3 +22,19 @@ export const parseRequestUrl = () => {
   // Return and object with params.
   return request;
 };
+
+export default function triggerHashChange(hash) {
+  // Store the current hash
+  var currentHash = window.location.hash;
+
+  // If the current hash is the same as the desired hash, temporarily change it
+  if (currentHash === `#${hash}`) {
+    window.location.hash = '';  // Clear the hash
+    setTimeout(function() {
+      window.location.hash = '#' + hash;  // Set the desired hash
+    }, 0);  // Delay is 0 to ensure the change is noticed
+  } else {
+    // If the current hash is different, simply set the desired hash
+    window.location.hash = '#' + hash;
+  }
+}

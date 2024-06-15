@@ -9,5 +9,16 @@
     </div>
 </section>
 {% else %}
-
+<section class="container-md" style="width: 20rem;">
+    <div class="card">
+        <img src="{{img}}" class="card-img-top" alt="avatar" id="characterImage">
+        <div class="card-body">
+            <h5 class="card-title"></h5>
+            <p class="card-text">Known as {{nickname}}.</p>
+            <p class="card-text">Level {{level}}.</p>
+            <p class="card-text">Email {{email}}.</p>
+            <a href="/#/home" class="btn btn-dark">Go Back</a>
+        </div>
+    </div>
+</section>
 {% endif %}
