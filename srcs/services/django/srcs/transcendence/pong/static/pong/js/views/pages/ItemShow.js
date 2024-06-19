@@ -26,6 +26,8 @@ const getItem = async id => {
   }
 };
 
+const ItemShow = {}
+
 // const ItemShow = {
 //   /**
 //    * Render the page content.
@@ -56,12 +58,12 @@ const getItem = async id => {
    * is fully loaded. This is because any manipulations or interactions with the DOM elements 
    * must be done after these elements have been fully rendered on the page.
    */
-  after_render: async () => {
-    // Add event listener with a simple alert.
-    document
-      .querySelector('#characterImage')
-      .addEventListener('click', () => alert('stocazzo, stocazzo, stocazzone!'));
-  }
-;
+//   after_render: async () => {
+//     // Add event listener with a simple alert.
+//     document
+//       .querySelector('#characterImage')
+//       .addEventListener('click', () => alert('stocazzo, stocazzo, stocazzone!'));
+//   }
+// ;
 
 export default ItemShow;
