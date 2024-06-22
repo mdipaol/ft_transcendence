@@ -24,9 +24,14 @@ const Home = {
 
   after_render: async () => 
     {
-      const button = document.getElementById("logout-button");
-      if (button) {
-        button.addEventListener('click', async () => {
+      const logoutButton = document.getElementById("logout-button");
+      const playOnlineButton = document.getElementById("play-online-button");
+      const playOfflineButton = document.getElementById("play-offline-button")
+
+      console.log(playOfflineButton)
+
+      if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
           try {
             const response = await fetch(`https://${window.location.host}/logout/`);
             if (response.ok) {
@@ -41,6 +46,21 @@ const Home = {
             console.error('An error occurred during logout:', error);
           }
         });
+    }
+
+    if (playOnlineButton) {
+      playOnlineButton.addEventListener('click', async () => {
+          const response = await fetch(`https://${window.location.host}/game/`)
+          return response.text();
+      });
+    }
+    
+    if (playOfflineButton) {
+        playOfflineButton.addEventListener('click', async () => {
+          const response = await fetch(`https://${window.location.host}/script_game/`)
+          const scripts = await response.text()
+          document.body.appendChild(scripts)
+      });
     }
   }
 };

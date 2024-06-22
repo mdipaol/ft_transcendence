@@ -23,7 +23,7 @@ const routes = {
   '/items/:id': ItemShow,
   '/account': Account,
   '/login': Login,
-  '/register': Register
+  '/register': Register,
 };
 
 /**

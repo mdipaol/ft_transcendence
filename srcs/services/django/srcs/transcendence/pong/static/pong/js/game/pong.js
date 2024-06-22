@@ -177,13 +177,13 @@ function updateMovements()
 {
 	if (p1Moves.up && player1.position.y < 27)
 	{
-		SuperPlayer.position.y += MOVSPEED;
-		socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+		player1.position.y += MOVSPEED;
+		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 	}
 	if (p1Moves.down && player1.position.y > -27)
 	{
-		SuperPlayer.position.y -= MOVSPEED;
-		socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+		player1.position.y -= MOVSPEED;
+		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 	}
 	/*
 	if (SuperPlayer === player2){
@@ -195,13 +195,15 @@ function updateMovements()
 */
 	if (p2Moves.up && player2.position.y < 27)
 	{
-		SuperPlayer.position.y += MOVSPEED;
-		socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+		player2.position.y += MOVSPEED;
+		//SuperPlayer.position.y += MOVSPEED;
+		//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 	}
 	if (p2Moves.down && player2.position.y > -27)
 	{
-		SuperPlayer.position.y -= MOVSPEED;
-		socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+		player2.position.y -= MOVSPEED;
+		//SuperPlayer.position.y -= MOVSPEED;
+		//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 	}
 	/*
 	if (SuperPlayer === player2){
@@ -247,6 +249,7 @@ scene.add(ambientLight);
 
 
 //---------WEBSOCKET----------
+/*
 const socket = new WebSocket(
 	'wss://'
 	+ window.location.host
@@ -283,15 +286,15 @@ socket.addEventListener('message', function (event) {
 			console.log("Player Two WINS")
 		started = false;
 	}
-});
+});*/
 
 
 //---------UPDATE AND RENDER----------
 var update = function()
 {
 	updateMovements()
-	/*ball.position.x += BALLSPEED * directionX;
-	ball.position.y += BALLSPEED * directionY;*/
+	ball.position.x += BALLSPEED * directionX;
+	ball.position.y += BALLSPEED * directionY;
 	if (checkCollision(player1, ball) && !collision)
 	{
 		if (BALLSPEED < 2)
@@ -331,7 +334,6 @@ var update = function()
 
 var render = function()
 {
-	if (started)
 		renderer.render(scene, camera);
 };
 

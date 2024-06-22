@@ -1,24 +1,15 @@
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Game Room</title>
-</head>
-<body>
-    <script>
-        window.staticUrl = "{% static 'pong/' %}"
-    </script>
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "{% static 'pong/js/three/build/three.module.js'%}",
-                "three/addons/": "{% static 'pong/js/three/examples/jsm/'%}"
-            }
-		}
-    </script>
-    <script src = "{% static 'pong/js/game/pong.js' %}" type="module"></script>
-    
-</body>
-</html>
+
+<script>
+    window.staticUrl = "{% static 'pong/' %}"
+</script>
+<script type="importmap">
+    {
+        "imports": {
+            "three": "{% static 'pong/js/three/build/three.module.js'%}",
+            "three/addons/": "{% static 'pong/js/three/examples/jsm/'%}"
+        }
+    }
+</script>
+<script src = "{% static 'pong/js/game/pong.js' %}" type="module"></script>

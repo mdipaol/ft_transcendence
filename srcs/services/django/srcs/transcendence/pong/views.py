@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
 from django.template import loader
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from friendship.models import Friend, Follow, Block
@@ -41,7 +42,7 @@ def sendFriendRequest(request, username):
 		to_send,
 		message='Sono proprio io'
 	)
-	return HttpResponse("Request Sent")	
+	return HttpResponse("Request Sent")
 
 
 class CallbackView(View):
@@ -87,14 +88,29 @@ class CallbackView(View):
 		)
 
 		response = requests.post(token_url, data=data)
-		print(response.text)
 		print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text), indent=4)))
 
-		#image_url
-		#name
-		#email
+		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
+			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
+		}).text)
+
+		print(json_data)
+
+		email = json_data['email']
+		username = json_data['login']
+		image = json_data['image']['link']
+
+		if BaseUser.objects.filter(email=email).exists():
+			user = BaseUser.objects.get(email=email)
+			login(request, user)
+		else:
+			user = BaseUser.objects.create_user(username=username, email=email, password=str(uuid.uuid4()))
+			user.image = image
+			user.save()
+			login(request, user)
+		return HttpResponseRedirect(reverse('pong:index'))
 
 
 class IndexView(TemplateView):
@@ -136,7 +152,7 @@ class LoginCustomView(View):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			form.save(request)
-			return render(request, 'pong/home.html')
+			return render(request, 'pong/spa/home.html')
 		return render(request, 'pong/login.html', {'form': form})
 
 
@@ -227,6 +243,10 @@ def chat_index(request):
 def room(request, room_name):
     return render(request, "pong/room.html", {"room_name": room_name})
 
+def scripts_view(request):
+    script_content = render_to_string('pong/game.html')
+    return HttpResponse(script_content, content_type='application/javascript')
+
 def game(request):
 	return render(request, 'pong/game.html')
 
@@ -254,14 +274,22 @@ def personal_profile(request):
 
 def home(request):
 	if request.method == 'GET':
-		return render(request, 'pong/home.html')
+		return render(request, 'pong/spa/home.html')
+
+def navbar(request):
+	if request.method == 'GET':
+		if not request.user.is_authenticated:
+			links = ['Home', 'AboutUs']
+		else:
+			links = ['Home', 'Tournament', 'Account', 'AboutUs']
+		return render(request, 'pong/spa/navbar.html', {'links' : links})
 
 def item_show(request):
 	if request.method == 'GET':
 		context = {
 			"nickname" : request.user.get_username(),
 		}
-		return render(request, 'pong/item_show.html', context)
+		return render(request, 'pong/spa/item_show.html', context)
 
 def account(request):
 	if request.method == 'GET':
@@ -274,4 +302,4 @@ def account(request):
 				'email' : user.email,
 				'level' : user.level,
 			}
-		return render(request, 'pong/account.html', context)
+		return render(request, 'pong/spa/account.html', context)

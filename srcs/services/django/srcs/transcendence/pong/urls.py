@@ -13,8 +13,8 @@ urlpatterns = [
 	path('', views.IndexView.as_view(), name='index'),
 	path('login42/', views.login42, name='login42'),
 	path('callback/', views.CallbackView.as_view(), name='callback'),
-    path('chat/<str:room_name>/', views.room, name='room'),
     path('game/', views.game, name='game'),
+    path('chat/<str:room_name>/', views.room, name='room'),
     path('chat/', views.chat_index, name='chat'),
 	path('login/', views.LoginCustomView.as_view(), name='login'),
 	path('logout/', views.LogoutView.as_view(), name='logout'),
@@ -29,9 +29,11 @@ urlpatterns = [
 	path('item_show/', views.item_show, name='item_show'),
 	path('home/', views.home, name='home'),
 	path('account/', views.account, name='account'),
+    path('navbar/', views.navbar, name='navbar'),
+    path('script_game/', views.scripts_view, name='scripts_view'),
 ]
 
-# To serve media files in development, because they are not server by default in development
+# To serve media files in development, because they are not served by default in development
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

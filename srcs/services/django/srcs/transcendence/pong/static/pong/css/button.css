@@ -3,6 +3,12 @@
     inherits: true;
     initial-value: 0deg;
 }
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Optional: This makes the container full height */
+  }
 
 .neon-button-wrapper {
     position: relative;

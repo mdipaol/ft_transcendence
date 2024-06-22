@@ -10,12 +10,6 @@ $(NAME): $(SRC)
 nodetatch:
 	@ docker compose --project-directory $(SRC) up --build
 
-start:
-	@ docker compose --project-directory $(SRC) start
-
-stop:
-	@ docker compose --project-directory $(SRC) stop
-
 clean:
 	@ docker compose --project-directory $(SRC) down
 

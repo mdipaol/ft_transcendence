@@ -5,11 +5,6 @@ const Home = {
    * Render the page content.
    */
   render: async () => {
-    const params = parseRequestUrl();
-    // Get destructured data from API based on id provided.
-    // const { name, nickname, img, score, level } = await getItem(
-    //   params.id
-    // );
     const response = await fetch(`https://${window.location.host}/account/`)
     return response.text();
   },

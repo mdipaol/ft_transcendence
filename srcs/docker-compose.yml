@@ -1,5 +1,6 @@
 services:
 
+  # Webserver
   nginx:
     container_name: nginx
     image: nginx:0.1
@@ -16,6 +17,7 @@ services:
     networks:
       - transcendence-network
 
+  # Framework
   django:
     container_name: django
     image: django:0.1
@@ -43,7 +45,8 @@ services:
       - transcendence-network
     stdin_open: true
     tty: true
-
+  
+  #Database
   postgres:
     container_name: postgres
     image: postgres:0.1
@@ -64,6 +67,7 @@ services:
       timeout: 3s
       retries: 3
 
+  # Key-Value store for Django Channels
   redis:
     container_name: redis
     build: 
