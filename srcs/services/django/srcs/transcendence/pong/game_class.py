@@ -177,9 +177,7 @@ class Match:
 
     async def handle_player_collision(self, player : Player):
 
-        print('handle_collision')
         if player.ball_collision(self.ball):
-            print('entro')
             self.event_update = True
             self.ball.direction.y = (self.ball.position.y - player.position.y) / 10
             self.ball.direction.x *= -1
@@ -194,10 +192,7 @@ class Match:
             return
 
         if self.ball.check_limit_x():
-            print('check_limit')
-            print(self.ball.direction.x)
             if self.ball.direction.x > 0:
-                print('before_handler')
                 await self.handle_player_collision(self.player2)
             elif self.ball.direction.x < 0:
                 await self.handle_player_collision(self.player1)

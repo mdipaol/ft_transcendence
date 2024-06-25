@@ -1,7 +1,7 @@
 
-function game_start(){
-    
-}
+import {startGame} from "../../game/game.js";
+import {stopGame} from "../../game/game.js";
+import triggerHashChange from "../../services/utils.js";
 
 const Play = {
     /**
@@ -9,7 +9,7 @@ const Play = {
      */
     render: async () => {
         const response = await fetch(`https://${window.location.host}/play/`)
-        return response.text();;
+        return response.text();
     },
     /**
      * All DOM related interactions and controls are typically put in place once the DOM 
@@ -17,8 +17,16 @@ const Play = {
      * must be done after these elements have been fully rendered on the page.
      */
     after_render: async () => {
-        const playButton = document.getElementById('playButton', async () => {
-            await game_start();
+        const playButton = document.getElementById('playButton');
+        playButton.addEventListener('click' , async () => {
+            startGame();
+            document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape' || event.code === 'Escape')
+                {
+                    stopGame();
+                    triggerHashChange('/home/');
+                }
+            })
         })
     }
   };

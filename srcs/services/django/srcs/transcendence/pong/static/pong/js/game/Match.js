@@ -10,7 +10,6 @@ export class Match {
 		this.world = world;
         this.player1 = new Player(world.paddle);
         this.player2 = new Player(world.paddle);
-		console.log(this.player1)
         this.ball = new Ball(0xf06400);
 		this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
@@ -158,7 +157,6 @@ export class Match {
 
 
 	onKeyDown(event) {
-		console.log(this.player1)
 		if (event.which == this.player1.upKey) //w key
 			this.player1.moves.up = true;
 		if (event.which == this.player1.downKey) //s key
@@ -267,7 +265,6 @@ export class Match {
 
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
-				// console.log(this.world.PowerUp);
 				const z = 15;
 				const max = 27;
 				const min = -27;
@@ -395,8 +392,6 @@ export class Match {
 			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
 			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
 			ball2.mesh.position.z = ball2.getZ();
-
-			// console.log(ball1.mesh.position);
 		}
 
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
