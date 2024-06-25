@@ -35,8 +35,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ./services/django/srcs/:/app
       - static-files:/app/transcendence/staticfiles
-      - ./services/django/srcs/:/app/
     depends_on:
       postgres:
         condition: service_healthy
@@ -70,7 +70,7 @@ services:
   # Key-Value store for Django Channels
   redis:
     container_name: redis
-    build: 
+    build:
       context: ./services/redis
     volumes:
       - redis-volume:/data
@@ -88,4 +88,3 @@ volumes:
   postgres-volume:
     driver: local
   redis-volume:
-    driver: local
