@@ -14,9 +14,17 @@
       crossorigin="anonymous"
     /> 
     <link rel="stylesheet" href="{% static 'pong/css/button.css'%}" />
-    <link rel="stylesheet" href="{%static 'pong/css/styles.css'%}" />
+    <link rel="stylesheet" href="{% static 'pong/css/styles.css'%}" />
     <link rel="stylesheet" href="{% static 'pong/css/sliderstyle.css'%}" />
     <link rel="stylesheet" href="{% static 'pong/css/minipong.css' %}" />
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "{% static 'pong/js/three/build/three.module.js'%}",
+            "three/addons/": "{% static 'pong/js/three/examples/jsm/'%}"
+        }
+    }
+    </script>
     <script type="module" src="{% static 'pong/js/index.js' %}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

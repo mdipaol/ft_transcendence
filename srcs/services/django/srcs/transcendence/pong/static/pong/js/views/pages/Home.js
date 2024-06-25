@@ -26,9 +26,8 @@ const Home = {
     {
       const logoutButton = document.getElementById("logout-button");
       const playOnlineButton = document.getElementById("play-online-button");
-      const playOfflineButton = document.getElementById("play-offline-button")
+      const playOfflineButton = document.getElementById("play-offline-button");
 
-      console.log(playOfflineButton)
 
       if (logoutButton) {
         logoutButton.addEventListener('click', async () => {
@@ -37,7 +36,6 @@ const Home = {
             if (response.ok) {
           //  window.location.hash = '#/';
             triggerHashChange('/home/');
-            console.log(response);
             //await Home.renderContent();
             } else {
               console.error('Logout failed.');
@@ -57,9 +55,26 @@ const Home = {
     
     if (playOfflineButton) {
         playOfflineButton.addEventListener('click', async () => {
-          const response = await fetch(`https://${window.location.host}/script_game/`)
-          const scripts = await response.text()
-          document.body.appendChild(scripts)
+          const response = await fetch(`https://${window.location.host}/game/`)
+          //eval(response);
+          const text = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'text/html');
+          const scripts = doc.head.querySelectorAll('script');
+          scripts.forEach(script => {
+              const newScript = document.createElement('script');
+              for (let i = 0; i < script.attributes.length; i++) {
+                  const attr = script.attributes[i];
+                  newScript.setAttribute(attr.name, attr.value);
+              }    
+              if (script.src) {
+                  newScript.src = script.src;
+              } else {
+                  newScript.textContent = script.textContent;
+              }
+
+              document.body.appendChild(newScript);
+          });
       });
     }
   }

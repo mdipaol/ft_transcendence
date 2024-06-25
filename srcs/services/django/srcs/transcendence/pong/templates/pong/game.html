@@ -1,15 +1,6 @@
 {% load static %}
 
-
-<script>
+<script class="pong_script">
     window.staticUrl = "{% static 'pong/' %}"
 </script>
-<script type="importmap">
-    {
-        "imports": {
-            "three": "{% static 'pong/js/three/build/three.module.js'%}",
-            "three/addons/": "{% static 'pong/js/three/examples/jsm/'%}"
-        }
-    }
-</script>
-<script src = "{% static 'pong/js/game/pong.js' %}" type="module"></script>
+<script src="{% static 'pong/js/game/pong.js' %}" type="module" class="pong_script"></script>

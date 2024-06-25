@@ -281,7 +281,7 @@ def navbar(request):
 		if not request.user.is_authenticated:
 			links = ['Home', 'AboutUs']
 		else:
-			links = ['Home', 'Tournament', 'Account', 'AboutUs']
+			links = ['Home', 'Play', 'Tournament', 'Account', 'AboutUs']
 		return render(request, 'pong/spa/navbar.html', {'links' : links})
 
 def item_show(request):
@@ -290,6 +290,10 @@ def item_show(request):
 			"nickname" : request.user.get_username(),
 		}
 		return render(request, 'pong/spa/item_show.html', context)
+
+def play(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/play.html')
 
 def account(request):
 	if request.method == 'GET':

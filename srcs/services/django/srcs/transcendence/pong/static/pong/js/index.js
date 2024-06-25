@@ -10,6 +10,7 @@ import Register from './views/pages/Register.js';
 import Login from './views/pages/Login.js';
 import Navbar from './views/components/Navbar.js';
 import Footer from './views/components/Footer.js';
+import Play from './views/pages/Play.js';
 
 import { parseRequestUrl } from './services/utils.js';
 
@@ -24,6 +25,7 @@ const routes = {
   '/account': Account,
   '/login': Login,
   '/register': Register,
+  '/play': Play,
 };
 
 /**
@@ -55,6 +57,13 @@ const router = async () => {
   const page = routes[parsedUrl] || Error404;
   content.innerHTML = await page.render();
   await page.after_render();
+  
+  const scripts = document.getElementsByClassName('pong_script');
+
+  // Convert HTMLCollection to an array
+  Array.from(scripts).forEach(script => {
+  script.parentNode.removeChild(script);
+});
 };
 
 /**

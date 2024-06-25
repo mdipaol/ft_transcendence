@@ -55,7 +55,10 @@ camera.position.set(0, -10, 70);
 camera.lookAt(0, 0, 0);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const content = null || document.getElementById('page_root');
+
+content.replaceChildren(renderer.domElement)
+// document.body.appendChild(renderer.domElement);
 var controls = new OrbitControls( camera, renderer.domElement);
 
 window.addEventListener('resize', function()
@@ -302,6 +305,7 @@ var update = function()
 		directionX *= -1;
 		directionY = (ball.position.y - player1.position.y)/10;
 		collision = true;
+		console.log('vivo')
 	}
 	if (checkCollision(player2, ball) && !collision)
 	{
@@ -334,13 +338,78 @@ var update = function()
 
 var render = function()
 {
-		renderer.render(scene, camera);
+	renderer.render(scene, camera);
 };
+
+let stopped = false;
 
 var gameLoop = function()
 {
-	requestAnimationFrame(gameLoop);
-	update();
-	render();
+	if (!stopped)
+	{
+		requestAnimationFrame(gameLoop);
+		update();
+		render();
+	}
 };
 gameLoop();
+
+function disposeThreeJS() {
+    while (scene.children.length > 0) {
+        const object = scene.children[0];
+
+        // Rimuovi l'oggetto dalla scena
+        scene.remove(object);
+
+        // Rilascia le risorse delle geometrie
+        if (object.geometry) {
+            object.geometry.dispose();
+        }
+
+        // Rilascia le risorse dei materiali
+        if (object.material) {
+            if (Array.isArray(object.material)) {
+                object.material.forEach(material => {
+                    material.dispose();
+                });
+            } else {
+                object.material.dispose();
+            }
+        }
+	}
+		
+    renderer.dispose();
+	console.log(scene);
+	console.log("scena ^");
+}
+
+function removeCanvas() {
+    var canvas = renderer.domElement;
+    if (canvas && canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+    }
+}
+
+function stopThreeJSGame() {
+    
+	stopped = true;
+
+    // Dispose of Three.js objects
+    disposeThreeJS();
+    
+    // Remove the canvas element
+    removeCanvas();
+}
+
+function restart(){
+	const content = null || document.getElementById('page_root');
+
+	content.replaceChildren(renderer.domElement)
+	console.log('ciao')
+	stopped = false;
+	gameLoop();
+}
+
+// Example usage when a button is clicked
+document.addEventListener('click', stopThreeJSGame);
+document.addEventListener('keypress', restart);
