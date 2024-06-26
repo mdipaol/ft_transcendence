@@ -32,6 +32,7 @@ urlpatterns = [
     path('navbar/', views.navbar, name='navbar'),
     path('script_game/', views.scripts_view, name='scripts_view'),
     path('play/', views.play, name='play'),
+    path('tournament/', views.tournament, name='tournament'),
 ]
 
 # To serve media files in development, because they are not served by default in development
