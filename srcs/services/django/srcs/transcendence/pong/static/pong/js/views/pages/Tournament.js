@@ -14,27 +14,6 @@ const Home = {
    * must be done after these elements have been fully rendered on the page.
    */
   after_render: async () => {
-    document.addEventListener('DOMContentLoaded', function() {
-      const tournamentListItems = document.querySelectorAll('#tournament-list li');
-      const tournamentInfoDivs = document.querySelectorAll('.tournament-info');
-
-      tournamentListItems.forEach(item => {
-          item.addEventListener('click', function() {
-              const tournamentId = this.getAttribute('data-tournament');
-
-              // Hide all tournament info divs
-              tournamentInfoDivs.forEach(div => {
-                  div.style.display = 'none';
-              });
-
-              // Display the selected tournament info div
-              const selectedTournamentDiv = document.getElementById(tournamentId);
-              if (selectedTournamentDiv) {
-                  selectedTournamentDiv.style.display = 'block';
-              }
-          });
-      });
-  });
 
   }
 };
