@@ -47,17 +47,17 @@
 		list-style-type: none;
 		padding: 0;
 	}
-	#tournament-list li {
+	{% comment %} #tournament-list li {
 		margin: 10px 0;
 		padding: 10px;
 		background: #333;
 		border-radius: 5px;
 		cursor: pointer;
-	}
-	#tournament-list li:hover {
+	} {% endcomment %}
+	{% comment %} #tournament-list li:hover {
 		background: #0ff;
 		color: #000;
-	}
+	} {% endcomment %}
 	.bracket {
 		display: flex;
 		justify-content: space-around;
@@ -85,24 +85,37 @@
 	.match span {
 		margin: 5px 0;
 	}
+	.button {
+		margin: 10px;
+		padding: 10px 20px;
+		background: #333;
+		border: 1px solid #0ff;
+		border-radius: 5px;
+		cursor: pointer;
+		transition: background 0.3s ease, color 0.3s ease;
+	  }
+	  .button:hover {
+		background: #0ff;
+		color: #000;
+	  }
 </style>
 </head>
 <body>
     <div class="container">
         <h1>Trascendence Tournament</h1>
 		<!--  PULSANTI TORNEO -->
-        <button id="join">Join Tournament</button>
-        <button id="play">Create Tournament</button>
+        <button class="button" id="join">Join Tournament</button>
+        <button class="button" id="create">Create Tournament</button>
         <div id="tournament">
             <div id="left-panel">
                 <div id="tournament-list">
 					<!--  LISTA TORNEI IN CORSO (AGGIUNGERE MAGARI FETCHANDO)-->
                     <h2>Your Tournaments</h2>
                     <ul>
-                        <li>Tournament 1</li>
-                        <li>Tournament 2</li>
-						<li>Tournament 3</li>
-						<li>Tournament 4</li>
+                        <li><button class="button">Tournament 1</button></li>
+                        <li><button class="button">Tournament 2</button></li>
+						<li><button class="button">Tournament 3</button></li>
+						<li><button class="button">Tournament 4</button></li>
                     </ul>
                 </div>
             </div>
