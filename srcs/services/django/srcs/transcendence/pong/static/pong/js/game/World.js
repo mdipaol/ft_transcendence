@@ -27,17 +27,19 @@ export class World {
 		this.mtlLoader = new MTLLoader();
 		this.fontLoader = new FontLoader();
 		this.font = null;
-		//this.laodTable();
 		this.powerUp = null;
 		this.skyboxInit();
 		this.posterInit();
 		this.loadObjects();
-		//gest cube powerup
 		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, Math.PI/2, 1,  1);
 		this.spotLight = spotLight;
 		this.arrayPowerup = this.powerUpsInit();
-		//end gest cube
 	}
+
+	async worldReady(){
+		return this.ready;
+	}
+
 	powerUpsInit(){
 		const posColor = 0x00ff00;
 		const negColor = 0xff0000;
@@ -293,42 +295,6 @@ export class World {
 			)
 		});
 	}
-
-	// loadMesh() {
-    //     const loader = new FBXLoader();
-    //     loader.load('vaso_vikfbx.fbx', (object) => {
-
-	// 		// Imposta la posizione dell'oggetto
-
-    //         // Rotazione di 90 gradi sull'asse Y
-    //         object.rotation.x = Math.PI/2;
-    //         object.position.set(-90, 90, -10);
-    //         object.scale.multiplyScalar(10);
-
-	// 		//addObject(object, new THREE.Vector3(-90,90,-10));
-    //         this.add(object);
-	// 		const object1 = object.clone();
-	// 		const object2 = object.clone();
-	// 		const object3 = object.clone();
-	// 		object1.position.set(-90,-90,-10);
-	// 		object2.position.set(90,90,-10);
-	// 		object3.position.set(90,-90,-10);
-	// 		this.add(object1);
-	// 		this.add(object2);
-	// 		this.add(object3);
-
-    //     }, undefined, (error) => {
-    //         console.error('Errore nel caricamento dell\'oggetto FBX:', error);
-    //     });
-	// 	const loader1 = new FBXLoader();
-	// 	loader1.load('door.fbx', (object) => {
-	// 		object.rotation.x = Math.PI/2;
-	// 		object.rotation.y = Math.PI;
-	// 		object.position.set(0,-120,28);
-	// 		object.scale.multiplyScalar(20);
-	// 		this.add(object);
-	// 	})
-    // }
 
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {

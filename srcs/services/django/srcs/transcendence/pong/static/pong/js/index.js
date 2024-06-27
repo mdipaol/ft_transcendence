@@ -57,13 +57,7 @@ const router = async () => {
   const page = routes[parsedUrl] || Error404;
   content.innerHTML = await page.render();
   await page.after_render();
-  
-  const scripts = document.getElementsByClassName('pong_script');
 
-  // Convert HTMLCollection to an array
-  Array.from(scripts).forEach(script => {
-  script.parentNode.removeChild(script);
-});
 };
 
 /**

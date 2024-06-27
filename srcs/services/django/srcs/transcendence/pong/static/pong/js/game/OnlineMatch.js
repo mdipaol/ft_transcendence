@@ -20,7 +20,7 @@ export class OnlineMatch extends Match {
         this.socket.addEventListener("close", (event) => this.onClose(event) );
         this.socket.addEventListener("message", (event) => this.onMessage(event) );
         this.socket.addEventListener("error", (event) => this.onError(event) );
-    }
+	}
 
 
 	gameMessage() {

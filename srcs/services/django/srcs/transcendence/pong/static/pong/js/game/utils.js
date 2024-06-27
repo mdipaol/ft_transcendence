@@ -7,6 +7,8 @@ export const STARTINGSPEED = 1;
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
 export const BOXSIZE = 250;
+export const MAXY = 27;
+export const MINY = -27
 
 export const ARROWUP = 38;
 export const ARROWDOWN = 40;
@@ -44,6 +46,23 @@ export function rotateVector(x, y, angle) {
   const newY = x * sinTheta + y * cosTheta;
 
   return { x: newX, y: newY };
+}
+
+export function angleBetweenVectors(a, b) {
+    // Calcola il prodotto scalare
+    const dotProduct = a[0] * b[0] + a[1] * b[1];
+    
+    // Calcola le norme dei vettori
+    const normA = Math.sqrt(a[0] * a[0] + a[1] * a[1]);
+    const normB = Math.sqrt(b[0] * b[0] + b[1] * b[1]);
+    
+    // Calcola il coseno dell'angolo
+    const cosTheta = dotProduct / (normA * normB);
+    
+    // Calcola l'angolo in radianti
+    const angleInRadians = Math.acos(cosTheta);
+    
+    return angleInRadians;
 }
 
 export function normalizeVector(vector) {

@@ -82,7 +82,7 @@ class CallbackView(View):
 
 		data = client.prepare_request_body(
 			code = code,
-			redirect_uri = "https://localhost/callback",
+			redirect_uri = "https://localhost/callback", # Controllare
 			client_id = client_id,
 			client_secret = client_secret,
 		)
@@ -114,7 +114,7 @@ class CallbackView(View):
 
 
 class IndexView(TemplateView):
-	template_name = 'pong/index.html'
+	template_name = 'pong/spa/index.html'
 	def get(self, request):
 		friend_requests = None
 		friends = None
