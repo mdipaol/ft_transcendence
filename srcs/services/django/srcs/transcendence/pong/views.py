@@ -307,3 +307,7 @@ def account(request):
 				'level' : user.level,
 			}
 		return render(request, 'pong/spa/account.html', context)
+
+def tournament(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/tournament.html')

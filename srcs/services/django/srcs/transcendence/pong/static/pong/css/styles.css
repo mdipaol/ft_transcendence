@@ -155,7 +155,7 @@ nav {
 		text-decoration: none;
 	}
 
-	/* questa cosa che mi ha fatto fare sasha va a prendere gli elementi che 
+	/* questa cosa che mi ha fatto fare sasha va a prendere gli elementi che
 	hanno la classe navbar--nav che sono dentro navbar-collapse.show */
 	.navbar-nav-mobile .nav-item {
 		display: block !important;
@@ -317,8 +317,8 @@ body{
 	font-weight: 400;
 	font-style: normal;
   }
-  
-  
+
+
   .neon.flicker{
 	font-family: 'Monoton', cursive !important;
 	color: #3dd61f;
@@ -328,19 +328,19 @@ body{
 	letter-spacing: 8px;
 	text-shadow: 1px 0px 4px #dcffd5, 2px 0px 4px #e1ffd5, 3px 0px 4px #dfffd5, 2px 0px 3px #00ff9d, 2px 3px 15px #7dff03, 2px 0px 15px, 5px 0px 125px, 20px 0vw 200px #452cd4,40px 0vw 200px #2c4bd4;
   }
-  
+
   .flicker-slow{
 	animation: flicker 3s linear infinite;
   }
-  
+
   .flicker-fast{
 	animation: flicker 1s linear infinite;
   }
-  
+
   @keyframes flicker {
 	  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
 	  opacity: .99;
-		  
+
 	  }
 	  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
 		  opacity: 0.4;
@@ -371,6 +371,6 @@ body{
 	  18.1%,20.1%,30%,50%,60.1%,65%,80.1%,90%,92.1%,100%{
 		  color: rgb(255, 255, 255) !important;
 		  text-shadow: 0 0 10px rgb(88, 227, 236),0 0 20px rgb(212, 241, 241),0 0 40px rgb(84, 235, 237),0 0 80px rgb(207, 231, 231),0 0 160px rgb(239, 255, 255);
-		  
+
 	  }
   }
