@@ -1,4 +1,3 @@
-
 import time, asyncio, uuid
 from .constants import Costants
 from channels.layers import get_channel_layer
@@ -10,7 +9,7 @@ class Vector2D:
     def __init__(self, x: float, y: float) -> None:
         self.x = x
         self.y = y
-    
+
     def normalizeVector(self):
         ...
 
@@ -30,7 +29,7 @@ class Ball:
             or self.position.y < Costants.MIN_PADDLE_Y :
             return True
         return False
-    
+
     def check_limit_x(self):
         if self.position.x > Costants.MAX_WIDTH \
         or self.position.x < Costants.MIN_WIDTH:
@@ -85,11 +84,15 @@ class Match:
         self.start_time = time.time()
         self.update_time = time.time()
         self.exchanges : int = 0
+        self.task = None
         self.state = {
             "player_one": {"x": self.player1.position.x, "y": self.player1.position.y, "score": self.score1,},
             "player_two": {"x": self.player2.position.x, "y": self.player2.position.y, "score": self.score2,},
             "ball": {"x": self.ball.position.x, "y": self.ball.position.y,"dirX": self.ball.direction.x, "dirY": self.ball.direction.y, "speed": self.ball.speed,},
         }
+
+    def set_task(self, task):
+        self.task = task
 
     def which_player(self, consumer):
         if consumer == self.player1.consumer:
@@ -123,7 +126,7 @@ class Match:
         self.state['ball']['dirY'] = self.ball.direction.y
         self.state['ball']['speed'] = self.ball.speed
 
-        
+
 
     async def send_game_state(self):
 
@@ -137,6 +140,11 @@ class Match:
                 "ball": {"x": self.ball.position.x, "y": self.ball.position.y,"dirX": self.ball.direction.x, "dirY": self.ball.direction.y, "speed": self.ball.speed,},
             }
         })
+
+    def is_empty(self):
+        if not self.player1 and not self.player2:
+            return True
+        return False
 
     def is_full(self):
         return self.full
@@ -161,8 +169,13 @@ class Match:
         if self.player1.consumer and self.player2.consumer:
             self.started = True
 
-    def end_match(self):
-        ...
+    async def end_match(self):
+        if self.task:
+            asyncio.cancel(self.task)
+            self.task = None
+        self.ended = True
+        self.player1 = None
+        self.player2 = None
 
     def check_players(self):
         if not self.player1.consumer or not self.player2.consumer:
@@ -236,10 +249,17 @@ class Match:
             self.ball.reset()
 
             # Send score
-            ...
+            await self.channel_layer.group_send("game_message", {
+                "event" : "score",
+                "message" : {
+                    "player_one": self.score1,
+                    "player_two": self.score2
+                }
+            })
 
             # Check game ended
-            ...
+            if self.score1 == Costants.MAX_SCORE or self.score2 == Costants.MAX_SCORE:
+                self.ended = True
 
     def move(self, consumer, direction):
         player: Player = None
@@ -269,7 +289,7 @@ class Match:
         await self.check_point()
 
         await self.wall_collision()
-        
+
         self.update_state()
 
         self.update_time = time.time()

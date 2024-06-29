@@ -34,7 +34,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
 
         # Game logic
-        # await MatchManager.delete_player(self)
+        await MatchManager.delete_player(self)
         ...
 
 
@@ -57,13 +57,18 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({
             "type": "game_message",
-            "event" : event["event"],
-            "message": event['message']
+            "event": event['event'],
+            "message": event['message'],
             }))
 
     async def game_end(self, event):
 
-        await self.send(text_data=json.dumps({"type": "game_end"}))
+        await self.send(text_data=json.dumps({
+            "type": "game_end",
+            'message' : event['message'],
+            }))
+
+        await self.close()
 
 # Chat sockets
 

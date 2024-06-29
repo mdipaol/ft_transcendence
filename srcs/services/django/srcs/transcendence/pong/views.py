@@ -96,8 +96,6 @@ class CallbackView(View):
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text)
 
-		print(json_data)
-
 		email = json_data['email']
 		username = json_data['login']
 		image = json_data['image']['link']
@@ -265,7 +263,6 @@ def is_authenticated(request):
 		authenticated = request.user.is_authenticated
 		json_res = {'authenticated': authenticated, 'prova': 'ciao'}
 		string = json.dumps(json_res)
-		print(string)
 		return JsonResponse(string, safe=False)
 	return(HttpResponseRedirect(reverse('pong:index')))
 

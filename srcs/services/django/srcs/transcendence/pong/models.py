@@ -10,7 +10,8 @@ class BaseUser(AbstractUser):
 	online = models.IntegerField(default=0)
 
 class Match(models.Model):
-	base_users = models.ManyToManyField(BaseUser)
+	player1 = models.ForeignKey(BaseUser, related_name='player_one', on_delete=models.CASCADE)
+	player2 = models.ForeignKey(BaseUser, related_name='player_two', on_delete=models.CASCADE)
 	score1 = models.IntegerField()
 	score2 = models.IntegerField()
 	date = models.DateTimeField()

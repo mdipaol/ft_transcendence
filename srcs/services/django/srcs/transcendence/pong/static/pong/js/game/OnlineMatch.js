@@ -76,6 +76,8 @@ export class OnlineMatch extends Match {
 				alert("Player Two WINS")
 			this.gameEnd();
 			this.started = false;
+
+
 		}
     }
 
@@ -153,6 +155,7 @@ export class OnlineMatch extends Match {
 	}
 
 	updateScore(msg){
+		console.log(msg)
 		this.score1 = msg.message.player_one;
 		this.score2 = msg.message.player_two;
 		this.updateScoreText();
