@@ -4,7 +4,7 @@ from password_strength import PasswordPolicy
 from django.contrib.auth import authenticate, login
 from django.core.files import File
 from django import forms
-from .models import BaseUser
+from .models import BaseUser, Tournament
 
 
 
@@ -49,7 +49,7 @@ class RegistrationForm(forms.Form):
 
 	def save(self):
 		username = self.cleaned_data.get("username")
-		email = self.cleaned_data.get("email")	
+		email = self.cleaned_data.get("email")
 		password = self.cleaned_data.get("password1")
 		user: BaseUser = BaseUser.objects.create_user(username=username, email=email, password=password)
 		user.image = 'static/pong/images/man.png'
@@ -123,7 +123,7 @@ class ChangeUsernameForm(UpdateForm):
 		if BaseUser.objects.filter(username=new_username).exists():
 			raise forms.ValidationError('This username is already taken.')
 		return new_username
-	
+
 class ChangeEmailForm(UpdateForm):
 
 	email = forms.CharField(label='Enter a new email address', max_length=20)
@@ -134,6 +134,28 @@ class ChangeEmailForm(UpdateForm):
 		if BaseUser.objects.filter(email=email).exists():
 			raise forms.ValidationError("Another user is currently registered with this email")
 		return email
-	
+
 class UpdateAvatar(UpdateForm):
 	id = 'avatar-form'
+
+class CreateTournamentForm(forms.Form):
+
+	NUM_CHOICES = [
+        (4, '4 Players'),
+        (8, '8 Players'),
+    ]
+
+	# def clean_name(self):
+	# 	...
+
+	# def clean(self):
+	# 	...
+
+	def save(self, user):
+		...
+		tournament = Tournament.objects.create(name=self.cleaned_data.get('name'), number_of_partecipants=self.cleaned_data.get('number_of_partecipants'), creator=user)
+		tournament.save()
+		return tournament
+
+	name = forms.CharField(label='Enter tournament name', max_length=10)
+	number_of_partecipants = forms.ChoiceField(label='Select the number of players', choices=NUM_CHOICES)

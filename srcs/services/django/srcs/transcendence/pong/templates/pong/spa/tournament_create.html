@@ -1,0 +1,22 @@
+{% extends "pong/spa/tournament.html" %}
+
+{% block create %}
+
+<div style="align-items:center;width:100%;height:100%">
+	<div>
+    	<h2>Create Tournament</h2>
+	</div>
+    <div>
+        <form action="{% url 'pong:tournament_create' %}" method="post" id="tournament-form">
+        {% csrf_token %}
+            {% for field in form %}
+            <div>
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+            {% endfor %}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+{% endblock %}

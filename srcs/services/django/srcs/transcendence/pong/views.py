@@ -19,6 +19,7 @@ from django.urls import reverse
 from friendship.models import Friend, Follow, Block
 
 from .models import BaseUser
+from .models import Tournament
 from .forms import *
 
 def login42(request):
@@ -278,7 +279,7 @@ def navbar(request):
 		if not request.user.is_authenticated:
 			links = ['Home', 'AboutUs']
 		else:
-			links = ['Home', 'Play', 'Tournament', 'Account', 'AboutUs']
+			links = ['Home', 'Play', 'Tournament_Join', 'Account', 'AboutUs']
 		return render(request, 'pong/spa/navbar.html', {'links' : links})
 
 def item_show(request):
@@ -305,6 +306,42 @@ def account(request):
 			}
 		return render(request, 'pong/spa/account.html', context)
 
+@login_required
 def tournament(request):
 	if request.method == 'GET':
-		return render(request, 'pong/spa/tournament.html')
+		tournaments = Tournament.objects.all()
+		form = CreateTournamentForm()
+		context = {
+			'tournaments' : tournaments,
+			'form' : form,
+		}
+		return render(request, 'pong/spa/tournamentJoin.html', context)
+
+@login_required
+def tournament_create(request):
+	if request.method == 'GET':
+		form = CreateTournamentForm()
+		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
+	if request.method == 'POST':
+		form = CreateTournamentForm(request.POST)
+		if form.is_valid():
+			tournament = form.save(request.user)
+			context = {
+				'name' : tournament.name,
+				'creator' : tournament.creator.username,
+				'number_of_partecipants' : tournament.number_of_partecipants,
+				'partecipants' : [request.user], # Fare la query per la lista dei partecipanti
+				'winner' : None,
+				'finished' : False,
+			}
+			return render(request, 'pong/spa/tournament_info.html', context)
+		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
+
+@login_required
+def tournaments_list(request):
+	if request.method == 'GET':
+		tournaments = Tournament.objects.all()
+		context = {
+			'tournaments' : tournaments,
+		}
+		return render(request, 'pong/spa/tournament_list.html', context)

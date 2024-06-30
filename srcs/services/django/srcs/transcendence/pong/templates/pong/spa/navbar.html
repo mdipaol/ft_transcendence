@@ -19,7 +19,11 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav">
             {% for link in links %}
-                <li class="nav-item"><a class="neonbar" href="/#/{{ link|lower }}">{{ link }}</a></li>
+                {% if link|lower == 'tournament_join'%}
+                    <li class="nav-item"><a class="neonbar" href="/#/{{ link|lower }}">Tournament</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="neonbar" href="/#/{{ link|lower }}">{{ link }}</a></li>
+                {% endif %}
             {% endfor %}
         </ul>
         <ul class="navbar-nav-mobile">
