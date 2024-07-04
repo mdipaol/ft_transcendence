@@ -1,5 +1,5 @@
 <h2>Registration</h2>
-<form action="{% url 'pong:registration' %}" method="post">
+<form action="{% url 'pong:registration' %}" method="post" id="registration-form">
 	{% csrf_token %}
 	{% for field in form %}
 	<div class="fieldWrapper">

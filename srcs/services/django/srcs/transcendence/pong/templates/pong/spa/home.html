@@ -13,18 +13,10 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-<div class="button-container">
-  <button class="neon-button" id="play-online-button">
-    <div class="glow"></div>
-    <span class="inner-button black">Play Online</span>
-  </button>
-  <button class="neon-button" id="play-offline-button">
-    <div class="glow"></div>
-    <span class="inner-button black">Play Offline</span>
-  </button>
-  <button class="neon-button" id="logout-button">
-    <div class="glow"></div>
-    <span class="inner-button black">Logout</span>
-  </button>
-</div>
+  <div class="button-container">
+    <button class="neon-button" id="logout-button">
+      <div class="glow"></div>
+      <span class="inner-button black">Logout</span>
+    </button>
+  </div>
 {% endif %}

@@ -4,7 +4,7 @@ from password_strength import PasswordPolicy
 from django.contrib.auth import authenticate, login
 from django.core.files import File
 from django import forms
-from .models import BaseUser, Tournament
+from .models import *
 
 
 
@@ -44,7 +44,7 @@ class RegistrationForm(forms.Form):
 		password1 = cleaned_data.get("password1")
 		password2 = cleaned_data.get("password2")
 		if password1 and password2 and password1 != password2:
-			raise forms.ValidationError("Passwords do not match")
+			raise forms.ValidationError({'password1': "Passwords do not match"})
 		return cleaned_data
 
 	def save(self):
@@ -57,7 +57,7 @@ class RegistrationForm(forms.Form):
 		return user
 
 class LoginForm(forms.Form):
-	username = forms.CharField(label="Enter your username", max_length=10)
+	username = forms.CharField(label="Enter your username", max_length=20)
 	password = forms.CharField(label="Choose a strong password", widget=forms.PasswordInput())
 
 	def clean(self):
@@ -154,7 +154,9 @@ class CreateTournamentForm(forms.Form):
 	def save(self, user):
 		...
 		tournament = Tournament.objects.create(name=self.cleaned_data.get('name'), number_of_partecipants=self.cleaned_data.get('number_of_partecipants'), creator=user)
+		partecipant = TournamentPartecipant.objects.create(tournament=tournament, user=user)
 		tournament.save()
+		partecipant.save()
 		return tournament
 
 	name = forms.CharField(label='Enter tournament name', max_length=10)

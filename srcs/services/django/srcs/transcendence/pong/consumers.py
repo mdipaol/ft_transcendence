@@ -114,12 +114,41 @@ class OnlineConsumer(WebsocketConsumer):
 
     def connect(self):
         user = self.scope['user']
-        self.add_connection(user)
-        self.accept()
+        if user.is_authenticated:
+            self.add_connection(user)
+            self.accept()
+            return
+        self.close()
 
     def disconnect(self, status_code):
         user = self.scope['user']
         self.del_connection(user)
+
+
+    # def receive(self, text_data):
+    #     # print(text_data)
+    #     json_data = json.loads(text_data)
+    #     # status = json_data.get('status')
+    #     user = self.scope['user']
+        
+    #     # print('scope')
+    #     # print(self.scope)
+    #     # print(status)
+    #     # print('self.authenticated: ' + str(self.authenticated))
+    #     # print('user.authenticated of ' + user.username +  ': ' + str(user.is_authenticated))
+
+
+    #     # Frontend socket sends status after operations of login and logout in backend
+    #     # if status == 'online' and self.authenticated == False and user.is_authenticated:
+    #     #     print('Connection added for user: ' + user.username)
+    #     #     self.authenticated = True
+    #     #     self.user_pk = user.pk
+    #     #     self.add_connection(user)
+    #     # if status == 'offline' and self.authenticated == True:
+    #     #     print('Connection removed')
+    #     #     self.authenticated = False
+    #     #     self.del_connection()
+    #     #     self.user_pk = None
 
     def add_connection(self, user):
         BaseUser.objects.filter(pk=user.pk).update(online=F('online') + 1)

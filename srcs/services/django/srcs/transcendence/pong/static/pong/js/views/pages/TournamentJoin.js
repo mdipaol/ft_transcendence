@@ -19,7 +19,6 @@ const TournamentJoin = {
     const tournamentDiv = document.getElementById("tournament");
     const joinTournament = document.querySelectorAll("#join-tournament-button");
 
-    console.log(joinTournament);
     if (createButton) {
       createButton.addEventListener('click', async () => {
         triggerHashChange('/tournament_create');
@@ -27,8 +26,25 @@ const TournamentJoin = {
     }
     if (joinTournament) {
       joinTournament.forEach(joinTournament => {
-        if (joinTournament) { joinTournament.addEventListener('dblclick', async () => {
-          await alert('Joined tournament successfully'); // FAR VISUALIZZARE TORNEO
+        if (joinTournament) { joinTournament.addEventListener('dblclick', async (event) => {
+
+          const buttonName = event.target.innerText;
+          console.log(buttonName);
+
+          const response = await fetch( '/tournament_join/' + buttonName + '/' , {
+            method: 'POST'
+        });
+        if (response.ok) {
+          // PARSARE ERRORI E VISUALIZZARE TORNEO
+          console.log(response);
+          const div = document.getElementById('tournament');
+          div.replaceChildren();
+
+          const JsonResponse = await response.json();
+          const html = JsonResponse.html;
+
+          div.innerHTML = html;
+        }
         });
       }});
      };

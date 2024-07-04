@@ -32,7 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:35977']
+CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:33431']
 
 # Application definition
 

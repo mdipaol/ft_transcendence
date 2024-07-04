@@ -16,10 +16,16 @@ const TournamentCreate = {
    */
   after_render: async () => {
     const listButton = document.getElementById("list");
+    const createButton = document.getElementById("create");
 
     if (listButton) {
       listButton.addEventListener('click', async () => {
         triggerHashChange('/tournament_join');
+      });
+    }
+    if (createButton) {
+      createButton.addEventListener('click', async () => {
+        triggerHashChange('/tournament_create');
       });
     }
     const form = document.getElementById('tournament-form');
@@ -55,6 +61,15 @@ const TournamentCreate = {
             console.log(error);
         }
     });
+    function reattachEventListeners() {
+      const tournamentDiv = document.getElementById("tournament");
+    
+      tournamentDiv.addEventListener('dblclick', (event) => {
+        if (event.target && event.target.id === 'join-tournament-button') {
+          alert('Joined tournament successfully');
+        }
+      });
+    }
    }
 };
 

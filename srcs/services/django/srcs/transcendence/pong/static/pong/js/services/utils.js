@@ -38,3 +38,11 @@ export default function triggerHashChange(hash) {
     window.location.hash = '#' + hash;
   }
 }
+
+function onlineWebSocket(){
+  const socket = new WebSocket(
+    'wss://'
+    + window.location.host
+    + '/ws/online/'
+  );
+}

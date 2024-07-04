@@ -1,4 +1,6 @@
 import { parseRequestUrl } from '../../services/utils.js';
+import triggerHashChange from '../../services/utils.js';
+import MyWebsocket from '../../services/MyWebsocket.js';
 
 const Login = {
     /**
@@ -35,14 +37,20 @@ const Login = {
                 });
 
                 if (response.ok) {
-                    form.style.display = 'none';
-                    window.location.hash = '#/home/';
+
+                    // New connection with websocket for online status
+                    // ...
+                    MyWebsocket.startConnection();
+
+                    triggerHashChange('/home/');
+
                 } else {
-                    const errorData = await response.json();
-                    errorMessageDiv.textContent = errorData.message || 'Si è verificato un errore. Riprova.';
+                    const errorForm = await response.text();
+                    document.getElementById('page_root').innerHTML = errorForm;
+                    await Login.after_render();
                 }
             } catch (error) {
-                errorMessageDiv.textContent = 'Errore di rete. Riprova.';
+                console.log(error);
             }
         });
     }

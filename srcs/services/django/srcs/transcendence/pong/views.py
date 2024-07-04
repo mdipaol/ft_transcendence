@@ -1,6 +1,7 @@
 import logging, json, requests, secrets, uuid, os
 from pathlib import Path
 
+import time
 from datetime import datetime, timedelta
 from oauthlib.oauth2 import WebApplicationClient
 
@@ -15,6 +16,7 @@ from django.views.generic import TemplateView, View
 from django.template import loader
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from friendship.models import Friend, Follow, Block
 
@@ -63,23 +65,6 @@ class CallbackView(View):
 		client_secret = settings.INTRA_OAUTH_SECRET
 
 		client = WebApplicationClient(client_id)
-		# data = client.prepare_token_request(
-		# 	client_id = client_id,
-		# 	secret_id = secret_id,
-		# 	code = code,
-		# 	redirect_url = "https://localhost/callback",
-		# 	token_url=token_url,
-		# 	#grant_type = 'authorization_code'
-		# )
-
-		# data = {
-		# 	"code" : code,
-		# 	"state" : state,
-		# 	"grant_type" : 'authorization_code',
-		# 	"client_id" : client_id,
-		# 	"client_secret" : secret_id,
-		# 	"redirect_uri" : "https://localhost/callback"
-		# }
 
 		data = client.prepare_request_body(
 			code = code,
@@ -89,9 +74,9 @@ class CallbackView(View):
 		)
 
 		response = requests.post(token_url, data=data)
-		print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
-			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
-		}).text), indent=4)))
+		# print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
+		# 	"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
+		# }).text), indent=4)))
 
 		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
@@ -141,7 +126,7 @@ class RegistrationFormView(View):
 		if form.is_valid():
 			form.save()
 			return HttpResponse("Registration Succesfull")
-		return(render(request, 'pong/registration.html', {'form': form}))
+		return(render(request, 'pong/registration.html', {'form': form}, status=409))
 
 class LoginCustomView(View):
 	def get(self, request):
@@ -152,12 +137,16 @@ class LoginCustomView(View):
 		if form.is_valid():
 			form.save(request)
 			return render(request, 'pong/spa/home.html')
-		return render(request, 'pong/login.html', {'form': form})
+		return render(request, 'pong/login.html', {'form': form}, status=401)
 
 
 class LogoutView(TemplateView):
 	def get(self, request):
 		logout(request)
+		try:
+			del request.session['user']
+		except:
+			return HttpResponseRedirect(reverse('pong:index'))
 		return HttpResponseRedirect(reverse('pong:index'))
 
 def handle_uploaded_file(file):
@@ -259,12 +248,12 @@ def username(request):
 		data['username'] = user.get_username()
 	return HttpResponse(data['username'])
 
-def is_authenticated(request):
+def authenticated(request):
 	if request.method == 'GET':
 		authenticated = request.user.is_authenticated
-		json_res = {'authenticated': authenticated, 'prova': 'ciao'}
-		string = json.dumps(json_res)
-		return JsonResponse(string, safe=False)
+		json_res = {'authenticated': authenticated}
+		# string = json.dumps(json_res)
+		return JsonResponse(json_res)
 	return(HttpResponseRedirect(reverse('pong:index')))
 
 def personal_profile(request):
@@ -307,17 +296,6 @@ def account(request):
 		return render(request, 'pong/spa/account.html', context)
 
 @login_required
-def tournament(request):
-	if request.method == 'GET':
-		tournaments = Tournament.objects.all()
-		form = CreateTournamentForm()
-		context = {
-			'tournaments' : tournaments,
-			'form' : form,
-		}
-		return render(request, 'pong/spa/tournamentJoin.html', context)
-
-@login_required
 def tournament_create(request):
 	if request.method == 'GET':
 		form = CreateTournamentForm()
@@ -326,16 +304,44 @@ def tournament_create(request):
 		form = CreateTournamentForm(request.POST)
 		if form.is_valid():
 			tournament = form.save(request.user)
+			partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 			context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
 				'number_of_partecipants' : tournament.number_of_partecipants,
-				'partecipants' : [request.user], # Fare la query per la lista dei partecipanti
+				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'winner' : None,
 				'finished' : False,
 			}
 			return render(request, 'pong/spa/tournament_info.html', context)
 		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
+
+@csrf_exempt
+@login_required
+def tournament_join(request, name):
+	if request.method == 'POST':
+		print(name)
+		tournament = Tournament.objects.get(name=name)
+		if not tournament:
+			...
+		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+		if len(partecipant_list) >= tournament.number_of_partecipants:
+			...
+		if name in partecipant_list:
+			...
+		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
+		partecipant.save()
+		context = {
+				'name' : tournament.name,
+				'creator' : tournament.creator.username,
+				'number_of_partecipants' : tournament.number_of_partecipants,
+				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+				'winner' : None,
+				'finished' : False,
+				}
+		return JsonResponse(data={
+			'html' : render_to_string('pong/spa/tournament_info.html', context)
+		})
 
 @login_required
 def tournaments_list(request):
@@ -345,3 +351,11 @@ def tournaments_list(request):
 			'tournaments' : tournaments,
 		}
 		return render(request, 'pong/spa/tournament_list.html', context)
+
+@login_required(login_url='/')
+def online_users(request):
+	if request.method == 'GET':
+		users = BaseUser.objects.filter(online__gt=0)
+		for item in users:
+			print(item)
+		return render(request, 'pong/spa/online_users.html', {'online_users' : users})

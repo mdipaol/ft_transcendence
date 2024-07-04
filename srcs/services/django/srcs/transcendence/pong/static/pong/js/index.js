@@ -30,11 +30,13 @@ const routes = {
   '/play': Play,
 };
 
+
 /**
  * The router code. Takes a URL, checks against the list of
  * supported routes and then renders the corresponding content page.
  */
 const router = async () => {
+
   // Lazy load view element:
   const header = null || document.getElementById('header_root');
   const content = null || document.getElementById('page_root');
