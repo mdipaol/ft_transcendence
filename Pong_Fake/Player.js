@@ -8,12 +8,13 @@ export class Player {
 		this.mesh = paddle.clone();
 		// console.log(this.mesh)
 		this.speed = UTILS.MOVSPEED;
-        this.name = "Undefined";
+		this.name = "Undefined";
 		this.moves = {
 			up: false,
 			down:false
-		}
-		this.mesh.position.z = -10;
-		this.powerUp = null;
 	}
+	this.mesh.position.z = -10;
+	this.powerUp = null;
 }
+}
+

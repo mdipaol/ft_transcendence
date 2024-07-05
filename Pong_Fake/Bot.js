@@ -106,7 +106,6 @@ export class MatchBot extends Match {
                 return (destinationY- 27);
         }
         else {
-            console.log("no collisions");
             iterator -= firstDeltaX;
             numberOfCollisions = 0;
             let destinationY = (108 - iterator) * Math.tan(alpha);
@@ -159,7 +158,6 @@ export class MatchBot extends Match {
         // this.bot2.destinationY = this.ball.mesh.position.y;
 
         this.bot2.destinationY = (this.pointPrediction());
-        console.log("destination: " + this.bot2.destinationY);
     }
 
     updateScore() {
@@ -199,6 +197,15 @@ export class MatchBot extends Match {
 		// Exchanges
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
+
+        //world1/////////////////////////////////////        
+        const player1Div = document.getElementById('player1-score');
+        const player2Div = document.getElementById('player2-score');
+        if (player1Div)
+            player1Div.innerHTML = this.score1.toString();
+        if (player2Div)
+            player2Div.innerHTML = this.score2.toString();
+        ///////////////////////////////////////////
 	}
 
     // region update()
@@ -206,6 +213,14 @@ export class MatchBot extends Match {
     update() {
 		this.updateMovements();
 		this.world.rotatePowerUp();
+
+        // this.world.spotLight.position.y = this.player2.mesh.position.y;
+        // this.world.spotLight2.position.y = this.player1.mesh.position.y;
+        // // this.world.spotLight.target.position.set(this.player2.mesh.position.x, this.player2.mesh.position.y, this.player2.mesh.position.z);
+		// // this.world.spotLight2.target.position.set(this.player1.mesh.position.x, this.player1.mesh.position.y, this.player1.mesh.position.z);
+        // this.world.spotLight.target.position.y = this.player2.mesh.position.y
+        // this.world.spotLight2.target.position.y = this.player1.mesh.position.y
+
 
 		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;

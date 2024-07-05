@@ -9,15 +9,25 @@ import { Ball } from './Ball.js';
 import { Match } from './Match.js';
 import { World } from './World.js';
 import { MatchBot } from './Bot.js';
+import { World1 } from './World1.js';
+import * as UTILS from './Utils.js';
 //import { Bot } from './Bot.js';
 //import { MatchBot } from './Bot.js';
 
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 // region MAIN
-
+	UTILS.SWITHCH_WORLD
 //---------INIT----------
-const world = new World();
+
+function world_1_2(){
+	if(UTILS.SWITHCH_WORLD === true)
+		return new World();
+	else if(UTILS.SWITHCH_WORLD === false)
+		return new World1();
+}
+
+const world = world_1_2();
 //const bot = new MatchBot(world);
 console.log(world.ready);
 console.log(world.paddle);

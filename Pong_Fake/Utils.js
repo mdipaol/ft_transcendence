@@ -3,7 +3,7 @@ import * as THREE from 'three';
 //---------COSTANTS--------
 export const MAXSCORE = 100;
 export const MOVSPEED = 0.6;
-export const STARTINGSPEED = 1.5;
+export const STARTINGSPEED = 0.8;//speed ball
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
 export const BOXSIZE = 250;
@@ -11,10 +11,14 @@ export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;
 export const MAX_SIZEY = 27
 export const MIN_SIZEY = -27
+export const SWITHCH_WORLD = true;
 
 // region HELPERSs
 
 //---------HELPERS----------
+export function change_wold(a){
+    return(a);
+}
 
 export function roundPos(pos)
 {

@@ -6,34 +6,70 @@ import { Player } from './Player.js';
 //import { Bot } from './Bot.js';
 //import { MatchBot } from './MatchBot.js';
 
+
+
 export class Match {
-    constructor(world){
-		this.world = world;
+    constructor(world) {
+        //this.world_1_2 = false; // true per world, false per world1
+        this.world = world;
         this.player1 = new Player(world.paddle);
-        this.player2 = new Player(world.paddle);
-		// this.powerVector1 = []
-		// this.powerVector2 = []
+        this.player2 = null;
+
+        if (UTILS.SWITHCH_WORLD === true) {
+            this.player2 = new Player(world.paddle);
+        } else if (UTILS.SWITHCH_WORLD === false) {
+            this.player2 = new Player(world.paddle2); // world1
+        }
+
         this.ball = new Ball(0xf06400);
-		this.maxScore = UTILS.MAXSCORE;
+        this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
         this.score2 = 0;
-		this.exchangesFont = world.font;
-		this.scoreText = this.scoreTextInit();
-		this.exchanges = 0;
-		this.exchangesText = this.exchangesTextInit();
-		this.collision = false;
-		this.player1.mesh.position.x = -54;
-		this.player2.mesh.position.x = 54;
-		this.player1.mesh.rotation.z = -Math.PI/2;
-		this.player2.mesh.rotation.z = Math.PI/2;
+        this.exchangesFont = world.font;
+        this.scoreText = this.scoreTextInit();
+        this.exchanges = 0;
+        this.exchangesText = this.exchangesTextInit();
+        this.collision = false;
 
-		// PowerUps
-		this.waitPowerup = 0;
-		this.activePowerUp = false;
-		this.meshPowerUp = null;
-		this.tripleEnabled = false;
-		this.fakeBalls = [new Ball(0xff0000), new Ball(0x0000ff)]
-	}
+        // Configurazione dei giocatori e delle luci per world
+        if (UTILS.SWITHCH_WORLD === true) {
+            this.player1.mesh.rotation.z = Math.PI / 2; // world
+            this.player1.mesh.position.x = -54; // world
+            this.player2.mesh.position.x = 54; // world
+            this.player2.mesh.rotation.z = Math.PI / 2; // world
+        }
+
+        // Configurazione dei giocatori e delle luci per world1
+        if (UTILS.SWITHCH_WORLD === false) {
+            this.player1.mesh.position.x = -51;
+            this.player2.mesh.position.x = 55.5;
+            this.player1.mesh.rotation.x = Math.PI / 2; // world1
+            this.player2.mesh.rotation.x = Math.PI / 2; // world1
+            world.spotLight.target = this.player1.mesh; // world1
+            world.spotLight2.target = this.player2.mesh; // world1
+            world.spotLightCenter1.target = this.player1.mesh; // world1
+            world.spotLightCenter2.target = this.player2.mesh; // world1
+            world.spotLightWall1.target = this.player1.mesh; // world1
+            world.spotLightWall2.target = this.player2.mesh; // world1
+        }
+
+        // PowerUps
+        this.waitPowerup = 0;
+        this.activePowerUp = false;
+        this.meshPowerUp = null;
+
+        // Triple Ball init
+        this.tripleEnabled = false;
+        this.fakeBalls = [new Ball(0xff0000), new Ball(0x0000ff)];
+        if (this.fakeBalls[0].mesh.children[0]) {
+            this.fakeBalls[0].mesh.remove(this.fakeBalls[0].mesh.children[0]);
+        }
+        if (this.fakeBalls[1].mesh.children[0]) {
+            this.fakeBalls[1].mesh.remove(this.fakeBalls[1].mesh.children[0]);
+        }
+
+        console.log(this.fakeBalls);
+    }
 
 	exchangesTextInit() {
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1] && this.exchangesText[2]) {
@@ -201,10 +237,6 @@ export class Match {
 		}
 	}
 
-	// powerUpActivate() {
-
-	// }
-
 	addPowerUp() {
 
 		this.waitPowerup++;
@@ -216,13 +248,13 @@ export class Match {
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
 				// console.log(this.world.PowerUp);
-				const z = 15;
 				const max = 27;
 				const min = -27;
 				//const y = Math.floor(Math.random() * (max - min + 1)) + min;
+				const z = 15;
 				const y = 3.0;
 				this.world.powerUp.mesh.position.set(0, y, z);
-				this.world.scene.add(this.world.powerUp.mesh);
+				this.world.scene.add(this.world.powerUp.mesh);//.mesh
 			}
 		}
 	}
@@ -327,6 +359,7 @@ export class Match {
 	update() {
 		this.updateMovements();
 		this.world.rotatePowerUp();
+		
 
 		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;

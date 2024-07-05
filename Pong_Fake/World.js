@@ -50,78 +50,112 @@ export class World {
 		this.arrayPowerup = this.powerUpsInit();
 		//end gest cube
 	}
+
+	setMeshStandardMaterial(M_color, M_color_emissive, M_emissiveIntensity, M_roughness, M_metalness, M_reflectivity){
+		return new THREE.MeshStandardMaterial({
+			color: M_color,
+			emissive: M_color_emissive,
+			emissiveIntensity: M_emissiveIntensity,
+			roughness: M_roughness,
+			metalness: M_metalness,
+			reflectivity: M_reflectivity
+		});
+	}
+
+	setMeshGLTF(path, material, scale, rotationX, rotationY, rotationZ){
+		return new Promise((resolve, reject)=>{
+			this.gltfLoader.load(
+				path, 
+				(object)=>{
+					const obj = object.scene;
+					obj.rotation.set(rotationX, rotationY, rotationZ);
+					obj.scale.multiplyScalar(scale);
+					obj.traverse((child)=>{
+						if(child.isMesh)
+							child.material = material
+					});
+					//this.scene.add(obj);
+					resolve(obj);
+				});
+				undefined,
+				(error)=>{
+					reject(error);
+				}
+		});
+	}
+
 	powerUpsInit(){
+		//const mesh_array =[];
+		const arrayPowerup=[]
 		const posColor = 0x00ff00;
 		const negColor = 0xff0000;
 		const posLineColor = 0x03c03c;
 		const negLineColor = 0xa2231d;
-		const cubeGeometry = new THREE.DodecahedronGeometry(3, 0);
-		const cubeMaterial = new THREE.MeshPhongMaterial( {color: posColor, emissive:posColor, emissiveIntensity:0.7} );//cube material
-		const cube = new THREE.Mesh( cubeGeometry, cubeMaterial);
-		const cubeEdgesGeometry = new THREE.EdgesGeometry(cubeGeometry);
-		const cubeLineMaterial = new THREE.LineBasicMaterial({ color: posLineColor});
-		const cubeEdges = new THREE.LineSegments(cubeEdgesGeometry, cubeLineMaterial);
-		cube.add(cubeEdges);
-		cube.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
-		//negative
-		const cubeMaterial_N = new THREE.MeshPhongMaterial( {color: negColor, emissive:negColor, emissiveIntensity:0.7} );
-		const cube_N = new THREE.Mesh( cubeGeometry, cubeMaterial_N);
-		const lineMaterial_N = new THREE.LineBasicMaterial({ color: negLineColor});
-		const cubeEdges_N = new THREE.LineSegments(cubeEdgesGeometry, lineMaterial_N);
-		cube_N.add(cubeEdges_N);
-		cube_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+		const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
+		const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
+		//speed///
+		const Fulmine_P = this.setMeshGLTF('PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
+		Fulmine_P.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("speed", mesh, "positive"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		})
 
-		// OctahedronGeometry // prisma
-		//positive
-		const prismGeometry = new THREE.OctahedronGeometry(3,0);
-		const prismMaterial = new THREE.MeshPhongMaterial({color: posColor, emissive:posColor, emissiveIntensity:0.7});
-		const prism = new THREE.Mesh(prismGeometry, prismMaterial);
-		const prismEdgesGeometry = new THREE.EdgesGeometry(prismGeometry);
-		const prismLineMaterial = new THREE.LineBasicMaterial({ color: posLineColor});
-		const prismEdges = new THREE.LineSegments(prismEdgesGeometry, prismLineMaterial);
-		prism.add(prismEdges);
-		prism.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
-		//negative
-		const prismMaterial_N = new THREE.MeshPhongMaterial({color: negColor, emissive:negColor, emissiveIntensity:0.7});
-		const prism_N = new THREE.Mesh(prismGeometry,prismMaterial_N);
-		const prismLineMaterial_N = new THREE.LineBasicMaterial({ color: negLineColor});
-		const prismEdges_N = new THREE.LineSegments(prismEdgesGeometry, prismLineMaterial_N);
-		prism_N.add(prismEdges_N);
-		prism_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+		const Fulmine_N = this.setMeshGLTF('PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
+		Fulmine_N.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("speed", mesh, "negative"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
 
-		//TorusGeometry //donut
-		//positivedonut
-		const donutGeometry = new THREE.TorusGeometry(3, 1.5);
-		const donutMaterial = new THREE.MeshPhongMaterial({color: posColor, emissive:posColor, emissiveIntensity: 0.7 });
-		const donut = new THREE.Mesh(donutGeometry, donutMaterial);
-		donut.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
-		//negativedonut
-		const donutMaterial_N = new THREE.MeshPhongMaterial({color: negColor, emissive:negColor, emissiveIntensity: 0.7 });
-		const donut_N = new THREE.Mesh(donutGeometry, donutMaterial_N);
-		donut_N.add(new THREE.PointLight(negColor, 15, 100000000, 0.6));
+		//slow////
+		const Tartole_P = this.setMeshGLTF('PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		Tartole_P.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
 
-		//positivecapsule
-        const capsuleGeometry = new THREE.CapsuleGeometry( 3, 1, 4, 8 );
-        const capsuleMaterial = new THREE.MeshPhongMaterial( {color: posColor, emissive:posColor, emissiveIntensity: 0.7} );
-        const capsule = new THREE.Mesh( capsuleGeometry, capsuleMaterial );
-        capsule.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
-        //negativecapsule
-        const capsuleMaterial_N = new THREE.MeshPhongMaterial( {color: posColor, emissive:posColor, emissiveIntensity: 0.7} );
-        const capsule_N = new THREE.Mesh( capsuleGeometry, capsuleMaterial_N );
-        capsule_N.add(new THREE.PointLight(posColor, 15, 100000000, 0.6));
+		const Tartole_N = this.setMeshGLTF('PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		Tartole_N.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("slowness", mesh, "negative"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
 
-		const arrayPowerup = [
-			new PowerUp("speed", cube, "positive") ,
-			new PowerUp("speed", cube_N, "negative") ,
-			new PowerUp("slowness", prism, "positive"),
-			new PowerUp("slowness", prism_N, "negative"),
-			new PowerUp("triple", donut, "positive"),
-			new PowerUp("triple", donut_N, "negative"),
-			new PowerUp("scale", capsule , "positive"),
-            new PowerUp("scale", capsule_N , "negative"),
-		]
+		//triple
+		const Triple_P = this.setMeshGLTF('PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
+		Triple_P.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("triple", mesh, "positive"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
+
+		const Triple_N = this.setMeshGLTF('PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
+		Triple_N.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("triple", mesh, "negative"));
+			//this.scene.add(mesh);
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
+
+		//scale
+		const Scale_P = this.setMeshGLTF('PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
+		Scale_P.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("scale", mesh, "positive"));
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
+		const Scale_N = this.setMeshGLTF('PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
+		Scale_N.then((mesh)=>{
+			arrayPowerup.push(new PowerUp("scale", mesh, "negative"));
+			
+		}).catch((error)=>{
+			console.error('Sei un bischero: ', error);
+		});
 		return arrayPowerup;
 	}
+
 	/* vik ha modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
@@ -188,8 +222,13 @@ export class World {
 	/* vik a modificato */
 	rotatePowerUp() {
 		if(this.powerUp){
-			this.powerUp.mesh.rotation.x += 0.05;
-			this.powerUp.mesh.rotation.y += 0.05;
+			if(this.powerUp.mesh){
+				let speed = 0.01;
+				let oscillazioneZ = 10;
+				let oscillazioneAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; // Modifica Math.PI / 8 per regolare l'ampiezza dell'oscillazione su z 
+				this.powerUp.mesh.position.z = oscillazioneAngleZ + oscillazioneZ;
+				this.powerUp.mesh.rotation.y += 0.03;
+			}
 		}
 	}
 
@@ -259,7 +298,7 @@ export class World {
 	loadPlant(){
 		return new Promise((resolve, reject) =>{
 			this.gltfLoader.load(
-				'pianta_vik.glb',
+				'UtilsMesh/pianta_vik.glb',
 				(object)=>{
 					console.log(object);
 					const threeObj = object.scene.children[0];
@@ -339,7 +378,7 @@ export class World {
 	loadPort(){
 		return new Promise((resolve, reject)=>{
 			this.gltfLoader.load(
-				'boor_2.glb',
+				'UtilsMesh/boor_2.glb',
 				(object)=>{
 					const threeObj = object.scene;
 					this.door = object.scene.children[0];
@@ -360,7 +399,7 @@ export class World {
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
-			'ping_pong_table.glb',
+			'table/ping_pong_table.glb',
 			(object)=>{
 
 				const threeObj = object.scene.children[0];

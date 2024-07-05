@@ -803,7 +803,7 @@ export class World {
 	loadFonts() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'Beauty.json',
+				'404font.json',
 				(font) => {
 					this.font = font;
 					const geometry = new TextGeometry( 'PONG', {

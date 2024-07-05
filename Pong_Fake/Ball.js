@@ -6,7 +6,13 @@ export class Ball {
 	constructor(color){
 		this.mesh = new THREE.Mesh(
             new THREE.SphereGeometry(0.8, 16, 32),
-            new THREE.MeshPhongMaterial({color: color, emissive: color})
+            new THREE.MeshPhongMaterial({
+				color: color,
+				emissive: color,
+				reflectivity: 1,
+				roughness: 0,
+				metalness: 1,
+			})
         );
 		this.mesh.add(new THREE.PointLight(color, 5, 100, 1))
 		this.speed = UTILS.STARTINGSPEED;
