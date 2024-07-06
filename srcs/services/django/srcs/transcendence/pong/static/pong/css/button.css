@@ -102,3 +102,104 @@ background-image: none;
 background-color: #ffffffe8;
 background-image: none;
 }
+
+
+/* Stile di base per il pulsante */
+.glow-button {
+  border: 2px solid #fff !important;
+  color: #fff !important;
+  background-color: transparent !important;
+  padding: 10px 20px !important;
+  font-size: 1.5rem !important;
+  font-family: "Tilt Neon", sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  display: inline-block !important;
+  margin: 20px !important;
+  cursor: pointer !important;
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+/* Effetto glow di base */
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: transparent !important;
+  z-index: -1;
+  transition: all 0.3s ease;
+  opacity: 0;
+  box-shadow: 0 0 5px #fff, 0 0 10px #fff !important;
+}
+
+/* Effetti hover */
+.glow-button:hover::before {
+  opacity: 1 !important;
+}
+
+/* Varianti di colore */
+.glow-button.red:hover {
+  color: #ff0000 !important;
+  border-color: #ff0000 !important;
+}
+
+.glow-button.red:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000 !important;
+}
+
+.glow-button.green:hover {
+  color: #00ff00 !important;
+  border-color: #00ff00 !important;
+}
+
+.glow-button.green:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00 !important;
+}
+
+.glow-button.blue:hover {
+  color: #0000ff !important;
+  border-color: #0000ff !important;
+}
+
+.glow-button.blue:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #0000ff, 0 0 10px #0000ff !important;
+}
+
+.glow-button.fuchsia:hover {
+  color: #ff00ff !important;
+  border-color: #ff00ff !important;
+}
+
+.glow-button.fuchsia:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff !important;
+}
+
+.glow-button.purple:hover {
+  color: #800080 !important;
+  border-color: #800080 !important;
+}
+
+.glow-button.purple:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #800080, 0 0 10px #800080 !important;
+}
+
+.glow-button.cyan:hover {
+  color: #00ffff !important;
+  border-color: #00ffff !important;
+}
+
+.glow-button.cyan:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff !important;
+}

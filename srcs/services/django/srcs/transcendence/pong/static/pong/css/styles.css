@@ -81,8 +81,9 @@ nav {
 
 .navbar-nav {
 	display: flex;
-	font-size: clamp(15px, 2.5vw, 30px);
+	font-size: clamp(10px, 2.5vw, 20px);
 	font-family: "Tilt Neon", sans-serif;
+	text-transform: uppercase !important;
 	gap: 20px;
 }
 
@@ -165,18 +166,111 @@ nav {
 	}
 }
 
+/* Definizione base neonbar */
 .neonbar {
 	color: #fff;
 	text-shadow:
+	  0 0 10px #ffffff4f,
+	  0 0 10px #0ff,
+	  0 0 10px rgb(13, 185, 176),
+	  0 0 10px rgba(0, 255, 255, 0.233),
+	  0 0 10px rgba(0, 255, 255, 0.336),
+	  0 0 10px rgba(0, 255, 255, 0.418);
+  }
+  
+  /* Varianti di dimensione */
+  .neonbar-small {
+	font-size: 1rem;
+  }
+  
+  .neonbar-medium {
+	font-size: 2rem;
+  }
+  
+  .neonbar-large {
+	font-size: 4rem;
+  }
+  
+  /* Animazioni */
+  @keyframes neon-flicker {
+	0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+	  opacity: 1;
+	}
+	20%, 24%, 55% {
+	  opacity: 0.4;
+	}
+  }
+  
+  @keyframes neon-pulse {
+	0% {
+	  text-shadow:
 		0 0 5px #fff,
 		0 0 10px #fff,
 		0 0 20px #fff,
-		0 0 40px #0ff,
-		0 0 80px #0ff,
-		0 0 90px #0ff,
-		0 0 100px #0ff,
-		0 0 150px #0ff;
-}
+		0 0 40px var(--neon-color),
+		0 0 80px var(--neon-color),
+		0 0 9px var(--neon-color),
+		0 0 10px var(--neon-color),
+		0 0 1px var(--neon-color);
+	}
+	50% {
+	  text-shadow:
+		0 0 5px #fff,
+		0 0 10px #fff,
+		0 0 20px #fff,
+		0 0 40px var(--neon-color),
+		0 0 0px var(--neon-color),
+		0 0 9px var(--neon-color),
+		0 0 2px var(--neon-color),
+		0 0 00px var(--neon-color);
+	}
+	100% {
+	  text-shadow:
+		0 0 5px #fff,
+		0 0 10px #fff,
+		0 0 20px #fff,
+		0 0 40px var(--neon-color),
+		0 0 80px var(--neon-color),
+		0 0 90px var(--neon-color),
+		0 0 100px var(--neon-color),
+		0 0 100px var(--neon-color);
+	}
+  }
+  
+  /* Neonbar con animazioni */
+  .neonbar-animated {
+	animation: neon-flicker 1.5s infinite alternate, neon-pulse 2s infinite alternate;
+  }
+  
+  /* Varianti di colore */
+  .neonbar-red {
+	--neon-color: #ff0000;
+  }
+  
+  .neonbar-green {
+	--neon-color: #5eff00;
+  }
+  
+  .neonbar-blue {
+	--neon-color: #0000ff;
+  }
+
+  .neonbar-pink {
+	--neon-color: #ff00f2;
+  }
+
+  .neonbar-orange{
+	--neon-color: #ff7300;
+  }
+
+  .neonbar-white {
+	--neon-color: #ffffff;
+  }
+  
+  /* <!-- Neonbar animate con diverse dimensioni e colori -->
+<div class="neonbar neonbar-animated neonbar-small neonbar-red">Testo Neon Rosso Piccolo Animato</div>
+<div class="neonbar neonbar-animated neonbar-medium neonbar-green">Testo Neon Verde Medio Animato</div>
+<div class="neonbar neonbar-animated neonbar-large neonbar-blue">Testo Neon Blu Grande Animato</div> */
 
 .neonpink {
 	color: #e7e7e7;

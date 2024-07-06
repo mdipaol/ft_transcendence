@@ -1,0 +1,49 @@
+{% load static %}
+
+    <div>
+        <div class="form-container form-container-teammates">
+            <div class="input-form" id="teammates-input">
+                <!-- <form id="teammates-form" action="/profile/teammates/" method="POST"> -->
+                    {% csrf_token %}
+                    <div class="legend-container">
+                        <legend>Select Teammates</legend>
+                    </div>
+                    <div class="search-container">
+                        <span class="smaller-text">Search for Teammates</span>
+                        <input id="teammate-searchbar" class="searchbar searchbar-med" type="search" placeholder="Example: Luka Doncic">
+                    </div>
+                    <ul id="teammates-list">
+                        <!-- {% for user in users %}
+                            {% if user.id != myuser.id %}
+                                    {% if user.id in current_teammates_id %} -->
+                                        <li class="select-item">
+                                            <label class="selected" for="user_id_{{ user.id }}">
+                                                <span class="{{ user.id }}">{{ user }}</span>
+                                                <span class="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</span>
+                                            </label>
+                                            <input type="checkbox" name="user_id_{{ user.id }}" id="user_id_{{ user.id }}" checked>
+                                        </li>
+                                    <!-- {% else %} -->
+                                        <li class="select-item">
+                                            <label for="user_id_{{ user.id }}">
+                                                <span class="{{ user.id }}">{{ user }}</span>
+                                                <span class="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</span>
+                                            </label>
+                                            <input type="checkbox" name="user_id_{{ user.id }}" id="user_id_{{ user.id }}">
+                                        </li>
+                                    <!-- {% endif %}
+                            {% endif %}
+                        {% endfor %} -->
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn" type="submit">Submit</button>
+                    </div>
+
+            </div>
+            <div class="form-sidepanel">
+                <img src="{% static 'events/images/background/shooting_outside_001.jpg' %}" alt="">
+            </div>
+        </div>
+    </div>
+    <!-- <script src="{% static 'events/javascript/selectTeammates.js' %}" defer></script>
+    <script src="{% static 'events/javascript/searchTeammates.js' %}" defer></script> -->
