@@ -216,9 +216,7 @@ nav {
 	50% {
 	  text-shadow:
 		0 0 5px #fff,
-		0 0 10px #fff,
-		0 0 20px #fff,
-		0 0 40px var(--neon-color),
+		0 0 20px var(--neon-color),
 		0 0 0px var(--neon-color),
 		0 0 9px var(--neon-color),
 		0 0 2px var(--neon-color),
@@ -227,13 +225,12 @@ nav {
 	100% {
 	  text-shadow:
 		0 0 5px #fff,
-		0 0 10px #fff,
-		0 0 20px #fff,
-		0 0 40px var(--neon-color),
-		0 0 80px var(--neon-color),
-		0 0 90px var(--neon-color),
-		0 0 100px var(--neon-color),
-		0 0 100px var(--neon-color);
+
+		0 0 10px var(--neon-color),
+		0 0 20px var(--neon-color),
+		0 0 30px var(--neon-color),
+		0 0 10px var(--neon-color),
+		0 0 10px var(--neon-color);
 	}
   }
   
@@ -264,7 +261,7 @@ nav {
   }
 
   .neonbar-white {
-	--neon-color: #ffffff;
+	--neon-color: #9ffcff;
   }
   
   /* <!-- Neonbar animate con diverse dimensioni e colori -->
