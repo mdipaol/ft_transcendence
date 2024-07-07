@@ -16,12 +16,20 @@ const TournamentJoin = {
    */
   after_render: async () => {
     const createButton = document.getElementById("create");
-    const tournamentDiv = document.getElementById("tournament");
+    const tournamentVisualization = document.querySelectorAll("#tournament-visualization");
     const joinTournament = document.querySelectorAll("#join-tournament-button");
 
     if (createButton) {
       createButton.addEventListener('click', async () => {
         triggerHashChange('/tournament_create');
+      });
+    }
+    if (tournamentVisualization) {
+      tournamentVisualization.forEach(tournamentVisualization => {
+        if (tournamentVisualization) { tournamentVisualization.addEventListener('dblclick', async (event) => {
+          alert('Tournament visualization'); // AGGIUNGERE VISUALIZZAZIONE TORNEO
+        });
+        }
       });
     }
     if (joinTournament) {
