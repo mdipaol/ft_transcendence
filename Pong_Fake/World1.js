@@ -564,7 +564,7 @@ export class World1 {
 			this.audioLoader.load('music/collision_world1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(0.25);
+				sound.setVolume(0.1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -581,7 +581,7 @@ export class World1 {
 			this.audioLoader.load('music/powerdown.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(0.2);
+				sound.setVolume(0.3);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -597,13 +597,30 @@ export class World1 {
 			this.audioLoader.load('music/powerup.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(0.2);
+				sound.setVolume(0.3);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
 				reject(error);
 			});
 		})
+	}
+
+	loadSoundWallCollision(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundWallCollision = sound;
+
+			this.audioLoader.load('music/collision_world1.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(0.1);
+				sound.setPlaybackRate(2);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
 	}
 
 	async loadObjects() {
@@ -616,6 +633,7 @@ export class World1 {
 			this.loadPointLight(),
 			this.loadAudio(),
 			this.loadSoundCollision(),
+			this.loadSoundWallCollision(),
 			this.loadSoundPowerUpP(),
 			this.loadSoundPowerUpN()
 		];

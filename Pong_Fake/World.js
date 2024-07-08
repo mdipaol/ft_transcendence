@@ -730,8 +730,8 @@ export class World {
 			this.loadNickName_1(),
 			this.loadNickName_2(),
 			this.loadNameTeem(),
-			//this.loadAudio_world(),
-			//this.loadSoundCollision(),
+			this.loadAudio_world(),
+			this.loadSoundCollision(),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

@@ -262,9 +262,16 @@ export class MatchBot extends Match {
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
-            if (this.world.soundCollision.isPlaying)
-                this.world.soundCollision.stop();
-            this.world.soundCollision.play();
+            if (UTILS.SWITHCH_WORLD == true){
+                if (this.world.soundCollision.isPlaying)
+                    this.world.soundCollision.stop();
+                this.world.soundCollision.play();
+            }
+            if(UTILS.SWITHCH_WORLD == false){
+                if (this.world.soundCollision.isPlaying)
+                    this.world.soundCollision.stop();
+                this.world.soundCollision.play();
+            }
 
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
@@ -296,11 +303,11 @@ export class MatchBot extends Match {
 			this.player2.powerUp = null;
 
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive"){
-                if(UTILS.SWITHCH_WORLD == true){
-                    if(this.world.soundPowerUpPositive.isPlaying)
-                        this.world.soundPowerUpPositive.stop();
-                    this.world.soundPowerUpPositive.play();
-                }
+                // if(UTILS.SWITHCH_WORLD == true){
+                //     if(this.world.soundPowerUpPositive.isPlaying)
+                //         this.world.soundPowerUpPositive.stop();
+                //     this.world.soundPowerUpPositive.play();
+                // }
                 if(UTILS.SWITHCH_WORLD == false){
                     if(this.world.soundPowerUpPositive.isPlaying)
                         this.world.soundPowerUpPositive.stop();
@@ -309,11 +316,11 @@ export class MatchBot extends Match {
 				this.player2.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative"){
-                if(UTILS.SWITHCH_WORLD == true){
-                    if(this.world.soundPowerUpNegative.isPlaying)
-                        this.world.soundPowerUpNegative.stop();
-                    this.world.soundPowerUpNegative.play();
-                }
+                // if(UTILS.SWITHCH_WORLD == true){
+                //     if(this.world.soundPowerUpNegative.isPlaying)
+                //         this.world.soundPowerUpNegative.stop();
+                //     this.world.soundPowerUpNegative.play();
+                // }
                 if(UTILS.SWITHCH_WORLD == false){
                     if(this.world.soundPowerUpNegative.isPlaying)
                         this.world.soundPowerUpNegative.stop();
@@ -322,11 +329,11 @@ export class MatchBot extends Match {
                 this.player1.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive"){
-                if(UTILS.SWITHCH_WORLD == true){
-                    if(this.world.soundPowerUpPositive.isPlaying)
-                        this.world.soundPowerUpPositive.stop();
-                    this.world.soundPowerUpPositive.play();
-                }
+                // if(UTILS.SWITHCH_WORLD == true){
+                //     if(this.world.soundPowerUpPositive.isPlaying)
+                //         this.world.soundPowerUpPositive.stop();
+                //     this.world.soundPowerUpPositive.play();
+                // }
                 if(UTILS.SWITHCH_WORLD == false){
                     if(this.world.soundPowerUpPositive.isPlaying)
                         this.world.soundPowerUpPositive.stop();
@@ -335,11 +342,11 @@ export class MatchBot extends Match {
 				this.player1.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative"){
-                if(UTILS.SWITHCH_WORLD == true){
-                    if(this.world.soundPowerUpNegative.isPlaying)
-                        this.world.soundPowerUpNegative.stop();
-                    this.world.soundPowerUpNegative.play();
-                }
+                // if(UTILS.SWITHCH_WORLD == true){
+                //     if(this.world.soundPowerUpNegative.isPlaying)
+                //         this.world.soundPowerUpNegative.stop();
+                //     this.world.soundPowerUpNegative.play();
+                // }
                 if(UTILS.SWITHCH_WORLD == false){
                     if(this.world.soundPowerUpNegative.isPlaying)
                         this.world.soundPowerUpNegative.stop();
@@ -355,13 +362,14 @@ export class MatchBot extends Match {
 
 		if (UTILS.wallCollision(this.ball)){
 			this.ball.direction.y *= -1;
-            console.log('collision wall');
-            const WallCollision = this.world.soundCollision.clone();
-            if(WallCollision.isPlaying){
-                WallCollision.stop();
+            //console.log('collision wall');
+            //const WallCollision = this.world.soundCollision.clone();
+            if(UTILS.SWITHCH_WORLD == false){
+                if( this.world.soundWallCollision.isPlaying){
+                    this.world.soundWallCollision.stop();
+                }
+                this.world.soundWallCollision.play();
             }
-            WallCollision.setPlaybackRate(2);
-            WallCollision.play();
         }
 
 		//Reset positions
