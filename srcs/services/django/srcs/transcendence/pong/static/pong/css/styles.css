@@ -192,23 +192,14 @@ nav {
   }
   
   /* Animazioni */
-  @keyframes neon-flicker {
-	0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-	  opacity: 1;
-	}
-	20%, 24%, 55% {
-	  opacity: 0.4;
-	}
-  }
   
   @keyframes neon-pulse {
 	0% {
 	  text-shadow:
 		0 0 5px #fff,
 		0 0 10px #fff,
-		0 0 20px #fff,
-		0 0 40px var(--neon-color),
-		0 0 80px var(--neon-color),
+		0 0 0px var(--neon-color),
+		0 0 30px var(--neon-color),
 		0 0 9px var(--neon-color),
 		0 0 10px var(--neon-color),
 		0 0 1px var(--neon-color);
@@ -216,7 +207,7 @@ nav {
 	50% {
 	  text-shadow:
 		0 0 5px #fff,
-		0 0 20px var(--neon-color),
+		0 0 0px var(--neon-color),
 		0 0 0px var(--neon-color),
 		0 0 9px var(--neon-color),
 		0 0 2px var(--neon-color),
@@ -228,7 +219,7 @@ nav {
 
 		0 0 10px var(--neon-color),
 		0 0 20px var(--neon-color),
-		0 0 30px var(--neon-color),
+		0 0 20px var(--neon-color),
 		0 0 10px var(--neon-color),
 		0 0 10px var(--neon-color);
 	}
@@ -262,6 +253,10 @@ nav {
 
   .neonbar-white {
 	--neon-color: #9ffcff;
+  }  
+  
+  .neonbar-purple {
+	--neon-color: #8400ff;
   }
   
   /* <!-- Neonbar animate con diverse dimensioni e colori -->
@@ -465,3 +460,47 @@ body{
 
 	  }
   }
+
+/* Stile per il bordo luminoso */
+/* Stile per il bordo luminoso */
+#account-header-glow,
+#account-events-glow,
+#account-highlights-glow {
+  position: relative;
+  border-radius: 15px;
+  z-index: 1;
+}
+
+#account-header-glow::before,
+#account-events-glow::before,
+#account-highlights-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 15px;
+  outline: 2px solid rgba(0, 255, 255, 0.5);
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+#account-header-glow:hover::before,
+#account-events-glow:hover::before,
+#account-highlights-glow:hover::before {
+  opacity: 1;
+}
+
+#account-header-glow:hover::before {
+  outline: 2px solid rgba(0, 255, 255, 0.7);
+}
+
+#account-events-glow:hover::before {
+  outline: 2px solid rgba(0, 255, 255, 0.7);
+}
+
+#account-highlights-glow:hover::before {
+  outline: 2px solid rgba(0, 255, 255, 0.7);
+}

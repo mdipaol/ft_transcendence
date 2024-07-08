@@ -305,6 +305,7 @@ def tournament_create(request):
 		if form.is_valid():
 			tournament = form.save(request.user)
 			partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+			user_partecipant = [item.user for item in partecipant_list]
 			context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
@@ -312,6 +313,7 @@ def tournament_create(request):
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'winner' : None,
 				'finished' : False,
+				'joined' : request.user in user_partecipant,
 			}
 			return render(request, 'pong/spa/tournament_info.html', context)
 		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
@@ -325,12 +327,15 @@ def tournament_join(request, name):
 		if not tournament:
 			...
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
-		if len(partecipant_list) >= tournament.number_of_partecipants:
-			...
 		if name in partecipant_list:
+			...
+		if len(partecipant_list) >= tournament.number_of_partecipants:
 			...
 		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
 		partecipant.save()
+		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+		user_partecipant = [item.user for item in partecipant_list]
+		print(user_partecipant)
 		context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
@@ -338,6 +343,7 @@ def tournament_join(request, name):
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
 				'winner' : None,
 				'finished' : False,
+				'joined' : request.user in user_partecipant,
 				}
 		return JsonResponse(data={
 			'html' : render_to_string('pong/spa/tournament_info.html', context)
@@ -349,6 +355,7 @@ def tournaments_list(request):
 		tournaments = Tournament.objects.all()
 		context = {
 			'tournaments' : tournaments,
+			'user' : request.user,
 		}
 		return render(request, 'pong/spa/tournament_list.html', context)
 
