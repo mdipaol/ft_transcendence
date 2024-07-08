@@ -3,7 +3,7 @@ import * as THREE from 'three';
 //---------COSTANTS--------
 export const MAXSCORE = 100;
 export const MOVSPEED = 0.6;
-export const STARTINGSPEED = 0.8;//speed ball
+export const STARTINGSPEED = 1;//speed ball
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
 export const BOXSIZE = 250;
@@ -11,7 +11,7 @@ export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;
 export const MAX_SIZEY = 27
 export const MIN_SIZEY = -27
-export const SWITHCH_WORLD = true;
+export const SWITHCH_WORLD = false;//true = world || false = world1
 
 // region HELPERSs
 
@@ -27,6 +27,26 @@ export function roundPos(pos)
 	if (pos < 0)
 		return 0;
 	return pos;
+}
+
+
+export function setSound(path, setLoop, setVolume){
+    return new Promise((resolve, reject) => {
+        const listener = new THREE.AudioListener();
+        const sound = new THREE.Audio(listener);
+        const audioLoader = new THREE.AudioLoader();
+        
+        audioLoader.load(path, function(buffer) {
+            sound.setBuffer(buffer);
+            sound.setLoop(setLoop);
+            sound.setVolume(setVolume);
+            sound.play();
+            
+            resolve(sound);
+        }, undefined, function(error) {
+            reject(error);
+        });
+    });
 }
 
 export function angleBetweenVectors(a, b) {

@@ -39,7 +39,7 @@ export class Match {
             this.player2.mesh.rotation.z = Math.PI / 2; // world
         }
 
-        // Configurazione dei giocatori e delle luci per world1
+       // Configurazione dei giocatori e delle luci per world1
         if (UTILS.SWITHCH_WORLD === false) {
             this.player1.mesh.position.x = -51;
             this.player2.mesh.position.x = 55.5;
@@ -47,8 +47,8 @@ export class Match {
             this.player2.mesh.rotation.x = Math.PI / 2; // world1
             world.spotLight.target = this.player1.mesh; // world1
             world.spotLight2.target = this.player2.mesh; // world1
-            world.spotLightCenter1.target = this.player1.mesh; // world1
-            world.spotLightCenter2.target = this.player2.mesh; // world1
+            // world.spotLightCenter1.target = this.player1.mesh; // world1
+            // world.spotLightCenter2.target = this.player2.mesh; // world1
             world.spotLightWall1.target = this.player1.mesh; // world1
             world.spotLightWall2.target = this.player2.mesh; // world1
         }
@@ -72,10 +72,9 @@ export class Match {
     }
 
 	exchangesTextInit() {
-		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1] && this.exchangesText[2]) {
+		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
 			this.world.remove(this.exchangesText[0]);
 			this.world.remove(this.exchangesText[1]);
-			this.world.remove(this.exchangesText[2]);
 		}
 		const geometry = new TextGeometry( "0", {
 			font: this.exchangesFont,
@@ -93,15 +92,11 @@ export class Match {
         mesh.position.set(-125, 0, 5);
 
 		const mirrored = mesh.clone();
-		const mirrored2 = mesh.clone();
 		mirrored.scale.x = -mesh.scale.x;
-		mirrored2.position.set(0, 50, -22.5);
-		mirrored2.rotation.set( 0, 0, 0);
 		mirrored.position.set(124, 0, 5)
         this.world.add(mesh);
 		this.world.add(mirrored);
-		this.world.add(mirrored2);
-		const meshes = [mesh, mirrored, mirrored2];
+		const meshes = [mesh, mirrored]
 		return meshes;
 	}
 
@@ -117,7 +112,6 @@ export class Match {
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 		this.exchangesText[0].geometry = geometry;
 		this.exchangesText[1].geometry = geometry;
-		this.exchangesText[2].geometry = geometry;
 	}
 
 	scoreTextInit() {
@@ -413,6 +407,7 @@ export class Match {
 
 			this.handlePowerUp(this.player2);
 			this.addPowerUp();
+			// UTILS.setSound('music/ball.hit.mp3', false, 1);
 		}
 		// PowerUp collision
 		if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){

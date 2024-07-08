@@ -30,8 +30,9 @@ export class World {
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();
 		this.fontLoader = new FontLoader();
-		//this.nikNameloader1 = new FontLoader();
-		//this.nikNameloader2 = new FontLoader();
+		this.audioLoader = new THREE.AudioLoader();
+		this.listener = new THREE.AudioListener();
+		this.soundCollision = null;
 		this.gltfLoader = new GLTFLoader();
 		this.dracoLoader = new DRACOLoader();
 		// 'https://www.gstatic.com/draco/v1/decoders/'
@@ -39,7 +40,6 @@ export class World {
 		this.dracoLoader.setDecoderConfig({type: 'js'});
 		this.gltfLoader.setDRACOLoader(this.dracoLoader);
 		this.font = null;
-		//this.laodTable();
 		this.powerUp = null;
 		this.skyboxInit();
 		this.posterInit();
@@ -332,7 +332,7 @@ export class World {
 			cylinder.position.set(-120, 120 , 110);
 			cylinder.rotation.x = Math.PI / 2;
 			cylinder.scale.multiplyScalar(0.4);
-			cylinder.add(new THREE.PointLight(0xFF4E4E, 5, 500, 0.6));
+			cylinder.add(new THREE.PointLight(0xFF4E4E, 5, 500,0.6));
 			// Correzione: ottenere la geometria del cilindro da utilizzare per gli spigoli
 			const cylinderEdgesGeometry = new THREE.EdgesGeometry(geometry);
 			const cylinderLineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
@@ -344,7 +344,7 @@ export class World {
 			const cylinder1 = new THREE.Mesh(geometry1, material1);
 			cylinder1.rotation.x = Math.PI / 2;
 			cylinder1.position.set(120, 120, 110);
-			cylinder1.add(new THREE.PointLight(0x9B4EFF, 5, 500, 0.6));
+			cylinder1.add(new THREE.PointLight(0x9B4EFF, 5, 500,0.6));
 			cylinder1.scale.multiplyScalar(0.4);
 			
 			
@@ -354,17 +354,15 @@ export class World {
 			cylinder2.rotation.x = Math.PI / 2;
 			cylinder2.position.set(-120, -120, 110);
 			cylinder2.scale.multiplyScalar(0.4);
-			cylinder2.add(new THREE.PointLight(0x6CFF4E, 5, 500, 0.6));
+			cylinder2.add(new THREE.PointLight(0x6CFF4E, 5, 500,0.6));
 			
-
-
 			const geometry3= new THREE.CylinderGeometry(5, 5, 600, 32); 
 			const material3 = new THREE.MeshBasicMaterial({ color: 0xFFC662 }); 
 			const cylinder3 = new THREE.Mesh(geometry3, material3);
 			cylinder3.position.set(120, -120, 110);
 			cylinder3.rotation.x = Math.PI / 2;
 			cylinder3.scale.multiplyScalar(0.4);
-			cylinder3.add(new THREE.PointLight(0xFFC662, 5, 500, 0.6));
+			cylinder3.add(new THREE.PointLight(0xFFC662, 5, 500,0.6));
 			
 			
 			this.add(cylinder);
@@ -386,7 +384,6 @@ export class World {
 					threeObj.rotation.y = Math.PI;
 					threeObj.position.set(-15, -117, -22);
 					threeObj.scale.multiplyScalar(25);
-					//this.door.position.x = -2;
 					this.door.material.emissive = new THREE.Color(0x808080); // Colore emissivo (verde in questo caso)
                     this.door.material.emissiveIntensity = 0.025;
 					this.add(object.scene);
@@ -414,8 +411,6 @@ export class World {
 				threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
 				threeObj.rotation.set(Math.PI / 2, 0, 0);
 				threeObj.position.set(0, 0, -23.5);
-	
-				// this.table = object.scene;
 				this.add(object.scene);
 				resolve();
 			},
@@ -539,11 +534,6 @@ export class World {
 					const text2 = text.clone();
 					text2.position.set(124, 70, 55);
 					text2.scale.x = -text2.scale.x;
-					const text3 = text.clone();
-					text3.rotation.set(0, 0 ,0);
-					text3.scale.multiplyScalar(1 / 2);
-					text3.position.set(-30,50, -22);
-					this.add(text3);
 					this.add(text);
 					this.add(text2);
 					resolve();
@@ -573,11 +563,6 @@ export class World {
 					const text2 = text.clone();
 					text2.position.set(124, -70, 55);
 					text2.scale.x = -text2.scale.x;
-					const text3 = text.clone();
-					text3.rotation.set(0, 0 ,0);
-					text3.scale.multiplyScalar(1 / 2);
-					text3.position.set(30,50, -22);
-					this.add(text3);
 					this.add(text);
 					this.add(text2);
 					resolve();
@@ -694,57 +679,59 @@ export class World {
 			resolve();
 		});
 	}
+	
+	loadAudio_world() {
+		//UTILS.setSound('music/2_Jazz.mp3', true, 0.04);
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			//this.mainCamera.add( this.listener);
 
-	// loadMesh() {
-    //     const loader = new FBXLoader();
-    //     loader.load('vaso_vikfbx.fbx', (object) => {
+			this.audioLoader.load('music/2_Jazz.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(true);
+				sound.setVolume(0.03);
+				sound.play();
+				
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
 
-	// 		// Imposta la posizione dell'oggetto
+	loadSoundCollision(){
+		//UTILS.setSound('music/ball_hit_2.mp3', false, 0.05);
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundCollision = sound;
 
-    //         // Rotazione di 90 gradi sull'asse Y
-    //         object.rotation.x = Math.PI/2;
-    //         object.position.set(-90, 90, -10);
-    //         object.scale.multiplyScalar(10);
+			this.audioLoader.load('music/ball_hit.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(0.5);
+				//sound.setPlaybackRate(1);
 
-	// 		//addObject(object, new THREE.Vector3(-90,90,-10));
-    //         this.add(object);
-	// 		const object1 = object.clone();
-	// 		const object2 = object.clone();
-	// 		const object3 = object.clone();
-	// 		object1.position.set(-90,-90,-10);
-	// 		object2.position.set(90,90,-10);
-	// 		object3.position.set(90,-90,-10);
-	// 		this.add(object1);
-	// 		this.add(object2);
-	// 		this.add(object3);
-
-    //     }, undefined, (error) => {
-    //         console.error('Errore nel caricamento dell\'oggetto FBX:', error);
-    //     });
-	// 	const loader1 = new FBXLoader();
-	// 	loader1.load('door.fbx', (object) => {
-	// 		object.rotation.x = Math.PI/2;
-	// 		object.rotation.y = Math.PI;
-	// 		object.position.set(0,-120,28);
-	// 		object.scale.multiplyScalar(20);
-	// 		this.add(object);
-	// 	})
-    // }
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
 
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
-		this.loadPaddle(),
-		this.loadPlant(),
-		this.loadPort(),
-		this.loadNeon_angular(),
-		this.loadTable(),
-		this.loadFonts(),
-		this.loadNickName_1(),
-		this.loadNickName_2(),
-		this.loadNameTeem()
-
-		//this.loadPolletto()
+			this.loadPaddle(),
+			this.loadPlant(),
+			this.loadPort(),
+			this.loadNeon_angular(),
+			this.loadTable(),
+			this.loadFonts(),
+			this.loadNickName_1(),
+			this.loadNickName_2(),
+			this.loadNameTeem(),
+			//this.loadAudio_world(),
+			//this.loadSoundCollision(),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

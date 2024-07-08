@@ -31,8 +31,8 @@ export class World1 {
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();
 		this.fontLoader = new FontLoader();
-		//this.nikNameloader1 = new FontLoader();
-		//this.nikNameloader2 = new FontLoader();
+		this.audioLoader = new THREE.AudioLoader();
+		this.listener = new THREE.AudioListener();
 		this.gltfLoader = new GLTFLoader();
 		this.dracoLoader = new DRACOLoader();
 		// 'https://www.gstatic.com/draco/v1/decoders/'
@@ -40,7 +40,6 @@ export class World1 {
 		this.dracoLoader.setDecoderConfig({type: 'js'});
 		this.gltfLoader.setDRACOLoader(this.dracoLoader);
 		this.font = null;
-		//this.laodTable();
 		this.powerUp = null;
 		this.skyboxInit();
 		this.loadObjects();
@@ -67,8 +66,8 @@ export class World1 {
 		this.spotLightWall1.position.set(-125, 0, 100);
 		this.spotLightWall2.position.set(125, 0, 100);
 
-		this.scene.add(this.spotLightCenter1);
-		this.scene.add(this.spotLightCenter2);
+		// this.scene.add(this.spotLightCenter1);
+		// this.scene.add(this.spotLightCenter2);
 		this.scene.add(this.spotLightWall1);
 		this.scene.add(this.spotLightWall2);
 		
@@ -289,6 +288,7 @@ export class World1 {
 		side: THREE.DoubleSide,  // Lati del materiale
 		envMapIntensity: 1  // Intensità della mappa ambientale (per riflessi)
 	}); */
+
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
@@ -297,17 +297,8 @@ export class World1 {
 				object.scene.rotation.x =Math.PI/2;
 				object.scene.scale.multiplyScalar(21.5);
 				object.scene.position.set(0, 0 , -2);
-				const material_piano = new THREE.MeshStandardMaterial({
-					metalness: 1,  // Il vetro non è metallico
-					roughness: 0,  // La superficie del vetro è liscia
-					transmission: 1,  // La trasparenza è al massimo
-					opacity: 0,  // Imposta l'opacità per vedere attraverso
-					//transparent: true,  // Necessario per abilitare la trasparenza
-					reflectivity: 1,  // Alto valore per riflettività
-					side: THREE.DoubleSide,  // Lati del materiale
-					envMapIntensity: 1  // Intensità della mappa ambientale (per riflessi)
-				})
 				const material_bordi = new THREE.MeshStandardMaterial({
+					
 					roughness: 0,
 					metalness:1,
 					reflectivity: 1,
@@ -321,17 +312,12 @@ export class World1 {
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
-
-
-				// if(object.scene.children[0]){
-				// 	object.scene.children[0].material = material_piano;
-				// }
 				
-				if(object.scene.children[1]){
-					object.scene.children[1].material = material_bordi;
+				if(object.scene.children[0]){
+					object.scene.children[0].material = material_bordi;
 				}
-				if(object.scene.children[2]){
-					object.scene.children[2].material = material_rete;
+				if(object.scene.children[1]){
+					object.scene.children[1].material = material_rete;
 				}
 				this.add(object.scene);
 				resolve();
@@ -346,39 +332,38 @@ export class World1 {
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
 			this.gltfLoader.load(
-				'paddle/paddle_vik_a_frammenti.glb',
+				'paddle/paddle_vik_a_frammenti_3.glb',
 				(object)=>{	
 					//object.scene.rotation.z = Math.PI/2;
 					//object.scene.rotation.y = Math.PI/2;
-					const material_bordi = new THREE.MeshPhysicalMaterial({
-						color: 0xFF8000,
-						emissive: 0xFF8000,
-						emissiveIntensity: 15,
+					//const material_bordi = new THREE.MeshPhysicalMaterial({
+					const material_bordi = new THREE.MeshStandardMaterial({
+						color: 0xf06400,
+						emissive: 0xf06400,
+						emissiveIntensity: 0.1,
 						roughness: 0,
 						metalness:1,
 						reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					});
-					const material_face1 = new THREE.MeshPhysicalMaterial({
-						color: 0xFFA200,  
-						emissive: 0xffffff,
-						emissiveIntensity: 0.05,
-						metalness: 0, 
+					//const material_face1 = new THREE.MeshPhysicalMaterial({
+					const material_face1 = new THREE.MeshStandardMaterial({
+						color: 0xffffff,  
+						metalness: 1, 
 						roughness: 0,  
 						transmission: 1,  
-						opacity: 0.1,  
+						opacity: 0.5,  
 						transparent: true, 
 						reflectivity: 1,  
 						side: THREE.DoubleSide,  
 						envMapIntensity: 1 
 					});
 					
-					const material_face2 =  new THREE.MeshPhysicalMaterial({
-						color: 0x003CFF, 
-						emissive: 0xffffff,
-						emissiveIntensity: 0.05,
-						metalness: 0,
+					// const material_face2 =  new THREE.MeshPhysicalMaterial({
+						const material_face2 = new THREE.MeshStandardMaterial({
+						color: 0xffffff, 
+						metalness: 1,
 						roughness: 0,
 						transmission: 1,
 						opacity: 0.1, 
@@ -388,6 +373,7 @@ export class World1 {
 						envMapIntensity: 1 
 					});
 					const material_manico = new THREE.MeshStandardMaterial({
+						//color: 0x000000,
 						emissiveIntensity:0.1,
 						roughness: 0,
 						metalness:1,
@@ -411,16 +397,17 @@ export class World1 {
 						object.scene.children[3].material = material_manico;
 					//object.scene.add(PointLight2);
 					
-
+					object.scene.scale.multiplyScalar(0.85);
 					this.paddle = object.scene;
 					this.paddle.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
 							child.geometry.computeVertexNormals();
 						}
 					});
+					// region MeshPhysicalMaterial
 					this.paddle2 = this.paddle.clone();
 					if (this.paddle2.children[0]){
-						this.paddle2.children[0].material = new THREE.MeshPhysicalMaterial({
+						this.paddle2.children[0].material = new THREE.MeshStandardMaterial({
 							color: 0x0009FF,
 							emissive: 0x0009FF,
 							emissiveIntensity: 10,
@@ -431,8 +418,6 @@ export class World1 {
 							side: THREE.DoubleSide
 						})
 					}
-					console.log(this.paddle);
-					console.log(this.paddl)
 					resolve();
 				}
 			)
@@ -494,6 +479,7 @@ export class World1 {
 					object.scene.scale.multiplyScalar(41.5);
 					object.scene.position.set(0,125,105);
 					const material = new THREE.MeshStandardMaterial({
+						//color: 0x000000,
 						roughness:0,
 						metalness:1,
 						reflectivity: 1,
@@ -533,33 +519,20 @@ export class World1 {
 	loadPointLight(){
 		return new Promise((resolve, reject)=>{
 			//orange
-			const PointLight1 = new THREE.PointLight(0xFFCD00, 400, 400, 0.9);//-x + y -z
-			const PointLight2 = new THREE.PointLight(0xFFCD00, 400, 400,0.9);//-x -y -z
-			const PointLight3 = new THREE.PointLight(0xFFCD00, 400, 400,0.9);//-x +y +z
-			const PointLight4 = new THREE.PointLight(0xFFCD00, 400, 400,0.9);//-x -y +z
-			
+			const PointLight1 = new THREE.PointLight(0xFFCD00, 600, 600, 0.9);//-x + y -z
+			const PointLight3 = new THREE.PointLight(0xFFCD00, 600, 600,0.9);//-x +y -z
 			//blue
-			const PointLight5 = new THREE.PointLight(0x001AFF, 400, 400,0.9);//+x +y -z
-			const PointLight6 = new THREE.PointLight(0x001AFF, 400, 400,0.9);//+x +y +z	
-			const PointLight7 = new THREE.PointLight(0x001AFF, 400, 400,0.9);//+x -y -z
-			const PointLight8 = new THREE.PointLight(0x001AFF, 400, 400,0.9);//+x -y +z
+			const PointLight5 = new THREE.PointLight(0x001AFF, 600, 600,0.9);//+x +y -z
+			const PointLight7 = new THREE.PointLight(0x001AFF, 600, 600,0.9);//+x -y -z
 
 			PointLight1.position.set(-120, 120, -10);
-			PointLight2.position.set(-120, 120, 210);
 			PointLight3.position.set(-120, -120, -10);
-			PointLight4.position.set(-120, -120, 210);
 			PointLight5.position.set(120, 120, -10);
-			PointLight6.position.set(120, 120, 210);			
 			PointLight7.position.set(120, -120, -10);
-			PointLight8.position.set(120, -120, 210);
 			this.scene.add(PointLight1);
-			this.scene.add(PointLight2);
 			this.scene.add(PointLight3);
-			this.scene.add(PointLight4);
 			this.scene.add(PointLight5);
-			this.scene.add(PointLight6);
 			this.scene.add(PointLight7);
-			this.scene.add(PointLight8);
 			resolve();
 		})
 	}
@@ -580,35 +553,71 @@ export class World1 {
 	}
 
 	loadAudio() {
+		UTILS.setSound('music/The Finals OST - Main Menu Themes.mp3', true, 0.1);
+	}
+
+	loadSoundCollision(){
 		return new Promise((resolve, reject) => {
-			const listener = new THREE.AudioListener();
-			const sound = new THREE.Audio(listener);
-			const audioLoader = new THREE.AudioLoader();
-			
-			audioLoader.load('music/The Finals OST - Main Menu Themes.mp3', function(buffer) {
+			const sound = new THREE.Audio(this.listener);
+			this.soundCollision = sound;
+
+			this.audioLoader.load('music/collision_world1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
-				sound.setLoop(true);
-				sound.setVolume(0.1);
-				sound.play();
-				
-				resolve();
+				sound.setLoop(false);
+				sound.setVolume(0.25);
+				sound.setPlaybackRate(1);
+				resolve(sound);
 			}, undefined, function(error) {
 				reject(error);
 			});
 		});
 	}
 
+	loadSoundPowerUpP(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPowerUpNegative = sound;
+
+			this.audioLoader.load('music/powerdown.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(0.2);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+	loadSoundPowerUpN(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPowerUpPositive = sound;
+
+			this.audioLoader.load('music/powerup.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(0.2);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
-		this.loadPaddle(),
-		this.loadTable(),
-		this.loadFonts(),
-		this.load_wall(),
-		this.loadPointLight(),
-		this.loadAudio()
-		//this.loadNickName_1(),
-		//this.loadNickName_2(),
+			this.loadPaddle(),
+			this.loadTable(),
+			this.loadFonts(),
+			this.load_wall(),
+			this.loadPointLight(),
+			this.loadAudio(),
+			this.loadSoundCollision(),
+			this.loadSoundPowerUpP(),
+			this.loadSoundPowerUpN()
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

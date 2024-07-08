@@ -31,7 +31,7 @@ export class MatchBot extends Match {
 
     timer(){
         this.time_end = false;
-        setInterval(updateTimer(), 1000);
+        setInterval(updateTimer(),1000);
     }
 
     updateTimer(){
@@ -145,7 +145,7 @@ export class MatchBot extends Match {
 
     updateMovementsBot(){
 
-        if (((new Date()) - this.time_update) < 1700)
+        if (((new Date()) - this.time_update) < 1000)
             return ;
 
         this.time_update = new Date();
@@ -180,8 +180,8 @@ export class MatchBot extends Match {
 		this.player1.speed = UTILS.MOVSPEED;
 		this.player2.speed = UTILS.MOVSPEED;
 		this.ball.speed = UTILS.STARTINGSPEED;
-		this.player1.mesh.scale.set(1, 1, 1);
-		this.player2.mesh.scale.set(1, 1, 1);
+		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
+		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
 		// Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -214,13 +214,6 @@ export class MatchBot extends Match {
 		this.updateMovements();
 		this.world.rotatePowerUp();
 
-        // this.world.spotLight.position.y = this.player2.mesh.position.y;
-        // this.world.spotLight2.position.y = this.player1.mesh.position.y;
-        // // this.world.spotLight.target.position.set(this.player2.mesh.position.x, this.player2.mesh.position.y, this.player2.mesh.position.z);
-		// // this.world.spotLight2.target.position.set(this.player1.mesh.position.x, this.player1.mesh.position.y, this.player1.mesh.position.z);
-        // this.world.spotLight.target.position.y = this.player2.mesh.position.y
-        // this.world.spotLight2.target.position.y = this.player1.mesh.position.y
-
 
 		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
@@ -239,13 +232,20 @@ export class MatchBot extends Match {
 			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
 			ball2.mesh.position.z = ball2.getZ();
 
-			// console.log(ball1.mesh.position);
 		}
 
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
-			/* if (ball.speed < 2)
-				ball.speed *= ACCELERATION; */
+            if (UTILS.SWITHCH_WORLD == true){
+                if (this.world.soundCollision.isPlaying)
+                    this.world.soundCollision.stop();
+                this.world.soundCollision.play();
+            }
+            if (UTILS.SWITHCH_WORLD == false){
+                if (this.world.soundCollision.isPlaying)
+                    this.world.soundCollision.stop();
+                this.world.soundCollision.play();
+            }
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -257,12 +257,15 @@ export class MatchBot extends Match {
 
 			this.handlePowerUp(this.player1);
 			this.addPowerUp();
-			//test funzione
+
+
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
-			// if (ball.speed  < 2)
-			// 	ball.speed  *= ACCELERATION;
+            if (this.world.soundCollision.isPlaying)
+                this.world.soundCollision.stop();
+            this.world.soundCollision.play();
+
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -275,6 +278,8 @@ export class MatchBot extends Match {
 			this.handlePowerUp(this.player2);
 			this.addPowerUp();
             this.bot2.destinationY = 0;
+
+
 		}
         // Bot movements
         this.updateMovementsBot();
@@ -290,22 +295,74 @@ export class MatchBot extends Match {
 			this.player1.powerUp = null;
 			this.player2.powerUp = null;
 
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive"){
+                if(UTILS.SWITHCH_WORLD == true){
+                    if(this.world.soundPowerUpPositive.isPlaying)
+                        this.world.soundPowerUpPositive.stop();
+                    this.world.soundPowerUpPositive.play();
+                }
+                if(UTILS.SWITHCH_WORLD == false){
+                    if(this.world.soundPowerUpPositive.isPlaying)
+                        this.world.soundPowerUpPositive.stop();
+                    this.world.soundPowerUpPositive.play();
+                }
 				this.player2.powerUp = this.world.powerUp;
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
+            }
+			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative"){
+                if(UTILS.SWITHCH_WORLD == true){
+                    if(this.world.soundPowerUpNegative.isPlaying)
+                        this.world.soundPowerUpNegative.stop();
+                    this.world.soundPowerUpNegative.play();
+                }
+                if(UTILS.SWITHCH_WORLD == false){
+                    if(this.world.soundPowerUpNegative.isPlaying)
+                        this.world.soundPowerUpNegative.stop();
+                    this.world.soundPowerUpNegative.play();
+                }
+                this.player1.powerUp = this.world.powerUp;
+            }
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive"){
+                if(UTILS.SWITHCH_WORLD == true){
+                    if(this.world.soundPowerUpPositive.isPlaying)
+                        this.world.soundPowerUpPositive.stop();
+                    this.world.soundPowerUpPositive.play();
+                }
+                if(UTILS.SWITHCH_WORLD == false){
+                    if(this.world.soundPowerUpPositive.isPlaying)
+                        this.world.soundPowerUpPositive.stop();
+                    this.world.soundPowerUpPositive.play();
+                }
 				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
-				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
+            }
+			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative"){
+                if(UTILS.SWITHCH_WORLD == true){
+                    if(this.world.soundPowerUpNegative.isPlaying)
+                        this.world.soundPowerUpNegative.stop();
+                    this.world.soundPowerUpNegative.play();
+                }
+                if(UTILS.SWITHCH_WORLD == false){
+                    if(this.world.soundPowerUpNegative.isPlaying)
+                        this.world.soundPowerUpNegative.stop();
+                    this.world.soundPowerUpNegative.play();
+                }
 				this.player2.powerUp = this.world.powerUp;
+            }
 
 			this.powerUpTaken();
 		}
 
 
 
-		if (UTILS.wallCollision(this.ball))
+		if (UTILS.wallCollision(this.ball)){
 			this.ball.direction.y *= -1;
+            console.log('collision wall');
+            const WallCollision = this.world.soundCollision.clone();
+            if(WallCollision.isPlaying){
+                WallCollision.stop();
+            }
+            WallCollision.setPlaybackRate(2);
+            WallCollision.play();
+        }
 
 		//Reset positions
 		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
