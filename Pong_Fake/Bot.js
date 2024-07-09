@@ -145,7 +145,7 @@ export class MatchBot extends Match {
 
     updateMovementsBot(){
 
-        if (((new Date()) - this.time_update) < 300)
+        if (((new Date()) - this.time_update) < 1000)
             return ;
 
         this.time_update = new Date();

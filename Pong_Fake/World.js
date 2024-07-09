@@ -718,12 +718,12 @@ export class World {
 		});
 	}
 
-	loadSoundPowerUpP(){
+	loadSoundPowerUpP(){//invertito è negativo
 		return new Promise((resolve, reject)=> {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpNegative = sound;
-
-			this.audioLoader.load('music/powerdown.mp3', function(buffer) {
+			//'music/powerdown.mp3'
+			this.audioLoader.load('music/sceet.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1);
@@ -734,12 +734,12 @@ export class World {
 			});
 		})
 	}
-	loadSoundPowerUpN(){
+	loadSoundPowerUpN(){//è positivo
 		return new Promise((resolve, reject)=> {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpPositive = sound;
-
-			this.audioLoader.load('music/powerup.mp3', function(buffer) {
+			//'music/powerup.mp3'
+			this.audioLoader.load('music/wow.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1);
