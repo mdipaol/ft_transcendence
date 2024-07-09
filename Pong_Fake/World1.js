@@ -561,7 +561,7 @@ export class World1 {
 			this.audioLoader.load('music/sound_World1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
-				sound.setVolume(0.3);
+				sound.setVolume(0.1);
 				sound.setPlaybackRate(1);
 				sound.play();
 				resolve(sound);
@@ -645,7 +645,7 @@ export class World1 {
 			this.audioLoader.load('music/punto_Win.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(1);
+				sound.setVolume(0.3);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {

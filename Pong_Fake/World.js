@@ -689,7 +689,7 @@ export class World {
 			this.audioLoader.load('music/2_Jazz.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
-				sound.setVolume(0.3);
+				sound.setVolume(0.08);
 				sound.play();
 				
 				resolve(sound);
@@ -726,7 +726,7 @@ export class World {
 			this.audioLoader.load('music/sceet.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(1);
+				sound.setVolume(0.7);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -742,7 +742,7 @@ export class World {
 			this.audioLoader.load('music/wow.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(1);
+				sound.setVolume(1.5);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -759,8 +759,8 @@ export class World {
 			this.audioLoader.load('music/ball_hit.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(1.5);
-				sound.setPlaybackRate(1);
+				sound.setVolume(0.3);
+				sound.setPlaybackRate(1/1.2);
 				resolve(sound);
 			}, undefined, function(error) {
 				reject(error);
@@ -772,7 +772,7 @@ export class World {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPoint = sound;
-			this.audioLoader.load('music/point_2.mp3', function(buffer) {
+			this.audioLoader.load('music/point_1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1);

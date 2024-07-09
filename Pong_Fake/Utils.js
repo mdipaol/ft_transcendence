@@ -11,7 +11,7 @@ export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;
 export const MAX_SIZEY = 27
 export const MIN_SIZEY = -27
-export const SWITHCH_WORLD = false;//true = world || false = world1
+export const SWITHCH_WORLD = true;//true = world || false = world1
 
 // region HELPERSs
 
