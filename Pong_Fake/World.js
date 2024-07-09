@@ -685,11 +685,11 @@ export class World {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			//this.mainCamera.add( this.listener);
-
+			this.sound = sound;
 			this.audioLoader.load('music/2_Jazz.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
-				sound.setVolume(0.03);
+				sound.setVolume(0.3);
 				sound.play();
 				
 				resolve(sound);
@@ -718,6 +718,94 @@ export class World {
 		});
 	}
 
+	loadSoundPowerUpP(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPowerUpNegative = sound;
+
+			this.audioLoader.load('music/powerdown.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+	loadSoundPowerUpN(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPowerUpPositive = sound;
+
+			this.audioLoader.load('music/powerup.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+
+	loadSoundWallCollision(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundWallCollision = sound;
+
+			this.audioLoader.load('music/ball_hit.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1.5);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
+
+	loadSounPoint(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPoint = sound;
+			this.audioLoader.load('music/point_2.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
+
+	loadSoundEndMach(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundEndMach = sound;
+			this.audioLoader.load('music/partita_end.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(true);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
+
+
+
+
+	
+	
+	
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
@@ -732,6 +820,11 @@ export class World {
 			this.loadNameTeem(),
 			this.loadAudio_world(),
 			this.loadSoundCollision(),
+			this.loadSoundEndMach(),
+			this.loadSoundPowerUpN(),
+			this.loadSoundPowerUpP(),
+			this.loadSoundWallCollision(),
+			this.loadSounPoint()
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

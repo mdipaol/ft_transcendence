@@ -553,7 +553,22 @@ export class World1 {
 	}
 
 	loadAudio() {
-		UTILS.setSound('music/The Finals OST - Main Menu Themes.mp3', true, 0.1);
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.sound = sound;
+			//The Finals OST - Main Menu Themes
+			//sound_World1
+			this.audioLoader.load('music/sound_World1.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(true);
+				sound.setVolume(0.3);
+				sound.setPlaybackRate(1);
+				sound.play();
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
 	}
 
 	loadSoundCollision(){
@@ -623,6 +638,38 @@ export class World1 {
 		});
 	}
 
+	loadSounPoint(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundPoint = sound;
+			this.audioLoader.load('music/punto_Win.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
+
+	loadSoundEndMach(){
+		return new Promise((resolve, reject) => {
+			const sound = new THREE.Audio(this.listener);
+			this.soundEndMach = sound;
+			this.audioLoader.load('music/partita_end.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(true);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		});
+	}
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
@@ -635,7 +682,9 @@ export class World1 {
 			this.loadSoundCollision(),
 			this.loadSoundWallCollision(),
 			this.loadSoundPowerUpP(),
-			this.loadSoundPowerUpN()
+			this.loadSoundPowerUpN(),
+			this.loadSounPoint(),
+			this.loadSoundEndMach()
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

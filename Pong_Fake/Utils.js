@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
 //---------COSTANTS--------
-export const MAXSCORE = 100;
-export const MOVSPEED = 0.6;
+export const MAXSCORE = 500;
+export const MOVSPEED = 0.8;
 export const STARTINGSPEED = 1;//speed ball
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;

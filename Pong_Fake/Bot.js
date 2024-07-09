@@ -145,7 +145,7 @@ export class MatchBot extends Match {
 
     updateMovementsBot(){
 
-        if (((new Date()) - this.time_update) < 1000)
+        if (((new Date()) - this.time_update) < 300)
             return ;
 
         this.time_update = new Date();
@@ -166,8 +166,18 @@ export class MatchBot extends Match {
 		else
 			this.score1++;
 		this.updateScoreText();
-		if (this.score1 == this.maxScore || this.score2 == this.maxScore)
+		if (this.score1 == this.maxScore || this.score2 == this.maxScore){
+            if(this.world.sound.isPlaying){
+                this.world.sound.stop();
+            }
+            this.world.soundEndMach.play();
 			this.gameEnd();
+        }
+        
+        if(this.world.soundPoint.isPlaying){
+            this.world.soundPoint.stop();
+        }
+        this.world.soundPoint.play();
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
 		this.ball.mesh.position.z = 0;
@@ -218,6 +228,11 @@ export class MatchBot extends Match {
 		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 		this.ball.mesh.position.z = this.ball.getZ();
+        if(this.ball.mesh.position.z < 0){
+            if (this.world.soundWallCollision.isPlaying)
+                this.world.soundWallCollision.stop();
+            this.world.soundWallCollision.play();
+        }
 
 		// Triple ball update
 		if (this.tripleEnabled) {
@@ -236,16 +251,9 @@ export class MatchBot extends Match {
 
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
-            if (UTILS.SWITHCH_WORLD == true){
-                if (this.world.soundCollision.isPlaying)
-                    this.world.soundCollision.stop();
-                this.world.soundCollision.play();
-            }
-            if (UTILS.SWITHCH_WORLD == false){
-                if (this.world.soundCollision.isPlaying)
-                    this.world.soundCollision.stop();
-                this.world.soundCollision.play();
-            }
+            if (this.world.soundCollision.isPlaying)
+                this.world.soundCollision.stop();
+            this.world.soundCollision.play();
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -262,16 +270,9 @@ export class MatchBot extends Match {
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
-            if (UTILS.SWITHCH_WORLD == true){
-                if (this.world.soundCollision.isPlaying)
-                    this.world.soundCollision.stop();
-                this.world.soundCollision.play();
-            }
-            if(UTILS.SWITHCH_WORLD == false){
-                if (this.world.soundCollision.isPlaying)
-                    this.world.soundCollision.stop();
-                this.world.soundCollision.play();
-            }
+            if (this.world.soundCollision.isPlaying)
+                this.world.soundCollision.stop();
+            this.world.soundCollision.play();
 
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
@@ -303,73 +304,45 @@ export class MatchBot extends Match {
 			this.player2.powerUp = null;
 
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive"){
-                // if(UTILS.SWITHCH_WORLD == true){
-                //     if(this.world.soundPowerUpPositive.isPlaying)
-                //         this.world.soundPowerUpPositive.stop();
-                //     this.world.soundPowerUpPositive.play();
-                // }
-                if(UTILS.SWITHCH_WORLD == false){
-                    if(this.world.soundPowerUpPositive.isPlaying)
-                        this.world.soundPowerUpPositive.stop();
-                    this.world.soundPowerUpPositive.play();
-                }
+                if(this.world.soundPowerUpPositive.isPlaying)
+                    this.world.soundPowerUpPositive.stop();
+                this.world.soundPowerUpPositive.play();
+
 				this.player2.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative"){
-                // if(UTILS.SWITHCH_WORLD == true){
-                //     if(this.world.soundPowerUpNegative.isPlaying)
-                //         this.world.soundPowerUpNegative.stop();
-                //     this.world.soundPowerUpNegative.play();
-                // }
-                if(UTILS.SWITHCH_WORLD == false){
-                    if(this.world.soundPowerUpNegative.isPlaying)
-                        this.world.soundPowerUpNegative.stop();
-                    this.world.soundPowerUpNegative.play();
-                }
+                if(this.world.soundPowerUpNegative.isPlaying)
+                    this.world.soundPowerUpNegative.stop();
+                this.world.soundPowerUpNegative.play();
+
                 this.player1.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive"){
-                // if(UTILS.SWITHCH_WORLD == true){
-                //     if(this.world.soundPowerUpPositive.isPlaying)
-                //         this.world.soundPowerUpPositive.stop();
-                //     this.world.soundPowerUpPositive.play();
-                // }
-                if(UTILS.SWITHCH_WORLD == false){
-                    if(this.world.soundPowerUpPositive.isPlaying)
-                        this.world.soundPowerUpPositive.stop();
-                    this.world.soundPowerUpPositive.play();
-                }
+                if(this.world.soundPowerUpPositive.isPlaying)
+                    this.world.soundPowerUpPositive.stop();
+                this.world.soundPowerUpPositive.play();
+
 				this.player1.powerUp = this.world.powerUp;
             }
 			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative"){
-                // if(UTILS.SWITHCH_WORLD == true){
-                //     if(this.world.soundPowerUpNegative.isPlaying)
-                //         this.world.soundPowerUpNegative.stop();
-                //     this.world.soundPowerUpNegative.play();
-                // }
-                if(UTILS.SWITHCH_WORLD == false){
-                    if(this.world.soundPowerUpNegative.isPlaying)
-                        this.world.soundPowerUpNegative.stop();
-                    this.world.soundPowerUpNegative.play();
-                }
+                if(this.world.soundPowerUpNegative.isPlaying)
+                    this.world.soundPowerUpNegative.stop();
+                this.world.soundPowerUpNegative.play();
+
 				this.player2.powerUp = this.world.powerUp;
             }
-
 			this.powerUpTaken();
 		}
 
 
 
 		if (UTILS.wallCollision(this.ball)){
-			this.ball.direction.y *= -1;
-            //console.log('collision wall');
-            //const WallCollision = this.world.soundCollision.clone();
-            if(UTILS.SWITHCH_WORLD == false){
-                if( this.world.soundWallCollision.isPlaying){
-                    this.world.soundWallCollision.stop();
-                }
-                this.world.soundWallCollision.play();
+            if( this.world.soundWallCollision.isPlaying){
+                this.world.soundWallCollision.stop();
             }
+            this.world.soundWallCollision.play();
+            
+			this.ball.direction.y *= -1;
         }
 
 		//Reset positions
