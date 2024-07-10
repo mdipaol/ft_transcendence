@@ -5,8 +5,8 @@ export class Player {
 	// static paddle = Player.loadPaddle();
 
 	constructor(paddle) {
-		this.mesh = paddle.clone();
-		// console.log(this.mesh)
+		this.mesh = paddle;
+		this.originScale = [this.mesh.scale.x, this.mesh.scale.y, this.mesh.scale.z];
 		this.speed = UTILS.MOVSPEED;
         this.name = "Undefined";
 		this.moves = {

@@ -1,0 +1,14 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 26.04.2011 16:46:09
+
+newmtl 01___Default
+	Ns 0
+	Ka 0.8 0.8 0.8
+	Kd 0.8 0.8 0.8
+	Ks 0.0 0.0 0.0
+	Ke 0.0 0.0 0.0
+	Ni 1.0
+	d 1.0
+	illum 1
+map_Ka 10519_Pingpong_paddle_v1_Diffuse.jpg
+map_Kd 10519_Pingpong_paddle_v1_Diffuse.jpg

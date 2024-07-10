@@ -8,14 +8,20 @@ import { Player } from './Player.js';
 import { Ball } from './Ball.js';
 import { Match } from './Match.js';
 import { World } from './World.js';
+import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
 import { MatchBot } from './Bot.js';
 
+(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+
+const content = null || document.getElementById('page_root');
 let isPlaying = false;
 export async function startGame(gameMode){
 
 	//---------INIT----------
-	const world = new World();
+	const world = new World1();
+
+	content.replaceChildren();
 
 	await world.worldReady();
 	console.log("Meshes loaded");
@@ -36,16 +42,16 @@ export async function startGame(gameMode){
 	  }
 
 	// canvas dom element
-	const content = null || document.getElementById('page_root');
+
 	content.replaceChildren(world.renderer.domElement);
 
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
 	})
-	
+
 	//---------KEYBOARD INPUT----------
 	const keyDownBind = match.onKeyDown.bind(match);
-	const keyUpBind = match.onKeyUp.bind(match)
+	const keyUpBind = match.onKeyUp.bind(match);
 
 	document.addEventListener("keydown", keyDownBind, false);
 	document.addEventListener("keyup", keyUpBind, false);

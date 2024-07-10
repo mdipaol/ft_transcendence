@@ -1,46 +1,52 @@
 import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-
 import { Ball } from "./Ball.js"
 import * as UTILS from './utils.js';
 import { Player } from './Player.js';
 
+
 export class Match {
-    constructor(world){
-		this.world = world;
+    constructor(world) {
+        this.world = world;
         this.player1 = new Player(world.paddle);
-        this.player2 = new Player(world.paddle);
-        this.ball = new Ball(0xf06400);
-		this.maxScore = UTILS.MAXSCORE;
-        this.score1 = 0;
-        this.score2 = 0;
-		this.exchangesFont = world.font;
-		this.scoreText = this.scoreTextInit();
-		this.exchanges = 0;
-		this.exchangesText = this.exchangesTextInit();
-		this.collision = false;
-		this.player1.mesh.position.x = -54;
-		this.player2.mesh.position.x = 54;
-		this.player1.mesh.rotation.z = -Math.PI/2;
-		this.player2.mesh.rotation.z = Math.PI/2;
+        this.player2 = new Player(world.paddle2);
 		this.player1.upKey = UTILS.W;
 		this.player1.downKey = UTILS.S;
 		this.player2.upKey = UTILS.ARROWUP;
 		this.player2.downKey = UTILS.ARROWDOWN;
 
-		// PowerUps
-		this.waitPowerup = 0;
-		this.activePowerUp = false;
-		this.meshPowerUp = null;
-		this.tripleEnabled = false;
-		this.fakeBalls = [new Ball(0xff0000), new Ball(0x0000ff)]
-	}
+        this.ball = new Ball(0xf06400);
+        this.maxScore = UTILS.MAXSCORE;
+        this.score1 = 0;
+        this.score2 = 0;
+        this.exchangesFont = world.font;
+        this.scoreText = this.scoreTextInit();
+        this.exchanges = 0;
+        this.exchangesText = this.exchangesTextInit();
+        this.collision = false;
+		//questa variabile serve per rendere indipendente il movimento della pallina con gli fps
+		this.update_time_ball = new Date();
+
+        // PowerUps
+        this.waitPowerup = 0;
+        this.activePowerUp = false;
+        this.meshPowerUp = null;
+
+        // Triple Ball init
+        this.tripleEnabled = false;
+        this.fakeBalls = [new Ball(0xff0000), new Ball(0x0000ff)];
+        if (this.fakeBalls[0].mesh.children[0]) {
+            this.fakeBalls[0].mesh.remove(this.fakeBalls[0].mesh.children[0]);
+        }
+        if (this.fakeBalls[1].mesh.children[0]) {
+            this.fakeBalls[1].mesh.remove(this.fakeBalls[1].mesh.children[0]);
+        }
+    }
 
 	exchangesTextInit() {
-		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1] && this.exchangesText[2]) {
+		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
 			this.world.remove(this.exchangesText[0]);
 			this.world.remove(this.exchangesText[1]);
-			this.world.remove(this.exchangesText[2]);
 		}
 		const geometry = new TextGeometry( "0", {
 			font: this.exchangesFont,
@@ -58,19 +64,16 @@ export class Match {
         mesh.position.set(-125, 0, 5);
 
 		const mirrored = mesh.clone();
-		const mirrored2 = mesh.clone();
 		mirrored.scale.x = -mesh.scale.x;
-		mirrored2.position.set(0, 50, -22.5);
-		mirrored2.rotation.set( 0, 0, 0);
 		mirrored.position.set(124, 0, 5)
         this.world.add(mesh);
 		this.world.add(mirrored);
-		this.world.add(mirrored2);
-		const meshes = [mesh, mirrored, mirrored2];
+		const meshes = [mesh, mirrored]
 		return meshes;
 	}
 
 	updateExchanges() {
+		this.exchanges++;
 
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
@@ -81,7 +84,6 @@ export class Match {
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 		this.exchangesText[0].geometry = geometry;
 		this.exchangesText[1].geometry = geometry;
-		this.exchangesText[2].geometry = geometry;
 	}
 
 	scoreTextInit() {
@@ -127,6 +129,11 @@ export class Match {
 		this.updateScoreText();
 		if (this.score1 == this.maxScore || this.score2 == this.maxScore)
 			this.gameEnd();
+		// Sound
+		if(this.world.soundPoint.isPlaying){
+            this.world.soundPoint.stop();
+        }
+		this.world.soundPoint.play();
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
 		this.ball.mesh.position.z = 0;
@@ -139,8 +146,8 @@ export class Match {
 		this.player1.speed = UTILS.MOVSPEED;
 		this.player2.speed = UTILS.MOVSPEED;
 		this.ball.speed = UTILS.STARTINGSPEED;
-		this.player1.mesh.scale.set(1, 1, 1);
-		this.player2.mesh.scale.set(1, 1, 1);
+		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
+		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
 		// Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -155,15 +162,17 @@ export class Match {
 		this.exchangesText = this.exchangesTextInit();
 	}
 
-
 	onKeyDown(event) {
-		if (event.which == this.player1.upKey) //w key
+		if (event.which == this.player1.upKey){
 			this.player1.moves.up = true;
-		if (event.which == this.player1.downKey) //s key
+        }
+		if (event.which == this.player1.downKey)
 			this.player1.moves.down = true;
-		if (event.which == this.player2.upKey) //up arrow
+
+		if (event.which == this.player2.upKey){
 			this.player2.moves.up = true;
-		if (event.which == this.player2.downKey) //down arrow
+        }
+		if (event.which == this.player2.downKey)
 			this.player2.moves.down = true;
 
 		if (event.which == UTILS.TWO)//first person with '2' key
@@ -205,55 +214,16 @@ export class Match {
 			this.player2.moves.down = false;
 	}
 
-	updateMovements() {
-		if (this.player1.moves.up && this.player1.mesh.position.y < 27)
-		{
-			this.player1.mesh.position.y += this.player1.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-		}
-		if (this.player1.moves.down && this.player1.mesh.position.y > -27)
-		{
-			this.player1.mesh.position.y -= this.player1.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-		}
-		if (this.player2.moves.up && this.player2.mesh.position.y < 27)
-		{
-			this.player2.mesh.position.y += this.player2.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-		}
-		if (this.player2.moves.down && this.player2.mesh.position.y > -27)
-		{
-			this.player2.mesh.position.y -= this.player2.speed;
-			//socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-		}
+	updateMovements(deltaTime) {
+		if (this.player1.moves.up && this.player1.mesh.position.y < UTILS.MAX_SIZEY)
+			this.player1.mesh.position.y += this.player1.speed * deltaTime * this.activePowerUp() + (SubmitEvent.apply() )
+		if (this.player1.moves.down && this.player1.mesh.position.y > UTILS.MIN_SIZEY)
+			this.player1.mesh.position.y -= this.player1.speed * deltaTime;
+		if (this.player2.moves.up && this.player2.mesh.position.y < UTILS.MAX_SIZEY)
+			this.player2.mesh.position.y += this.player2.speed * deltaTime;
+		if (this.player2.moves.down && this.player2.mesh.position.y > UTILS.MIN_SIZEY)
+			this.player2.mesh.position.y -= this.player2.speed * deltaTime;
 	}
-
-	startPowerUp(){
-		if(this.ball.direction.x > 0 )// player1
-		{
-			if(this.world.PowerUp == this.world.arrayPowerup[0]){
-				if(this.ball.position.x >= -5)
-					this.ball.speed += 5;
-				else if(this.ball.position.x <= 5){
-					this.ball.speed = 0.5;
-				}
-			}
-		}
-		else if(this.ball.direction.x < 0) // player2
-		{
-			if(this.world.PowerUp == this.world.arrayPowerup[0]){
-				if(this.ball.position.x <= -5)
-					this.ball.speed += 5;
-				else if(this.ball.position.x >= 5){
-					this.ball.speed = 0.5;
-				}
-			}
-		}
-	}
-
-	// powerUpActivate() {
-
-	// }
 
 	addPowerUp() {
 
@@ -265,13 +235,13 @@ export class Match {
 
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
-				const z = 15;
+				// console.log(this.world.PowerUp);
 				const max = 27;
 				const min = -27;
-				//const y = Math.floor(Math.random() * (max - min + 1)) + min;
-				const y = 3.0;
+				const y = Math.floor(Math.random() * (max - min + 1)) + min;
+				const z = 15;
 				this.world.powerUp.mesh.position.set(0, y, z);
-				this.world.scene.add(this.world.powerUp.mesh);
+				this.world.scene.add(this.world.powerUp.mesh);//.mesh
 			}
 		}
 	}
@@ -320,15 +290,60 @@ export class Match {
 		this.world.remove(this.fakeBalls[1].mesh);
 	}
 
+	// region powerUpTaken()
 	powerUpTaken() {
+
+		// Powerup assignment
+
+		this.player1.powerUp = null;
+		this.player2.powerUp = null;
+
+		if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive"){
+			if(this.world.soundPowerUpPositive.isPlaying)
+				this.world.soundPowerUpPositive.stop();
+			this.world.soundPowerUpPositive.play();
+
+			this.player2.powerUp = this.world.powerUp;
+		}
+		if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative"){
+			if(this.world.soundPowerUpNegative.isPlaying)
+				this.world.soundPowerUpNegative.stop();
+			this.world.soundPowerUpNegative.play();
+
+			this.player1.powerUp = this.world.powerUp;
+		}
+		if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive"){
+			if(this.world.soundPowerUpPositive.isPlaying)
+				this.world.soundPowerUpPositive.stop();
+			this.world.soundPowerUpPositive.play();
+
+			this.player1.powerUp = this.world.powerUp;
+		}
+		if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative"){
+			if(this.world.soundPowerUpNegative.isPlaying)
+				this.world.soundPowerUpNegative.stop();
+			this.world.soundPowerUpNegative.play();
+
+			this.player2.powerUp = this.world.powerUp;
+		}
+
+		if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
+			this.player2.powerUp = this.world.powerUp;
+		if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
+			this.player1.powerUp = this.world.powerUp;
+		if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
+			this.player1.powerUp = this.world.powerUp;
+		if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
+			this.player2.powerUp = this.world.powerUp;
+
 		const player = (this.player1.powerUp) ? this.player1 : this.player2;
 		const opp = (player === this.player1) ? this.player2 : this.player1;
 
 		// Slowness check
 		if (this.player1.powerUp && this.player1.powerUp.name == "slowness")
-			this.player2.speed = 0.3;
+			this.player2.speed = this.player2.speed / 3;
 		if (this.player2.powerUp && this.player2.powerUp.name == "slowness")
-			this.player1.speed = 0.3;
+			this.player1.speed = this.player2.speed / 3;
 		//Scale check
 		if (this.player1.powerUp && this.player1.powerUp.name ==  "scale"){
 			this.player2.mesh.position.z = -6;
@@ -339,9 +354,10 @@ export class Match {
 			this.player1.mesh.scale.multiplyScalar(0.7);
 		}
 		// Triple check
-		if (player.powerUp.name == "triple") {
+		if (this.player1.powerUp && this.player1.powerUp.name == "triple" && this.ball.direction.x > 0)
 			this.add_triple();
-		}
+		if (this.player2.powerUp && this.player2.powerUp.name == "triple" && this.ball.direction.x < 0)
+			this.add_triple();
 	}
 
 	handlePowerUp(player) {
@@ -373,31 +389,48 @@ export class Match {
 
 	// region update()
 	update() {
-		this.updateMovements();
+
+		const currentTime = new Date()
+        const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
+            this.update_time_ball = currentTime;
+
+		this.updateMovements(deltaTime);
+
 		this.world.rotatePowerUp();
 
-		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
-		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
+		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
+		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
 		this.ball.mesh.position.z = this.ball.getZ();
+
+		if(this.ball.mesh.position.z < 0){
+            if (this.world.soundWallCollision.isPlaying)
+                this.world.soundWallCollision.stop();
+            this.world.soundWallCollision.play();
+        }
 
 		// Triple ball update
 		if (this.tripleEnabled) {
 			const ball1 = this.fakeBalls[0];
 			const ball2 = this.fakeBalls[1];
 
-			ball1.mesh.position.x += ball1.speed * ball1.direction.x;
-			ball1.mesh.position.y += ball1.speed * ball1.direction.y;
+			ball1.mesh.position.x += ball1.speed * ball1.direction.x * deltaTime;
+			ball1.mesh.position.y += ball1.speed * ball1.direction.y * deltaTime;
 			ball1.mesh.position.z = ball1.getZ();
 
-			ball2.mesh.position.x += ball2.speed * ball2.direction.x;
-			ball2.mesh.position.y += ball2.speed * ball2.direction.y;
+			ball2.mesh.position.x += ball2.speed * ball2.direction.x * deltaTime;
+			ball2.mesh.position.y += ball2.speed * ball2.direction.y * deltaTime;
 			ball2.mesh.position.z = ball2.getZ();
+
+			// console.log(ball1.mesh.position);
 		}
 
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
 			/* if (ball.speed < 2)
 				ball.speed *= ACCELERATION; */
+			if (this.world.soundCollision.isPlaying)
+                this.world.soundCollision.stop();
+			this.world.soundCollision.play();
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -405,16 +438,19 @@ export class Match {
 			this.ball.direction.y = normalizedVector[1];
 
 			this.collision = true;
-			this.exchanges++;
 			this.updateExchanges();
-			
+
 			this.handlePowerUp(this.player1);
-			this.addPowerUp()
+			this.addPowerUp();
+			//test funzione
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
 			// if (ball.speed  < 2)
 			// 	ball.speed  *= ACCELERATION;
+			if (this.world.soundCollision.isPlaying)
+                this.world.soundCollision.stop();
+			this.world.soundCollision.play();
 			this.ball.direction.x *= -1;
 			this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
 			const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -422,11 +458,11 @@ export class Match {
 			this.ball.direction.y = normalizedVector[1];
 
 			this.collision = true;
-			this.exchanges++;
 			this.updateExchanges();
 
 			this.handlePowerUp(this.player2);
 			this.addPowerUp();
+			// UTILS.setSound('music/ball.hit.mp3', false, 1);
 		}
 		// PowerUp collision
 		if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
@@ -434,28 +470,19 @@ export class Match {
 			this.world.remove(this.world.powerUp.mesh);
 			this.activePowerUp = false;
 			this.waitPowerup = 0;
-
-			// Powerup assignment
-
-			this.player1.powerUp = null;
-			this.player2.powerUp = null;
-
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
-				this.player2.powerUp = this.world.powerUp;
-			if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
-				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
-				this.player1.powerUp = this.world.powerUp;
-			if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
-				this.player2.powerUp = this.world.powerUp;
-
+			//assegnazione powerUp Player
 			this.powerUpTaken();
 		}
 
 
 
-		if (UTILS.wallCollision(this.ball))
+		if (UTILS.wallCollision(this.ball)){
+			if( this.world.soundWallCollision.isPlaying){
+                this.world.soundWallCollision.stop();
+            }
+            this.world.soundWallCollision.play();
 			this.ball.direction.y *= -1;
+		}
 
 		//Reset positions
 		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
@@ -488,12 +515,33 @@ export class Match {
 	}
 
 	gameEnd() {
-		if (this.score1 > this.score2)
+		/* if (this.score1 > this.score2)
 			alert("Player 1 wins!");
 		else
-			alert("Player 2 wins!");
+			alert("Player 2 wins!"); */
+			this.world.setCamera(this.world.DoorExit);
+			this.world.DoorExit.position.set(0, 10, 50);
+
+			this.world.DoorExit.lookAt(0,-20,50);
+		 	this.world.DoorExit.rotation.z += THREE.MathUtils.degToRad(180);
+
+			function animateDoor() {
+				if (this.world.door.position.x > -2) {
+					this.world.door.position.x -= 0.05; // Velocità di spostamento della porta
+					requestAnimationFrame(animateDoor.bind(this));
+				}
+				else{
+					this.score1 = 0;
+					this.score2 = 0;
+					this.updateScoreText();
+				}
+			}
+			animateDoor.call(this);
+			/* while(this.world.door.position.x > -2){
+			this.world.door.position.x -= 0.000001;
+		}
 		this.score1 = 0;
 		this.score2 = 0;
-		this.updateScoreText();
+		this.updateScoreText(); */
 	}
 }
