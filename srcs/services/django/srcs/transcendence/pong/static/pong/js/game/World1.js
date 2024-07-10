@@ -8,7 +8,7 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-import * as UTILS from './Utils.js';
+import * as UTILS from './utils.js';
 import { PowerUp } from './PowerUp.js';
 
 export class World1 {
@@ -661,7 +661,7 @@ export class World1 {
 			this.audioLoader.load('static/pong/js/Pong_Fake/music/punto_Win.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(0.3);
+				sound.setVolume(1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {

@@ -14,6 +14,7 @@ import { PowerUp } from './PowerUp.js';
 export class World {
 	constructor(){
 		this.paddle = null;
+		this.paddle2 = null;
 		this.table = null;
 		this.door = null;
 		this.ready = new Promise(function(resolve, reject) {});
@@ -43,12 +44,17 @@ export class World {
 		this.powerUp = null;
 		this.skyboxInit();
 		this.posterInit();
-		this.loadObjects();
 		//gest cube powerup
 		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, Math.PI/2, 1,  1);
 		this.spotLight = spotLight;
 		this.arrayPowerup = this.powerUpsInit();
 		//end gest cube
+
+		this.loadObjects();
+	}
+
+	async worldReady(){
+		return this.ready;
 	}
 
 	setMeshStandardMaterial(M_color, M_color_emissive, M_emissiveIntensity, M_roughness, M_metalness, M_reflectivity){
@@ -65,7 +71,7 @@ export class World {
 	setMeshGLTF(path, material, scale, rotationX, rotationY, rotationZ){
 		return new Promise((resolve, reject)=>{
 			this.gltfLoader.load(
-				path, 
+				path,
 				(object)=>{
 					const obj = object.scene;
 					obj.rotation.set(rotationX, rotationY, rotationZ);
@@ -94,14 +100,14 @@ export class World {
 		const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
 		const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
 		//speed///
-		const Fulmine_P = this.setMeshGLTF('PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
+		const Fulmine_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
 		Fulmine_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("speed", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		})
 
-		const Fulmine_N = this.setMeshGLTF('PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
+		const Fulmine_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
 		Fulmine_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("speed", mesh, "negative"));
 		}).catch((error)=>{
@@ -109,14 +115,14 @@ export class World {
 		});
 
 		//slow////
-		const Tartole_P = this.setMeshGLTF('PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		const Tartole_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
 		Tartole_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
-		const Tartole_N = this.setMeshGLTF('PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		const Tartole_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
 		Tartole_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("slowness", mesh, "negative"));
 		}).catch((error)=>{
@@ -124,14 +130,14 @@ export class World {
 		});
 
 		//triple
-		const Triple_P = this.setMeshGLTF('PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
+		const Triple_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
 		Triple_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("triple", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
-		const Triple_N = this.setMeshGLTF('PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
+		const Triple_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
 		Triple_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("triple", mesh, "negative"));
 			//this.scene.add(mesh);
@@ -140,16 +146,16 @@ export class World {
 		});
 
 		//scale
-		const Scale_P = this.setMeshGLTF('PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
+		const Scale_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("scale", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
-		const Scale_N = this.setMeshGLTF('PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
+		const Scale_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("scale", mesh, "negative"));
-			
+
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
@@ -225,7 +231,7 @@ export class World {
 			if(this.powerUp.mesh){
 				let speed = 0.01;
 				let oscillazioneZ = 10;
-				let oscillazioneAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; // Modifica Math.PI / 8 per regolare l'ampiezza dell'oscillazione su z 
+				let oscillazioneAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; // Modifica Math.PI / 8 per regolare l'ampiezza dell'oscillazione su z
 				this.powerUp.mesh.position.z = oscillazioneAngleZ + oscillazioneZ;
 				this.powerUp.mesh.rotation.y += 0.03;
 			}
@@ -234,15 +240,15 @@ export class World {
 
 	skyboxInit() {
 		const box = new THREE.BoxGeometry(UTILS.BOXSIZE, UTILS.BOXSIZE, UTILS.BOXSIZE);
-		const wall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("mattone.png"), side: THREE.DoubleSide});
+		const wall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/mattone.png"), side: THREE.DoubleSide});
 		const rotatedWall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, side: THREE.DoubleSide, map: (() => {
-			const texture = new THREE.TextureLoader().load("mattone.png");
+			const texture = new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/mattone.png");
 			texture.center.set(0.5, 0.5);
 			texture.rotation = Math.PI/ 2;
 			return texture;
 		})()})
 
-		const wood = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("wood.png"), side: THREE.DoubleSide});
+		const wood = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/wood.png"), side: THREE.DoubleSide});
 		const cubeMaterial =[rotatedWall, rotatedWall, wall, wall, wood, wood]
 		const cube = new THREE.Mesh(box, cubeMaterial);
 		cube.position.set(0, 0, 102)
@@ -251,7 +257,7 @@ export class World {
 
 	posterInit() {
 		const posterGeometry = new THREE.PlaneGeometry( 53.85, 68.35 );
-		const posterMaterial = new THREE.MeshPhongMaterial( {map:  new THREE.TextureLoader().load("escape_room.jpg") , side: THREE.DoubleSide});
+		const posterMaterial = new THREE.MeshPhongMaterial( {map:  new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/escape_room.jpg") , side: THREE.DoubleSide});
 		const poster = new THREE.Mesh( posterGeometry, posterMaterial );
 		poster.rotation.set(Math.PI/2, 0, 0);
 		poster.position.set(0, 124.5, 70);
@@ -298,7 +304,7 @@ export class World {
 	loadPlant(){
 		return new Promise((resolve, reject) =>{
 			this.gltfLoader.load(
-				'UtilsMesh/pianta_vik.glb',
+				'/static/pong/js/Pong_Fake/UtilsMesh/pianta_vik.glb',
 				(object)=>{
 					console.log(object);
 					const threeObj = object.scene.children[0];
@@ -316,7 +322,7 @@ export class World {
 					this.add(all_object[1]);
 					this.add(all_object[2]);
 					this.add(all_object[3]);
-					
+
 					resolve();
 				}
 			)
@@ -326,8 +332,8 @@ export class World {
 
 	loadNeon_angular(){
 		return new Promise((resolve, reject) => {
-			const geometry = new THREE.CylinderGeometry(5, 5, 600, 32); 
-			const material = new THREE.MeshBasicMaterial({ color: 0xFF4E4E }); 
+			const geometry = new THREE.CylinderGeometry(5, 5, 600, 32);
+			const material = new THREE.MeshBasicMaterial({ color: 0xFF4E4E });
 			const cylinder = new THREE.Mesh(geometry, material);
 			cylinder.position.set(-120, 120 , 110);
 			cylinder.rotation.x = Math.PI / 2;
@@ -338,35 +344,35 @@ export class World {
 			const cylinderLineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
 			const cylinderEdges = new THREE.LineSegments(cylinderEdgesGeometry, cylinderLineMaterial);
 
-			
-			const geometry1= new THREE.CylinderGeometry(5, 5, 600, 32); 
-			const material1 = new THREE.MeshBasicMaterial({ color: 0x9B4EFF}); 
+
+			const geometry1= new THREE.CylinderGeometry(5, 5, 600, 32);
+			const material1 = new THREE.MeshBasicMaterial({ color: 0x9B4EFF});
 			const cylinder1 = new THREE.Mesh(geometry1, material1);
 			cylinder1.rotation.x = Math.PI / 2;
 			cylinder1.position.set(120, 120, 110);
 			cylinder1.add(new THREE.PointLight(0x9B4EFF, 5, 500,0.6));
 			cylinder1.scale.multiplyScalar(0.4);
-			
-			
-			const geometry2 = new THREE.CylinderGeometry(5, 5, 600, 32); 
-			const material2 = new THREE.MeshBasicMaterial({ color: 0x6CFF4E }); 
+
+
+			const geometry2 = new THREE.CylinderGeometry(5, 5, 600, 32);
+			const material2 = new THREE.MeshBasicMaterial({ color: 0x6CFF4E });
 			const cylinder2 = new THREE.Mesh(geometry2, material2);
 			cylinder2.rotation.x = Math.PI / 2;
 			cylinder2.position.set(-120, -120, 110);
 			cylinder2.scale.multiplyScalar(0.4);
 			cylinder2.add(new THREE.PointLight(0x6CFF4E, 5, 500,0.6));
-			
-			const geometry3= new THREE.CylinderGeometry(5, 5, 600, 32); 
-			const material3 = new THREE.MeshBasicMaterial({ color: 0xFFC662 }); 
+
+			const geometry3= new THREE.CylinderGeometry(5, 5, 600, 32);
+			const material3 = new THREE.MeshBasicMaterial({ color: 0xFFC662 });
 			const cylinder3 = new THREE.Mesh(geometry3, material3);
 			cylinder3.position.set(120, -120, 110);
 			cylinder3.rotation.x = Math.PI / 2;
 			cylinder3.scale.multiplyScalar(0.4);
 			cylinder3.add(new THREE.PointLight(0xFFC662, 5, 500,0.6));
-			
-			
+
+
 			this.add(cylinder);
-			this.add(cylinder1); 
+			this.add(cylinder1);
 			this.add(cylinder2);
 			this.add(cylinder3);
 			resolve();
@@ -376,7 +382,7 @@ export class World {
 	loadPort(){
 		return new Promise((resolve, reject)=>{
 			this.gltfLoader.load(
-				'UtilsMesh/boor_2.glb',
+				'/static/pong/js/Pong_Fake/UtilsMesh/boor_2.glb',
 				(object)=>{
 					const threeObj = object.scene;
 					this.door = object.scene.children[0];
@@ -396,18 +402,18 @@ export class World {
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
-			'table/ping_pong_table.glb',
+			'/static/pong/js/Pong_Fake/table/ping_pong_table.glb',
 			(object)=>{
 
 				const threeObj = object.scene.children[0];
-				
+
 				const geometry = threeObj.children[0].geometry;
 				const desiredWidth = 104;
 				geometry.computeBoundingBox();
 				const boundingBox = geometry.boundingBox;
 				const currentWidth = boundingBox.max.x - boundingBox.min.x;
 				const scaleFactor = desiredWidth / currentWidth;
-		
+
 				threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
 				threeObj.rotation.set(Math.PI / 2, 0, 0);
 				threeObj.position.set(0, 0, -23.5);
@@ -419,13 +425,13 @@ export class World {
 			)
 		});
 	}
-	
+
 
 	loadPolletto() {
 		return new Promise((resolve, reject) => {
 			const textureLoader = new THREE.TextureLoader();
 			textureLoader.load(
-				'polletto.jpeg',
+				'/static/pong/js/Pong_Fake/polletto.jpeg',
 				(texture) => {
 					const material = new THREE.MeshBasicMaterial({ map: texture });
 					const geometry = new THREE.PlaneGeometry(1, 2); // Dimensioni del piano
@@ -444,12 +450,12 @@ export class World {
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
 
-			this.mtlLoader.load('paddle/paddle.mtl',
+			this.mtlLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.mtl',
 			(materials) =>{
 				materials.preload();
 
 				this.objLoader.setMaterials(materials);
-				this.objLoader.load('paddle/paddle.obj', (object) => {
+				this.objLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.obj', (object) => {
 					object;
 					object.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
@@ -457,6 +463,13 @@ export class World {
 						}
 					});
 				this.paddle = object;
+				this.paddle2 = this.paddle.clone();
+				this.paddle.rotation.z = Math.PI / 2;
+				this.paddle.position.x = -54;
+				this.paddle2.position.x = 54;
+				this.paddle2.rotation.z = Math.PI / 2;
+
+
 				resolve();
 				});
 			},
@@ -469,7 +482,7 @@ export class World {
 	loadFonts() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'Font/404font.json',
+				'/static/pong/js/Pong_Fake/Font/404font.json',
 				(font) => {
 					this.font = font;
 					const geometry = new TextGeometry( 'PONG', {
@@ -516,7 +529,7 @@ export class World {
 	loadNickName_1() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'Font/Dark Underground_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Dark Underground_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'NickName 1', {
 						font: font,
@@ -545,7 +558,7 @@ export class World {
 	loadNickName_2() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'Font/Dark Underground_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Dark Underground_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'NickName 2', {
 						font: font,
@@ -574,7 +587,7 @@ export class World {
 	loadNameTeem(){
 		return new Promise((resolve, reject)=>{
 			this.fontLoader.load(//viktor
-				'Font/Underground NF_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Underground NF_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'Vguidoni', {
 						font: font,
@@ -592,7 +605,7 @@ export class World {
 					this.add(text);
 			})
 			this.fontLoader.load(//ivana
-				'Font/Dark Underground_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Dark Underground_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'Ivana', {
 						font: font,
@@ -609,7 +622,7 @@ export class World {
 					this.add(text);
 				})
 			this.fontLoader.load(//ale
-				'Font/Sportrop_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Sportrop_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'AleGreci', {
 						font: font,
@@ -626,7 +639,7 @@ export class World {
 					this.add(text);
 				})
 			this.fontLoader.load(//manuel
-				'Font/Chicago_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Chicago_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'Manuel', {
 						font: font,
@@ -643,7 +656,7 @@ export class World {
 					this.add(text);
 				})
 			this.fontLoader.load(//damiano
-				'Font/Polentical Neon_Bold.json',
+				'/static/pong/js/Pong_Fake/Font/Polentical Neon_Bold.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'dcolucci', {
 						font: font,
@@ -660,7 +673,7 @@ export class World {
 					this.add(text);
 				})
 			this.fontLoader.load(//questo per il nome del teem
-				'Font/Sportrop_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Sportrop_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'POLLETTI', {
 						font: font,
@@ -679,19 +692,19 @@ export class World {
 			resolve();
 		});
 	}
-	
+
 	loadAudio_world() {
 		//UTILS.setSound('music/2_Jazz.mp3', true, 0.04);
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			//this.mainCamera.add( this.listener);
 			this.sound = sound;
-			this.audioLoader.load('music/2_Jazz.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/2_Jazz.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
 				sound.setVolume(0.08);
 				sound.play();
-				
+
 				resolve(sound);
 			}, undefined, function(error) {
 				reject(error);
@@ -705,7 +718,7 @@ export class World {
 			const sound = new THREE.Audio(this.listener);
 			this.soundCollision = sound;
 
-			this.audioLoader.load('music/ball_hit.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/ball_hit.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.5);
@@ -723,7 +736,7 @@ export class World {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpNegative = sound;
 			//'music/powerdown.mp3'
-			this.audioLoader.load('music/sceet.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/sceet.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.7);
@@ -739,7 +752,7 @@ export class World {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpPositive = sound;
 			//'music/powerup.mp3'
-			this.audioLoader.load('music/wow.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/wow.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1.5);
@@ -756,7 +769,7 @@ export class World {
 			const sound = new THREE.Audio(this.listener);
 			this.soundWallCollision = sound;
 
-			this.audioLoader.load('music/ball_hit.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/ball_hit.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.3);
@@ -772,7 +785,7 @@ export class World {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPoint = sound;
-			this.audioLoader.load('music/point_1.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/point_1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1);
@@ -788,7 +801,7 @@ export class World {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundEndMach = sound;
-			this.audioLoader.load('music/partita_end.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
 				sound.setVolume(1);
@@ -803,9 +816,9 @@ export class World {
 
 
 
-	
-	
-	
+
+
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [

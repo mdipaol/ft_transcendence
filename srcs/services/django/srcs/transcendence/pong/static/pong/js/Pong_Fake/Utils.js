@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 //---------COSTANTS--------
 export const MAXSCORE = 500;
-export const MOVSPEED = 80;
+export const MOVSPEED = 85;
 export const STARTINGSPEED = 100;//speed ball
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
@@ -47,13 +47,13 @@ export function setSound(path, setLoop, setVolume){
         const listener = new THREE.AudioListener();
         const sound = new THREE.Audio(listener);
         const audioLoader = new THREE.AudioLoader();
-        
+
         audioLoader.load(path, function(buffer) {
             sound.setBuffer(buffer);
             sound.setLoop(setLoop);
             sound.setVolume(setVolume);
             sound.play();
-            
+
             resolve(sound);
         }, undefined, function(error) {
             reject(error);
@@ -64,17 +64,17 @@ export function setSound(path, setLoop, setVolume){
 export function angleBetweenVectors(a, b) {
     // Calcola il prodotto scalare
     const dotProduct = a[0] * b[0] + a[1] * b[1];
-    
+
     // Calcola le norme dei vettori
     const normA = Math.sqrt(a[0] * a[0] + a[1] * a[1]);
     const normB = Math.sqrt(b[0] * b[0] + b[1] * b[1]);
-    
+
     // Calcola il coseno dell'angolo
     const cosTheta = dotProduct / (normA * normB);
-    
+
     // Calcola l'angolo in radianti
     const angleInRadians = Math.acos(cosTheta);
-    
+
     return angleInRadians;
 }
 
