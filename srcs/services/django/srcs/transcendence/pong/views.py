@@ -124,7 +124,8 @@ class RegistrationFormView(View):
 	def post(self, request):
 		form = RegistrationForm(request.POST)
 		if form.is_valid():
-			form.save()
+			user = form.save()
+			login(request, user)
 			return HttpResponse("Registration Succesfull")
 		return(render(request, 'pong/registration.html', {'form': form}, status=409))
 
@@ -318,24 +319,53 @@ def tournament_create(request):
 			return render(request, 'pong/spa/tournament_info.html', context)
 		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
 
-@csrf_exempt
 @login_required
 def tournament_join(request, name):
 	if request.method == 'POST':
-		print(name)
+
+		# Not existing tournament
 		tournament = Tournament.objects.get(name=name)
 		if not tournament:
 			...
+		
+		# User already in tournament
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
-		if name in partecipant_list:
-			...
+		partecipant_user = [item.user for item in partecipant_list]
+		if request.user in partecipant_user:
+			context = {
+				'name' : tournament.name,
+				'creator' : tournament.creator.username,
+				'number_of_partecipants' : tournament.number_of_partecipants,
+				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+				'winner' : None,
+				'finished' : False,
+				'joined' : request.user in partecipant_user,
+				}
+			return JsonResponse(data={
+				'html' : render_to_string('pong/spa/tournament_info.html', context)
+			})
+
+		# Tournament full
 		if len(partecipant_list) >= tournament.number_of_partecipants:
 			...
+		
+		# Add new partecipant to database
 		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
 		partecipant.save()
+		
+		
+		# Creation of matches if tournament is full
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		user_partecipant = [item.user for item in partecipant_list]
 		print(user_partecipant)
+		if len(user_partecipant) == tournament.number_of_partecipants:
+			sorted_user = sorted(user_partecipant, key=lambda user: user.level)
+			paired_user = [(sorted_user[i], sorted_user[i + 1]) for i in range(0, len(sorted_user) - 1, 2)]
+			for pair in paired_user:
+				match = Match.objects.create(tournament=tournament, player1=pair[0], player2=pair[1])
+				match.save()
+
+		# Return the tournament visualization
 		context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
@@ -366,3 +396,38 @@ def online_users(request):
 		for item in users:
 			print(item)
 		return render(request, 'pong/spa/online_users.html', {'online_users' : users})
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
+@login_required
+def tournament_info(request, name):
+	tournament = Tournament.objects.get(name=name)
+	partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+	context = {
+			'name' : tournament.name,
+			'creator' : tournament.creator.username,
+			'number_of_partecipants' : tournament.number_of_partecipants,
+			'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+			'winner' : None,
+			'finished' : False,
+			'joined' : request.user in [item.user for item in partecipant_list],
+		}
+	return render(request, 'pong/spa/tournament_info.html', context)
+
+@login_required
+def notification(request, username):
+	user = BaseUser.objects.get(username=username)
+	if not user:
+		return HttpResponse('user not found')
+	channel_layer = get_channel_layer()
+	mes = async_to_sync(channel_layer.group_send)(
+        f"notifications_{user.username}",
+        {
+            "type": "send_notification",
+            "message": {"message": "sono una puttana"}
+        }
+    )
+	print(mes)
+	
+	return HttpResponse('Notification sent')

@@ -1,4 +1,4 @@
-import { parseRequestUrl } from '../../services/utils.js';
+import { parseRequestUrl, getCookie } from '../../services/utils.js';
 import triggerHashChange from '../../services/utils.js';
 
 const TournamentJoin = {
@@ -40,7 +40,10 @@ const TournamentJoin = {
           console.log(buttonName);
 
           const response = await fetch( '/tournament_join/' + buttonName + '/' , {
-            method: 'POST'
+            method: 'POST',
+            headers : {
+              'X-CSRFToken' : getCookie('csrftoken')
+            },
         });
         if (response.ok) {
           // PARSARE ERRORI E VISUALIZZARE TORNEO

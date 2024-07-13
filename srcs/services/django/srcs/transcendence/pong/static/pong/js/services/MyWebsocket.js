@@ -38,7 +38,10 @@
       };
       
       MyWebsocket.socket.onmessage = function(event) {
-        console.log('Message from server')
+        console.log(event);
+        console.log('ccccccc');
+        const data = JSON.parse(event.data);
+        alert(data.message);
       };
       
       MyWebsocket.socket.onclose = function(event) {

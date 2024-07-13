@@ -1,6 +1,7 @@
 import os
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 import datetime
 
@@ -15,6 +16,8 @@ class Tournament(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	creator = models.ForeignKey(BaseUser, related_name='creator', on_delete=models.CASCADE, null=True, blank=True)
 	number_of_partecipants = models.IntegerField(default=4)
+	start_date = models.DateField(default=timezone.now())
+	end_date = models.DateField(null=True)
 	winner = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='winner', null=True, blank=True) # A winner can be a non partecipant?
 	finished = models.BooleanField(default=False)
 
@@ -25,9 +28,9 @@ class Tournament(models.Model):
 		ordering = ['name']
 
 class TournamentPartecipant(models.Model):
-	user = models.ForeignKey(BaseUser, related_name='alias_user', on_delete=models.CASCADE)
-	tournament = models.ForeignKey(Tournament, related_name='tournament_of_partecipant', on_delete=models.CASCADE)
-	alias = models.CharField(max_length=255, blank=True)
+	user = models.ForeignKey(BaseUser, related_name='tournament', on_delete=models.CASCADE)
+	tournament = models.ForeignKey(Tournament, related_name='partecipant', on_delete=models.CASCADE)
+	alias = models.CharField(max_length=100)
 
 	class Meta:
 		unique_together = ('user', 'tournament')
@@ -36,28 +39,33 @@ class TournamentPartecipant(models.Model):
 		verbose_name_plural = 'Tournament Partecipants'
 
 	def __str__(self):
-		return str(self.id) + '-' + self.tournament.name + '-' + self.user.username
+		return f"{self.user.username}'s alias in {self.tournament.name}: {self.alias}"
 
 class Match(models.Model):
+	tournament = models.ForeignKey(Tournament, related_name='tournament', null=True, on_delete=models.CASCADE)
 	player1 = models.ForeignKey(BaseUser, related_name='player_one', on_delete=models.CASCADE)
 	player2 = models.ForeignKey(BaseUser, related_name='player_two', on_delete=models.CASCADE)
-	score1 = models.IntegerField()
-	score2 = models.IntegerField()
-	date = models.DateTimeField()
+	score1 = models.IntegerField(default=0)
+	score2 = models.IntegerField(default=0)
+	date = models.DateTimeField(null=True)
+	is_played = models.BooleanField(default=False)
 
 	class Meta:
 		verbose_name = 'Match'
 		verbose_name_plural = 'Matches'
+	
+	def __str__(self):
+		return f"{self.player1} vs {self.player2}"
 
-class TournamentMatch(models.Model):
-	tournament = models.ForeignKey(Tournament, related_name='tournament_of_match', on_delete=models.CASCADE)
-	match = models.ForeignKey(Match, related_name='match_of_tournament', on_delete=models.CASCADE)
+# class TournamentMatch(models.Model):
+# 	tournament = models.ForeignKey(Tournament, related_name='tournament_of_match', on_delete=models.CASCADE)
+# 	match = models.ForeignKey(Match, related_name='match_of_tournament', on_delete=models.CASCADE)
 
-	class Meta:
-		unique_together = ('match', 'tournament')
-		ordering = ['tournament']
-		verbose_name = 'Tournament Match'
-		verbose_name_plural = 'Tournament Matches'
+# 	class Meta:
+# 		unique_together = ('match', 'tournament')
+# 		ordering = ['tournament']
+# 		verbose_name = 'Tournament Match'
+# 		verbose_name_plural = 'Tournament Matches'
 
 class Group(models.Model):
 	base_users = models.ManyToManyField(BaseUser)

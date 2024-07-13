@@ -34,7 +34,8 @@ const Home = {
   after_render: async () => 
     {
       const logoutButton = document.getElementById("logout-button");
-
+      const notificationButton = document.getElementById("notification-button");
+  
       if (logoutButton) {
         logoutButton.addEventListener('click', async () => {
           try {
@@ -49,6 +50,13 @@ const Home = {
             console.error('An error occurred during logout:', error);
           }
         });
+
+        if (notificationButton){
+          notificationButton.addEventListener('click', async () => {
+            const response = await fetch(`https://${window.location.host}/notification/mdi-paol/`);
+            console.log(await response.text());
+          })
+        }
     }
   }
 };
