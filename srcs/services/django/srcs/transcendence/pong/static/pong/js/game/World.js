@@ -468,8 +468,20 @@ export class World {
 				this.paddle.position.x = -54;
 				this.paddle2.position.x = 54;
 				this.paddle2.rotation.z = Math.PI / 2;
+				console.log(this.paddle.geometry.computeBoundingBox().max.y - this.paddle.geometry.computeBoundingBox().min.y)
+				// const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+				// const mesh = new THREE.Mesh(geometry, material);
 
+				// // Compute bounding box to get the current width
+				// geometry.computeBoundingBox();
+				// const boundingBox = geometry.boundingBox;
+				// const currentWidth = boundingBox.max.x - boundingBox.min.x;
 
+				// // Calculate scaling factor
+				// const scaleFactor = desiredWidth / currentWidth;
+
+				// // Apply scaling factor to match the desired width
+				// mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
 				resolve();
 				});
 			},

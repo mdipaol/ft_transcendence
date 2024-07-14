@@ -9,8 +9,9 @@ export const POWERUPDURATION = 2;
 export const BOXSIZE = 250;
 export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;
-export const MAX_SIZEY = 27
-export const MIN_SIZEY = -27
+export const MAX_SIZEY = 27;
+export const MIN_SIZEY = -27;
+export const PADDLE_SIZE = 5;
 export const SWITHCH_WORLD = false;//true = world || false = world1
 
 export const ARROWUP = 38;

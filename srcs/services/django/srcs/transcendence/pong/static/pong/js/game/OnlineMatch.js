@@ -135,13 +135,13 @@ export class OnlineMatch extends Match {
 			return;
 		if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
 		{
-			this.superPlayer.mesh.position.y += this.superPlayer.speed;
+			// this.superPlayer.mesh.position.y += this.superPlayer.speed;
 			// this.player1.mesh.position.y += this.player1.speed;
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
 		}
 		if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
 		{
-			this.superPlayer.mesh.position.y -= this.superPlayer.speed;
+			// this.superPlayer.mesh.position.y -= this.superPlayer.speed;
 			// this.player1.mesh.position.y -= this.player1.speed;
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 		}
@@ -149,9 +149,9 @@ export class OnlineMatch extends Match {
 	updateState(msg)
 	{
 		this.player1.mesh.position.y = msg.message.player_one.y;
-			this.player2.mesh.position.y = msg.message.player_two.y;
-			this.ball.mesh.position.x = msg.message.ball.x;
-			this.ball.mesh.position.y = msg.message.ball.y;
+		this.player2.mesh.position.y = msg.message.player_two.y;
+		this.ball.mesh.position.x = msg.message.ball.x;
+		this.ball.mesh.position.y = msg.message.ball.y;
 	}
 
 	updateScore(msg){

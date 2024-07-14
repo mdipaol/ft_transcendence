@@ -416,6 +416,15 @@ def tournament_info(request, name):
 	return render(request, 'pong/spa/tournament_info.html', context)
 
 @login_required
+def tournament_leave(request, name):
+	if request.method == 'POST':
+		print('suca')
+		tournament = Tournament.objects.get(name=name)
+		partecipant = TournamentPartecipant.objects.get(user=request.user, tournament=tournament)
+		partecipant.delete()
+		tournament_info(request, name)
+
+@login_required
 def notification(request, username):
 	user = BaseUser.objects.get(username=username)
 	if not user:

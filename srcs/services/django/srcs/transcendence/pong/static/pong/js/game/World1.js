@@ -422,6 +422,14 @@ export class World1 {
 					this.spotLightWall1.target = this.paddle; // world1
 					this.spotLightWall2.target = this.paddle2; // world1
 
+					// console.log(this.paddle);
+					
+					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
+					// this.paddle.children[0].geometry.computeBoundingBox();
+					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
+					// const scaleFactor = 15 / currentWidth;
+					// this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
 					if (this.paddle2.children[0]){
 						this.paddle2.children[0].material = new THREE.MeshStandardMaterial({
 							color: 0x0009FF,
