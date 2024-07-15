@@ -8,10 +8,10 @@
 		{% endfor %}
 	<h3>{{ winner }}</h3>
 	<h3>{{ finished }}</h3>
-	<button>Back</button>
+	<button id="backButton">Back</button>
 	{% if not joined %}
-		<button>Join</button>
+		<button id="joinButton">Join</button>
 	{% else %}
-		<button>Leave</button>
+		<button id="leaveButton">Leave</button>
 	{% endif %}
 </div>

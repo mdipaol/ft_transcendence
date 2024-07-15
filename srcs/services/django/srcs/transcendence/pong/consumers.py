@@ -1,6 +1,7 @@
 
 import uuid, json, pdb, asyncio
 from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync
 
 from .game_class import Match
 from .match_manager import MatchManager
@@ -116,15 +117,24 @@ class OnlineConsumer(WebsocketConsumer):
         user = self.scope['user']
         if user.is_authenticated:
             self.add_connection(user)
+            async_to_sync(self.channel_layer.group_add)(
+                f"notifications_{user.username}", self.channel_name
+            )
             self.accept()
-            return
-        self.close()
+        else:
+            self.close()
 
     def disconnect(self, status_code):
         user = self.scope['user']
+        if not user.is_anonymous:
+            async_to_sync(self.channel_layer.group_discard)(
+                f"notifications_{user.username}", self.channel_name
+            )
         self.del_connection(user)
 
-
+    def send_notification(self, event):
+        print(event)
+        (self.send)(text_data=json.dumps(event["message"]))
     # def receive(self, text_data):
     #     # print(text_data)
     #     json_data = json.loads(text_data)

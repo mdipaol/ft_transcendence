@@ -216,7 +216,7 @@ export class Match {
 
 	updateMovements(deltaTime) {
 		if (this.player1.moves.up && this.player1.mesh.position.y < UTILS.MAX_SIZEY)
-			this.player1.mesh.position.y += this.player1.speed * deltaTime * this.activePowerUp() + (SubmitEvent.apply() )
+			this.player1.mesh.position.y += this.player1.speed * deltaTime;
 		if (this.player1.moves.down && this.player1.mesh.position.y > UTILS.MIN_SIZEY)
 			this.player1.mesh.position.y -= this.player1.speed * deltaTime;
 		if (this.player2.moves.up && this.player2.mesh.position.y < UTILS.MAX_SIZEY)
@@ -397,9 +397,20 @@ export class Match {
 		this.updateMovements(deltaTime);
 
 		this.world.rotatePowerUp();
-
-		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
-		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
+		//salvo pos futura
+		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
+		let futureY = this.ball.mesh.position.y + this.ball.speed * this.ball.direction.y * deltaTime;
+		//check se è oltre la racchetta
+/* 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
+			// Paddle in ball trajectory
+			if (){
+				
+			}
+		} */
+		//se si teletrasporto dove mi pare
+		//se no salvo pos futura in pos della ball
+		this.ball.mesh.position.x = futureX;
+		this.ball.mesh.position.y = futureY;
 		this.ball.mesh.position.z = this.ball.getZ();
 
 		if(this.ball.mesh.position.z < 0){
@@ -481,12 +492,18 @@ export class Match {
                 this.world.soundWallCollision.stop();
             }
             this.world.soundWallCollision.play();
+			this.ball.mesh.position.y = Math.sign(this.ball.direction.y) * UTILS.MAX_SIZEY;
 			this.ball.direction.y *= -1;
 		}
 
-		//Reset positions
-		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
+		// Ball pass the table limit on x
+		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5){
+
+			// Check intersection between ball and paddle
+
+			// Updating positions and score after a point
 			this.updateScore();
+		}
 
 		// If triple ball is enabled
 		if (this.tripleEnabled) {

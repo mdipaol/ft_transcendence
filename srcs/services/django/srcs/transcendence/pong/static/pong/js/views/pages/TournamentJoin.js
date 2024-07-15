@@ -1,4 +1,4 @@
-import { parseRequestUrl } from '../../services/utils.js';
+import { parseRequestUrl, getCookie } from '../../services/utils.js';
 import triggerHashChange from '../../services/utils.js';
 
 const TournamentJoin = {
@@ -40,7 +40,10 @@ const TournamentJoin = {
           console.log(buttonName);
 
           const response = await fetch( '/tournament_join/' + buttonName + '/' , {
-            method: 'POST'
+            method: 'POST',
+            headers : {
+              'X-CSRFToken' : getCookie('csrftoken')
+            },
         });
         if (response.ok) {
           // PARSARE ERRORI E VISUALIZZARE TORNEO
@@ -52,12 +55,55 @@ const TournamentJoin = {
           const html = JsonResponse.html;
 
           div.innerHTML = html;
+          updateEventListeners(joinTournament);
         }
         });
       }});
      };
     }
 };
+
+function updateEventListeners(joinTournament) {
+  const backButton = document.getElementById("backButton");
+  const joinButton = document.getElementById("joinButton");
+  const leaveButton = document.getElementById("leaveButton");
+
+  if (backButton) {
+    backButton.addEventListener('click', async () => {
+      triggerHashChange('/tournament_join');
+    });
+  }
+  if (joinButton) {
+    joinButton.addEventListener('click', async () => {
+      alert("ciao");
+    });
+  }
+  if (leaveButton) {
+    leaveButton.addEventListener('click', async () => {
+
+      // const buttonName = event.target.innerText;
+      // console.log(buttonName);
+
+      const response = await fetch( 'https://${window.location.host}/tournament_leave/', {
+        method: 'POST',
+        headers : {
+          'X-CSRFToken' : getCookie('csrftoken')
+        },
+    });
+    if (response.ok) {
+      console.log(response);
+      const div = document.getElementById('tournament');
+      div.replaceChildren();
+
+      const JsonResponse = await response.json();
+      const html = JsonResponse.html;
+
+      div.innerHTML = html;
+    }
+    });
+  }
+}
+
 
 function reattachEventListeners() {
   const tournamentDiv = document.getElementById("tournament");
