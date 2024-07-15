@@ -414,6 +414,13 @@ export class World {
 				const currentWidth = boundingBox.max.x - boundingBox.min.x;
 				const scaleFactor = desiredWidth / currentWidth;
 
+				// const desiredHeight = UTILS.TABLE_HEIGHT;
+				// const currentHeight = boundingBox.max.z - boundingBox.min.z;
+				// const scaleFactorHeight = desiredHeight / currentWidth;
+
+				// console.log(boundingBox.max.x - boundingBox.min.x);
+				// console.log(boundingBox.max.y - boundingBox.min.y);
+
 				threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
 				threeObj.rotation.set(Math.PI / 2, 0, 0);
 				threeObj.position.set(0, 0, -23.5);
@@ -468,7 +475,7 @@ export class World {
 				this.paddle.position.x = -54;
 				this.paddle2.position.x = 54;
 				this.paddle2.rotation.z = Math.PI / 2;
-				console.log(this.paddle.geometry.computeBoundingBox().max.y - this.paddle.geometry.computeBoundingBox().min.y)
+				// console.log(this.paddle.geometry.computeBoundingBox().max.y - this.paddle.geometry.computeBoundingBox().min.y)
 				// const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
 				// const mesh = new THREE.Mesh(geometry, material);
 

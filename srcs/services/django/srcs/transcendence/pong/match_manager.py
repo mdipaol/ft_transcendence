@@ -57,7 +57,11 @@ class MatchManager:
         if match.is_empty():
             cls.matches.remove(match)
         else:
-            match.send_to_channel("game_end", {})
+            await match.channel_layer.group_send(
+                match.id, {
+                    'type' : 'game_end',
+                    'message' : {}
+                })
             consumer.match = None
 
 

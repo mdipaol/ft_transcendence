@@ -3,7 +3,28 @@ from .constants import Costants
 from channels.layers import get_channel_layer
 
 class State:
-    ...
+    def __init__(self):
+        self.players = {"player_one": None, "player_two": None}
+        self.ball = None
+        self.scores = {"player_one": 0, "player_two": 0}
+        self.exchanges = 0
+        self.started = False
+        self.ended = False
+        self.full = False
+
+    def reset(self):
+        self.players = {"player_one": None, "player_two": None}
+        self.ball = None
+        self.scores = {"player_one": 0, "player_two": 0}
+        self.exchanges = 0
+        self.started = False
+        self.ended = False
+        self.full = False
+
+    def update(self, player1, player2, ball, score1, score2):
+        self.players["player_one"] = {"x": player1.position.x, "y": player1.position.y, "score": score1}
+        self.players["player_two"] = {"x": player2.position.x, "y": player2.position.y, "score": score2}
+        self.ball = {"x": ball.position.x, "y": ball.position.y, "dirX": ball.direction.x, "dirY": ball.direction.y, "speed": ball.speed}
 
 class Vector2D:
     def __init__(self, x: float, y: float) -> None:
@@ -11,7 +32,10 @@ class Vector2D:
         self.y = y
 
     def normalizeVector(self):
-        ...
+        magnitude = (self.x**2 + self.y**2)**0.5
+        if magnitude > 0:
+            self.x /= magnitude
+            self.y /= magnitude
 
 class Ball:
     def __init__(self) -> None:
@@ -36,19 +60,22 @@ class Ball:
             return True
         return False
 
-    def update(self):
-        self.position.x += self.speed * self.direction.x
-        self.position.y += self.speed * self.direction.y
+    def update(self, delta_time):
+        self.position.x += self.speed * self.direction.x * delta_time
+        self.position.y += self.speed * self.direction.y * delta_time
 
 
 class Player:
     def __init__(self, name : str, vector : Vector2D) -> None:
         self.name : str = name
         self.position : Vector2D = vector
-        self.speed = 1
+        self.speed = Costants.MOVSPEED
         self.size = Costants.PADDLE_SIZE
         self.half_size = self.size / 2
-
+        self.move = {
+            'up' : False,
+            'down' : False,
+        }
         self.consumer = None
 
     def reset(self):
@@ -261,7 +288,18 @@ class Match:
             if self.score1 == Costants.MAX_SCORE or self.score2 == Costants.MAX_SCORE:
                 self.ended = True
 
-    def move(self, consumer, direction):
+    def update_player(self, deltaTime):
+        if self.player1.move['up'] and self.player1.position.y < Costants.MAX_PADDLE_Y:
+            self.player1.position.y += self.player1.speed * deltaTime
+        if self.player1.move['down'] and self.player1.position.y > Costants.MIN_PADDLE_Y:
+            self.player1.position.y -= self.player1.speed * deltaTime
+        if self.player2.move['up'] and self.player2.position.y < Costants.MAX_PADDLE_Y:
+            self.player2.position.y += self.player2.speed * deltaTime
+        if self.player2.move['down'] and self.player2.position.y > Costants.MIN_PADDLE_Y:
+            self.player2.position.y -= self.player2.speed * deltaTime
+
+    def move(self, consumer, data):
+
         player: Player = None
         if self.player1.consumer == consumer:
             player = self.player1
@@ -270,18 +308,34 @@ class Match:
         if not player:
             return
 
-        if direction == 'up':
-            player.position.y += player.speed
-        elif direction == 'down':
-            player.position.y -= player.speed
+        if not data['type'] or not data['direction'] or not data['mode']:
+            return
+
+        if not data['type'] == 'input':
+            return
+
+        if data['direction'] == 'up':
+            if data['mode'] == 'keydown':
+                player.move['up'] = True
+            elif data['mode'] == 'keyup':
+                player.move['up'] = False
+        elif data['direction'] == 'down':
+            if(data['mode'] == 'keyup'):
+                player.move['down'] = False
+            elif data['mode'] == 'keydown':
+                player.move['down'] = True
 
     async def update(self):
         now = time.time()
-        if now - self.update_time < Costants.REFRESH_RATE:
-            await asyncio.sleep(Costants.REFRESH_RATE - ( now - self.update_time))
+        time_since_update = now - self.update_time
+        if time_since_update < Costants.REFRESH_RATE:
+            await asyncio.sleep(Costants.REFRESH_RATE - (time_since_update))
 
-        self.ball.update()
+        delta_time = time.time() - self.update_time
 
+        self.ball.update(delta_time)
+        self.update_player(delta_time)
+    
         self.event_update = False
 
         await self.ball_player_collision()

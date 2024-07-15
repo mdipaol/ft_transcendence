@@ -23,8 +23,24 @@ export class OnlineMatch extends Match {
 	}
 
 
-	gameMessage() {
-
+	gameMessage(msg) {
+		if (msg.event == "state")
+			this.updateState(msg);
+		else if(msg.event == "exchanges"){
+			console.log(msg)
+			this.exchanges = msg.message.exchanges;
+			this.updateExchanges();
+		}
+		else if (msg.event == "score")
+			this.updateScore(msg);
+		else if (msg.event == "powerUpSpawn") {
+			console.log(msg);
+			this.world.powerUp = this.world.arrayPowerup[msg.message.powerUp];
+			this.world.powerUp.mesh.position.x = msg.message.x;
+			this.world.powerUp.mesh.position.y = msg.message.y;
+			this.world.powerUp.mesh.position.z = 10;
+			this.world.add(this.world.powerUp.mesh);
+		}
 	}
 
     onOpen(event) {
@@ -38,25 +54,7 @@ export class OnlineMatch extends Match {
 	onMessage(event) {
 		const msg = JSON.parse(event.data);
 		if (msg.type == "game_message")
-		{
-			if (msg.event == "state")
-				this.updateState(msg);
-			else if(msg.event == "exchanges"){
-				console.log(msg)
-				this.exchanges = msg.message.exchanges;
-				this.updateExchanges();
-			}
-			else if (msg.event == "score")
-				this.updateScore(msg);
-			else if (msg.event == "powerUpSpawn") {
-				console.log(msg);
-				this.world.powerUp = this.world.arrayPowerup[msg.message.powerUp];
-				this.world.powerUp.mesh.position.x = msg.message.x;
-				this.world.powerUp.mesh.position.y = msg.message.y;
-				this.world.powerUp.mesh.position.z = 10;
-				this.world.add(this.world.powerUp.mesh);
-			}
-		}
+			this.gameMessage(msg);
 		else if (msg.type == "game_start")
 		{
 			console.log("game started")
@@ -89,9 +87,9 @@ export class OnlineMatch extends Match {
 		if (!this.started)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
-			this.superPlayer.moves.up = true;
+			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'up', 'mode' : 'keydown' }));
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
-			this.superPlayer.moves.down = true;
+			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'down', 'mode' : 'keydown' }));
 
 		if (event.which == UTILS.TWO)//first person with '2' key
 		{
@@ -125,27 +123,28 @@ export class OnlineMatch extends Match {
 		if (!this.started)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
-			this.superPlayer.moves.up = false;
+			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up', 'mode' : 'keyup' }));
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
-			this.superPlayer.moves.down = false;
+			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'down', 'mode' : 'keyup' }));
 	}
 
-    updateMovements() {
-		if (!this.started)
-			return;
-		if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
-		{
-			// this.superPlayer.mesh.position.y += this.superPlayer.speed;
-			// this.player1.mesh.position.y += this.player1.speed;
-			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-		}
-		if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
-		{
-			// this.superPlayer.mesh.position.y -= this.superPlayer.speed;
-			// this.player1.mesh.position.y -= this.player1.speed;
-			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-		}
-	}
+    // updateMovements() {
+	// 	if (!this.started)
+	// 		return;
+	// 	if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
+	// 	{
+	// 		// this.superPlayer.mesh.position.y += this.superPlayer.speed;
+	// 		// this.player1.mesh.position.y += this.player1.speed;
+	// 		this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
+	// 	}
+	// 	if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
+	// 	{
+	// 		// this.superPlayer.mesh.position.y -= this.superPlayer.speed;
+	// 		// this.player1.mesh.position.y -= this.player1.speed;
+	// 		this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
+	// 	}
+	// }
+
 	updateState(msg)
 	{
 		this.player1.mesh.position.y = msg.message.player_one.y;
@@ -178,7 +177,7 @@ export class OnlineMatch extends Match {
 	}
 
     update() {
-		this.updateMovements();
+		// this.updateMovements();
 		this.world.rotatePowerUp();
 		this.ball.mesh.position.z = this.ball.getZ();
 		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;

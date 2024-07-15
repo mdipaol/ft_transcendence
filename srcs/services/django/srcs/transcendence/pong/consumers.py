@@ -41,9 +41,10 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
 
-        direction = json.loads(text_data).get("direction")
+        # direction = json.loads(text_data).get("direction")
+        data = json.loads(text_data)
         # self.match.paddle_move(self.player_id, direction)
-        self.match.move(self, direction)
+        self.match.move(self, data)
 
     # Channel layers message handlers
 

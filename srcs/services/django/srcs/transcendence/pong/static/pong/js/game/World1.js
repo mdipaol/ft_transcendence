@@ -300,7 +300,7 @@ export class World1 {
 			(object)=>{
 				object.scene.rotation.x =Math.PI/2;
 				object.scene.scale.multiplyScalar(21.5);
-				object.scene.position.set(0, 0 , -2);
+				object.scene.position.set(0, 0 , 0);
 				const material_bordi = new THREE.MeshStandardMaterial({
 
 					roughness: 0,
@@ -425,10 +425,10 @@ export class World1 {
 					// console.log(this.paddle);
 					
 					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
-					// this.paddle.children[0].geometry.computeBoundingBox();
-					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
-					// const scaleFactor = 15 / currentWidth;
-					// this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
+					this.paddle.children[0].geometry.computeBoundingBox();
+					const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
+					const scaleFactor = (15) / currentWidth;
+					this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
 					if (this.paddle2.children[0]){
 						this.paddle2.children[0].material = new THREE.MeshStandardMaterial({
