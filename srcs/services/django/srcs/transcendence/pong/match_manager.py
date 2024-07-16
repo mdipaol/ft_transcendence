@@ -72,12 +72,16 @@ class MatchManager:
 
         await match.channel_layer.send( match.player1.consumer.channel_name, {
             'type' : 'game_start',
-            'player' : 'player_one'
+            'player' : 'player_one',
+            'username_one' : match.player1.consumer.username,
+            'username_two' : match.player2.consumer.username,
         })
 
         await match.channel_layer.send( match.player2.consumer.channel_name, {
             'type' : 'game_start',
-            'player' : 'player_two'
+            'player' : 'player_two',
+            'username_one' : match.player1.consumer.username,
+            'username_two' : match.player2.consumer.username,
         })
 
         while not match.is_ended():

@@ -27,7 +27,6 @@ export class OnlineMatch extends Match {
 		if (msg.event == "state")
 			this.updateState(msg);
 		else if(msg.event == "exchanges"){
-			console.log(msg)
 			this.exchanges = msg.message.exchanges;
 			this.updateExchanges();
 		}
@@ -40,6 +39,28 @@ export class OnlineMatch extends Match {
 			this.world.powerUp.mesh.position.y = msg.message.y;
 			this.world.powerUp.mesh.position.z = 10;
 			this.world.add(this.world.powerUp.mesh);
+		}
+		else if (msg.event == "soundCollision"){
+			if (this.world.soundCollision.isPlaying)
+				this.world.soundCollision.stop();
+			this.world.soundCollision.play();
+		}
+		else if (msg.event == "soundWallCollision"){
+			
+			if (this.world.soundWallCollision.isPlaying)
+				this.world.soundWallCollision.stop();
+			this.world.soundWallCollision.play();
+		}
+		else if (msg.event == "soundPoint"){
+			if (this.world.soundPoint.isPlaying)
+				this.world.soundPoint.stop();
+			this.world.soundPoint.play();
+		}
+		else if (msg.event == "powerUpTaken"){
+			const data = msg.messagge;
+		}
+		else if (msg.event == "powerUpSpawn"){
+
 		}
 	}
 
@@ -59,10 +80,15 @@ export class OnlineMatch extends Match {
 		{
 			console.log("game started")
 			console.log(msg.player)
-			if (msg.player == "player_one")
+			if (msg.player == "player_one"){
 				this.superPlayer = this.player1;
-			else if (msg.player == "player_two")
+			}
+			else if (msg.player == "player_two"){
 				this.superPlayer = this.player2;
+			}
+
+			
+
 			this.started = true;
 		}
 		else if (msg.type == "game_end")
@@ -151,10 +177,17 @@ export class OnlineMatch extends Match {
 		this.player2.mesh.position.y = msg.message.player_two.y;
 		this.ball.mesh.position.x = msg.message.ball.x;
 		this.ball.mesh.position.y = msg.message.ball.y;
+		this.ball.direction.x = msg.message.ball.dirX;
+		this.ball.direction.y = msg.message.ball.dirY;
 	}
 
 	updateScore(msg){
-		console.log(msg)
+
+
+		if (this.world.soundPoint.isPlaying)
+			this.world.soundPoint.stop();
+		this.world.soundPoint.play();
+
 		this.score1 = msg.message.player_one;
 		this.score2 = msg.message.player_two;
 		this.updateScoreText();
@@ -162,8 +195,8 @@ export class OnlineMatch extends Match {
 		this.player2.mesh.position.z = -10;
 		this.player1.powerUp = null;
 		this.player2.powerUp = null;
-		this.player1.mesh.scale.set(1, 1, 1);
-		this.player2.mesh.scale.set(1, 1, 1);
+		this.player1.mesh.scale.set(this.player.mesh.scale.x, this.player.mesh.scale.y, this.player.mesh.scale.z);
+		this.player2.mesh.scale.set(this.player.mesh.scale.x, this.player.mesh.scale.y, this.player.mesh.scale.z);
 		//---------------------------
 		// Reset direction
 		//const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);

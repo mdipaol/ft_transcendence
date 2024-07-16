@@ -38,7 +38,7 @@ export class Ball {
 	getZ()
 	{
 		let z;
-		if (this.direction.x > 0 )
+		if (this.direction.x > 0)
 			z = this.posCurve.getPointAt(UTILS.roundPos((this.mesh.position.x + 45)/100)).z;
 		else
 			z = this.negCurve.getPointAt(UTILS.roundPos((-this.mesh.position.x + 45)/100)).z;

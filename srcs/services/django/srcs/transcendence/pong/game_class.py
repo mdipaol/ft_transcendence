@@ -236,6 +236,12 @@ class Match:
                 await self.handle_player_collision(self.player2)
             elif self.ball.direction.x < 0:
                 await self.handle_player_collision(self.player1)
+            
+            await self.channel_layer.group_send(self.id , {
+                'type' :  "game_message", 
+                'event' : "soundCollision",
+                'message' : {},
+            })
             # print('funcion called')
             # player1 = self.player1.ball_collision(self.ball)
             # player2 = self.player2.ball_collision(self.ball)
@@ -258,6 +264,11 @@ class Match:
             limit = Costants.MAX_PADDLE_Y if self.ball.position.y > Costants.MAX_PADDLE_Y else Costants.MIN_PADDLE_Y
             self.ball.direction.y *= -1
             self.ball.position.y = limit
+            await self.channel_layer.group_send(self.id,  {
+                'type' : 'game_message', 
+                'event' : 'soundWallCollision',
+                'message' : {},
+                })
 
     async def check_point(self):
         if self.event_update:
@@ -275,13 +286,10 @@ class Match:
             self.player2.reset()
             self.ball.reset()
 
-            # Send score
-            await self.channel_layer.group_send("game_message", {
-                "event" : "score",
-                "message" : {
-                    "player_one": self.score1,
-                    "player_two": self.score2
-                }
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'soundPoint',
+                'message' : {},
             })
 
             # Check game ended
