@@ -8,13 +8,6 @@ const Home = {
    */
   render: async () => {
 
-    const authenticatedResponse = await fetch(`https://${window.location.host}/authenticated/`);
-    const jsonData = await authenticatedResponse.json();
-
-    if (jsonData.authenticated == true)
-      MyWebsocket.startConnection();
-
-
     console.log(`https://${window.location.host}/online_users/`);
     const onlineUsersResponse = await fetch(`https://${window.location.host}/online_users/`);
     const onlineUsers = await onlineUsersResponse.text();

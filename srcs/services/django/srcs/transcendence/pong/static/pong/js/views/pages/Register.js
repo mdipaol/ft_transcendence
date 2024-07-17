@@ -1,4 +1,5 @@
-import { parseRequestUrl } from '../../services/utils.js';
+import triggerHashChange, { parseRequestUrl } from '../../services/utils.js';
+import MyWebsocket from '../../services/MyWebsocket.js';
 
 const Register = {
   /**
@@ -37,7 +38,7 @@ const Register = {
             });
 
             if (response.ok) {
-                window.location.hash = '#/home/';
+                triggerHashChange('/home/');
             } else {
                 const errorForm = await response.text();
                 document.getElementById('page_root').innerHTML = errorForm;

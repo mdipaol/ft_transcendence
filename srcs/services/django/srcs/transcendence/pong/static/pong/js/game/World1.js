@@ -40,6 +40,8 @@ export class World1 {
 		this.dracoLoader.setDecoderConfig({type: 'js'});
 		this.gltfLoader.setDRACOLoader(this.dracoLoader);
 		this.font = null;
+		this.username1 = null;
+		this.username2 = null;
 		this.powerUp = null;
 		this.skyboxInit();
 		//gest cube powerup

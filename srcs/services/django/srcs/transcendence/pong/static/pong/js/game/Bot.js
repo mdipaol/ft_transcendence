@@ -19,12 +19,19 @@ export class MatchBot extends Match {
         // this.player2 = new Bot(world.paddle);
         // this.bot = new Bot(world.paddle);
         // this.bot1 = new Bot(world.paddle);
+        
+        if (this.world.username1){
+            this.world.setUsernameFont('two', 'Mario Bus')
+        }
+        
         this.bot2 = this.player2;
         this.activeBot1 = false;
         this.activeBot2 = false;
         let timer_start = 0;
         const time_end = false;
         let animationFrame = null;
+
+        
 
         this.update_time_ball = new Date();
 

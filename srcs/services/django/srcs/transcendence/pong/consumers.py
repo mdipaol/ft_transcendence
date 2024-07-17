@@ -52,7 +52,9 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({
             "type": "game_start",
-            "player": event['player']
+            "player": event['player'],
+            'username_one' : event['username_one'],
+            'username_two' : event['username_two'],
             }))
 
     async def game_message(self, event):
@@ -119,9 +121,10 @@ class OnlineConsumer(WebsocketConsumer):
         if user.is_authenticated:
             self.add_connection(user)
             async_to_sync(self.channel_layer.group_add)(
-                f"notifications_{user.username}", self.channel_name
+                f"notifications_{str(user.id)}", self.channel_name
             )
             self.accept()
+            self.send(text_data=json.dumps({'username' : user.username}))
         else:
             self.close()
 
@@ -129,7 +132,7 @@ class OnlineConsumer(WebsocketConsumer):
         user = self.scope['user']
         if not user.is_anonymous:
             async_to_sync(self.channel_layer.group_discard)(
-                f"notifications_{user.username}", self.channel_name
+                f"notifications_{str(user.id)}", self.channel_name
             )
         self.del_connection(user)
 

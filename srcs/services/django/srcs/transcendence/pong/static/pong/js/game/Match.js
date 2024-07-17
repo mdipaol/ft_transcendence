@@ -31,6 +31,11 @@ export class Match {
         this.waitPowerup = 0;
         this.activePowerUp = false;
         this.meshPowerUp = null;
+		
+		if (this.world.username1 && window.username){
+			this.world.setUsernameFont('one', window.username);
+			this.world.setUsernameFont('two', UTILS.truncateString(window.username, 4) + '[2.0]')
+		}
 
         // Triple Ball init
         this.tripleEnabled = false;

@@ -38,10 +38,6 @@ const Login = {
 
                 if (response.ok) {
 
-                    // New connection with websocket for online status
-                    // ...
-                    MyWebsocket.startConnection();
-
                     triggerHashChange('/home/');
 
                 } else {

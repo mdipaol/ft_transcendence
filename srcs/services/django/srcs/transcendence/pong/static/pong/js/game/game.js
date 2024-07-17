@@ -19,7 +19,7 @@ let isPlaying = false;
 export async function startGame(gameMode){
 
 	//---------INIT----------
-	const world = new World1();
+	const world = new World();
 
 	content.replaceChildren();
 

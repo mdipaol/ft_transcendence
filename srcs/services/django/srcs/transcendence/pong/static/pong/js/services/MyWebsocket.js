@@ -38,14 +38,19 @@
       };
       
       MyWebsocket.socket.onmessage = function(event) {
-        console.log(event);
-        console.log('ccccccc');
         const data = JSON.parse(event.data);
-        alert(data.message);
+
+        if (data.username)
+          window.username = data.username;
+        
+        console.log('Connected as: ' + window.username);
       };
       
       MyWebsocket.socket.onclose = function(event) {
         console.log('WebSocket is closed.');
+
+        if (window.username)
+          window.username = null;
       };
       
       MyWebsocket.socket.onerror = function(error) {

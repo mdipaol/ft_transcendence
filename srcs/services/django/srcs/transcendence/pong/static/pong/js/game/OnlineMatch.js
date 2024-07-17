@@ -86,8 +86,11 @@ export class OnlineMatch extends Match {
 			else if (msg.player == "player_two"){
 				this.superPlayer = this.player2;
 			}
-
 			
+			if (this.world.username1)
+				this.world.setUsernameFont('one', msg.username_one)
+			if (this.world.username2)
+				this.world.setUsernameFont('two', msg.username_two)
 
 			this.started = true;
 		}
