@@ -160,7 +160,6 @@ class Match:
         await self.channel_layer.group_send(self.id, {
             "type" : "game_message",
             "event" : "state",
-            # "message" : self.state,
             'message' : {
                 "player_one": {"x": self.player1.position.x, "y": self.player1.position.y, "score": self.score1,},
                 "player_two": {"x": self.player2.position.x, "y": self.player2.position.y, "score": self.score2,},
@@ -226,6 +225,14 @@ class Match:
             self.exchanges += 1
 
             # Send exchanges
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'exchanges',
+                'message' : {
+                    'exchanges' : self.exchanges,
+                },
+                
+            })
 
     async def ball_player_collision(self):
         if self.event_update:
@@ -286,10 +293,30 @@ class Match:
             self.player2.reset()
             self.ball.reset()
 
+            # Sound point event send
             await self.channel_layer.group_send(self.id, {
                 'type' : 'game_message',
                 'event' : 'soundPoint',
                 'message' : {},
+            })
+
+            # Score event
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'score',
+                'message' : {
+                    'player_one' : self.score1,
+                    'player_two' : self.score2,
+                },
+            })
+
+            # Exchanges reset
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'exchanges',
+                'message' : {
+                    'exchanges' : 0,
+                },
             })
 
             # Check game ended

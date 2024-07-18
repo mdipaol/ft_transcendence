@@ -8,6 +8,9 @@ import { Player } from './Player.js';
 export class Match {
     constructor(world) {
         this.world = world;
+		this.start = new Date();
+		this.htmlElement = null;
+
         this.player1 = new Player(world.paddle);
         this.player2 = new Player(world.paddle2);
 		this.player1.upKey = UTILS.W;
@@ -32,6 +35,7 @@ export class Match {
         this.activePowerUp = false;
         this.meshPowerUp = null;
 		
+		// Update mesh with username
 		if (this.world.username1 && window.username){
 			this.world.setUsernameFont('one', window.username);
 			this.world.setUsernameFont('two', UTILS.truncateString(window.username, 4) + '[2.0]')
@@ -47,6 +51,24 @@ export class Match {
             this.fakeBalls[1].mesh.remove(this.fakeBalls[1].mesh.children[0]);
         }
     }
+
+	initHtmlInterface(htmlElement){
+		this.htmlElement = htmlElement;
+		console.log(this.htmlElement)
+		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
+		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
+		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username, 4) + '[2.0]';
+		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
+	}
+
+	updateHtmlInterface(){
+		if (!this.htmlElement)
+			return;
+		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
+		this.htmlElement.querySelector('#interface-score').innerHTML = `${this.score1}` + "-" + `${this.score2}`;
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
+	}
 
 	exchangesTextInit() {
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
@@ -488,6 +510,7 @@ export class Match {
 			this.waitPowerup = 0;
 			//assegnazione powerUp Player
 			this.powerUpTaken();
+
 		}
 
 
@@ -530,6 +553,8 @@ export class Match {
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
+
+		this.updateHtmlInterface();
 	}
 
 	render() {

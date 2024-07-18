@@ -66,6 +66,8 @@ const router = async () => {
   if (data.authenticated)
     // MyWebsocket.startConnection returns if there is a connection already
     MyWebsocket.startConnection();
+  else
+    MyWebsocket.removeConnection();
 
   // Render the page from map of supported routes or render 404 page.
   const page = routes[parsedUrl] || Error404;

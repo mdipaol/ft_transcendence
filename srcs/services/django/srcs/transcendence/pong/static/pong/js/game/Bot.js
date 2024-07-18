@@ -16,9 +16,6 @@ export class Bot extends Player{
 export class MatchBot extends Match {
     constructor(world) {
         super(world);
-        // this.player2 = new Bot(world.paddle);
-        // this.bot = new Bot(world.paddle);
-        // this.bot1 = new Bot(world.paddle);
         
         if (this.world.username1){
             this.world.setUsernameFont('two', 'Mario Bus')

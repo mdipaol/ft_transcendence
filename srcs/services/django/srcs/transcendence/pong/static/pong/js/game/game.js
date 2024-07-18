@@ -14,17 +14,30 @@ import { MatchBot } from './Bot.js';
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
-const content = null || document.getElementById('page_root');
 let isPlaying = false;
-export async function startGame(gameMode){
-
-	//---------INIT----------
-	const world = new World();
-
+export async function startGame(gameMode, worldMap){
+	
+	// page_root cleaning
+	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
+	
+	// Loading page
+	// ...
+	
+	//---------INIT----------
+	let world = null;
+	if (worldMap == 'underground'){
+		
+		world = new World();
+	}
+	else{
+		
+		world = new World1();
+	}
 
 	await world.worldReady();
 	console.log("Meshes loaded");
+	
 	let match = null;
 
 	switch (gameMode) {
@@ -41,9 +54,23 @@ export async function startGame(gameMode){
 		  match = new Match(world);
 	  }
 
-	// canvas dom element
 
-	content.replaceChildren(world.renderer.domElement);
+	const response = await fetch(`https://${window.location.host}/interface_underground/`);
+	// userInterface.innerHTML = await response.text();
+	// canvas dom element
+	const html = await response.text();
+	const parser = new DOMParser();
+
+    // Parse the text
+    const doc = parser.parseFromString(html, "text/html");
+	const interfaceUser = doc.getElementById('interface');
+
+	// Set match html variable with interface html element
+	match.initHtmlInterface(interfaceUser);
+
+	content.appendChild(interfaceUser);
+	content.appendChild(world.renderer.domElement);
+	// content.appendChild(userInterface);
 
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);

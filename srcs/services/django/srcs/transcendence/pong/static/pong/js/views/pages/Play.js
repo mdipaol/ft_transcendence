@@ -21,7 +21,7 @@ const Play = {
     },
 
     startLocalGame: async () => {
-        await startGame('local');
+        await startGame('local', 'underground');
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape' || event.code === 'Escape'){
                 stopGame();
@@ -31,7 +31,7 @@ const Play = {
     },
 
     startRemoteGame: async () => {
-        await startGame('remote');
+        await startGame('remote', 'underground');
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape' || event.code === 'Escape'){
                 stopGame();
@@ -41,7 +41,7 @@ const Play = {
     },
 
     startBotGame: async () => {
-        await startGame('bot');
+        await startGame('bot', 'underground');
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape' || event.code === 'Escape'){
                 stopGame();

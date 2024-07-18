@@ -283,6 +283,10 @@ def play(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/play.html')
 
+def interface_underground(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/interface_underground.html')
+
 def account(request):
 	if request.method == 'GET':
 		user = request.user
