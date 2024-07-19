@@ -8,7 +8,6 @@ const Home = {
    */
   render: async () => {
 
-    console.log(`https://${window.location.host}/online_users/`);
     const onlineUsersResponse = await fetch(`https://${window.location.host}/online_users/`);
     const onlineUsers = await onlineUsersResponse.text();
 

@@ -75,8 +75,20 @@ export class World1 {
 		this.loadObjects();
 	}
 
+
+
 	async worldReady(){
 		return this.ready;
+	}
+
+	resetMesh(){
+
+		if (!this.paddle || !this.paddle2){
+			return;
+		}
+
+		this.paddle.position.z = UTILS.POSITION_Z_W1;
+		this.paddle2.position.z = UTILS.POSITION_Z_W1;
 	}
 
 	setMeshStandardMaterial(M_color, M_color_emissive, M_emissiveIntensity, M_roughness, M_metalness, M_reflectivity){
@@ -403,7 +415,7 @@ export class World1 {
 						object.scene.children[3].material = material_manico;
 					//object.scene.add(PointLight2);
 
-					object.scene.scale.multiplyScalar(0.85);
+					//object.scene.scale.multiplyScalar(0.85);
 					this.paddle = object.scene;
 					this.paddle.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
@@ -411,26 +423,28 @@ export class World1 {
 						}
 					});
 					// region MeshPhysicalMaterial
-					this.paddle2 = this.paddle.clone();
-
-					this.paddle.position.x = -51;
-					this.paddle2.position.x = 55.5;
-					this.paddle.rotation.x = Math.PI / 2; // world1
-					this.paddle2.rotation.x = Math.PI / 2; // world1
-					this.spotLight.target = this.paddle; // world1
-					this.spotLight2.target = this.paddle2; // world1
-					// world.spotLightCenter1.target = this.player1.mesh; // world1
-					// world.spotLightCenter2.target = this.player2.mesh; // world1
 					this.spotLightWall1.target = this.paddle; // world1
+					this.spotLight.target = this.paddle; // world1
+					this.paddle.rotation.x = Math.PI / 2; // world1
+					this.paddle.position.x = -51;
+					this.paddle.position.z = UTILS.POSITION_Z_W1;
+					this.paddle.scale.multiplyScalar(0.85);
+
+					this.paddle2 = this.paddle.clone();
+					this.paddle2.position.x = 55.5;
+					this.paddle2.rotation.x = Math.PI / 2; // world1
+					this.spotLight2.target = this.paddle2; // world1
 					this.spotLightWall2.target = this.paddle2; // world1
 
+					console.log(this.paddle);
+					console.log(this.paddle2);
 					// console.log(this.paddle);
 					
 					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
-					this.paddle.children[0].geometry.computeBoundingBox();
-					const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
-					const scaleFactor = (15) / currentWidth;
-					this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
+					// this.paddle.children[0].geometry.computeBoundingBox();
+					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
+					// const scaleFactor = (15) / currentWidth;
+					// this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
 					if (this.paddle2.children[0]){
 						this.paddle2.children[0].material = new THREE.MeshStandardMaterial({

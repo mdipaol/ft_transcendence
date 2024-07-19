@@ -77,7 +77,7 @@ class CallbackView(View):
 		# print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 		# 	"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		# }).text), indent=4)))
-
+		print(response)
 		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text)
@@ -279,10 +279,12 @@ def item_show(request):
 		}
 		return render(request, 'pong/spa/item_show.html', context)
 
+@login_required
 def play(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/play.html')
 
+@login_required
 def interface_underground(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/interface_underground.html')

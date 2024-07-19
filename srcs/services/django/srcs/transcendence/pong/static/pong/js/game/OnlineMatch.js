@@ -80,6 +80,7 @@ export class OnlineMatch extends Match {
 		{
 			console.log("game started")
 			console.log(msg.player)
+			this.start = new Date();
 			if (msg.player == "player_one"){
 				this.superPlayer = this.player1;
 			}
@@ -216,6 +217,9 @@ export class OnlineMatch extends Match {
 		// this.updateMovements();
 		this.world.rotatePowerUp();
 		this.ball.mesh.position.z = this.ball.getZ();
+		
+		// Update game interface
+		this.updateHtmlInterface();
 		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		// this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 

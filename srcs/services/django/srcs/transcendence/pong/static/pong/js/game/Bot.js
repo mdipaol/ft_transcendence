@@ -100,10 +100,10 @@ export class MatchBot extends Match {
 
         let directionX = this.ball.direction.x;
         let directionY = this.ball.direction.y;
-        let startPosition = [this.ball.mesh.position.x + 54, this.ball.mesh.position.y + 27];//ci greppiamo la posizione della palla
+        let startPosition = [this.ball.mesh.position.x + (UTILS.TABLE_WIDTH/2), this.ball.mesh.position.y + (UTILS.TABLE_HEIGHT/2)];//ci greppiamo la posizione della palla
 
         if (directionY == 0)
-            return (startPosition[1] - 27);
+            return (startPosition[1] -  (UTILS.TABLE_HEIGHT/2));
 
         let alpha = UTILS.angleBetweenVectors([Math.abs(directionX), Math.abs(directionY)], [1, 0]);
 
@@ -112,21 +112,21 @@ export class MatchBot extends Match {
         let iterator = startPosition[0];
 
         if (directionY > 0)
-            firstDeltaX = (54 - startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
+            firstDeltaX = ((UTILS.TABLE_WIDTH/2) - startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
         else
             firstDeltaX = (startPosition[1]) * Math.tan( (Math.PI / 2 ) - alpha )
 
-        midDeltaX = 54 * Math.tan( (Math.PI / 2 ) - alpha )
+        midDeltaX = (UTILS.TABLE_WIDTH/2) * Math.tan( (Math.PI / 2 ) - alpha )
 
         iterator = startPosition[0] + firstDeltaX;
         let collisions = false;
         let numberOfCollisions = 0;
-        while(iterator < 108){
+        while(iterator < UTILS.TABLE_WIDTH){
             iterator += midDeltaX;
             collisions = true;
             numberOfCollisions++;
         }
-
+        let prediction = null;
         if (collisions){
             // iterator -= midDeltaX;
             // let finalDirY = (!(numberOfCollisions % 2)) ? Math.sign(directionY) : -Math.sign(directionY) ;
@@ -134,28 +134,39 @@ export class MatchBot extends Match {
             // if (finalDirY > 0)
             //     return (destinationY -27)
             // else
-            //     return (108 - destinationY - 27)
+            //     return (108 - destinationY - 27)TABLE_HEIGHT
             iterator -= midDeltaX;
-            let destinationY = (108 - iterator) * Math.tan(alpha);
+            let destinationY = (UTILS.TABLE_WIDTH - iterator) * Math.tan(alpha);
             if (directionY > 0 && !(numberOfCollisions % 2))
-                return (destinationY - 27);
+                prediction = (destinationY - (UTILS.TABLE_HEIGHT/2));
             else if (directionY > 0 && (numberOfCollisions % 2))
-                return (54 - destinationY - 27);
+                prediction = ((UTILS.TABLE_WIDTH/2) - destinationY - (UTILS.TABLE_HEIGHT/2));
             else if (directionY < 0 && !(numberOfCollisions % 2))
-                return (54 - destinationY -27);
+                prediction = ((UTILS.TABLE_WIDTH/2) - destinationY - (UTILS.TABLE_HEIGHT/2));
             else if (directionY < 0 && (numberOfCollisions % 2))
-                return (destinationY- 27);
+                prediction = (destinationY - (UTILS.TABLE_HEIGHT/2));
         }
         else {
             iterator -= firstDeltaX;
             numberOfCollisions = 0;
-            let destinationY = (108 - iterator) * Math.tan(alpha);
+            let destinationY = (UTILS.TABLE_WIDTH - iterator) * Math.tan(alpha);
             if (directionY > 0)
-                return (startPosition[1] + destinationY) - 27;
+                prediction = (startPosition[1] + destinationY) - (UTILS.TABLE_HEIGHT/2);
             else
-                return (startPosition[1] - destinationY) - 27;
+                prediction = (startPosition[1] - destinationY) - (UTILS.TABLE_HEIGHT/2);
         }
-        return (0);
+
+        if (prediction == null){
+            // console.log('esco');
+            return (0);
+        }
+
+        const maxError = prediction + UTILS.PADDLE_SIZE / 2;
+        const minError = prediction - UTILS.PADDLE_SIZE / 2;
+        const randomPrediction = ( Math.random() * (maxError - minError) ) + minError;
+        // console.log("real prediction: " + prediction);
+        // console.log("randomPrediction: " + randomPrediction);
+        return (randomPrediction);
     }
 
     updateMovements(deltaTime) {
@@ -233,7 +244,8 @@ export class MatchBot extends Match {
 		this.ball.speed = UTILS.STARTINGSPEED;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
-		// Reset direction
+		this.world.resetMesh();
+        // Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
 		this.ball.direction.x = normalized[0];
@@ -387,6 +399,7 @@ export class MatchBot extends Match {
             }
             this.world.soundWallCollision.play();
 
+			this.ball.mesh.position.y = Math.sign(this.ball.direction.y) * UTILS.MAX_SIZEY;
 			this.ball.direction.y *= -1;
         }
 
@@ -414,6 +427,9 @@ export class MatchBot extends Match {
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
+        
+        // Update game interface
+        this.updateHtmlInterface();
 	}
 }
 

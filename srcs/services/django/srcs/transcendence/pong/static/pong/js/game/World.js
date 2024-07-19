@@ -65,6 +65,16 @@ export class World {
 		return this.ready;
 	}
 
+	resetMesh(){
+
+		if (!this.paddle || !this.paddle2){
+			return;
+		}
+		
+		this.paddle.position.z = UTILS.POSITION_Z_W;
+		this.paddle2.position.z = UTILS.POSITION_Z_W;
+	}
+
 	setUsernameFont(player, playerName){
 		if (player == 'one'){
 
@@ -467,9 +477,10 @@ export class World {
 						}
 					});
 				this.paddle = object;
-				this.paddle2 = this.paddle.clone();
 				this.paddle.rotation.z = Math.PI / 2;
 				this.paddle.position.x = -54;
+				this.paddle.position.z = UTILS.POSITION_Z_W;
+				this.paddle2 = this.paddle.clone();
 				this.paddle2.position.x = 54;
 				this.paddle2.rotation.z = Math.PI / 2;
 				resolve();

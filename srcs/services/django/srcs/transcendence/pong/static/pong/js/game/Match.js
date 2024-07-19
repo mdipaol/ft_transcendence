@@ -54,10 +54,10 @@ export class Match {
 
 	initHtmlInterface(htmlElement){
 		this.htmlElement = htmlElement;
-		console.log(this.htmlElement)
+		// console.log(this.htmlElement);
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
 		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
-		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username, 4) + '[2.0]';
+		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username.toString(), 4) + '[2.0]';
 		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
 		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
 	}
@@ -166,8 +166,6 @@ export class Match {
 		this.ball.mesh.position.z = 0;
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
-		this.player1.mesh.position.z = -10;
-		this.player2.mesh.position.z = -10;
 		this.player1.powerUp = null;
 		this.player2.powerUp = null;
 		this.player1.speed = UTILS.MOVSPEED;
@@ -175,6 +173,7 @@ export class Match {
 		this.ball.speed = UTILS.STARTINGSPEED;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
+		this.world.resetMesh();
 		// Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -408,7 +407,7 @@ export class Match {
 			opp.speed = UTILS.MOVSPEED;
 			if (player.powerUp.name == "scale"){
 				opp.mesh.scale.multiplyScalar(1 / 0.7);
-            	opp.mesh.position.z = -10;
+            	this.world.resetMesh();
 			}
 			player.powerUp = null;
 		}
@@ -554,6 +553,7 @@ export class Match {
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
 
+		// Update game interface
 		this.updateHtmlInterface();
 	}
 
