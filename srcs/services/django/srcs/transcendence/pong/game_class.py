@@ -1,3 +1,4 @@
+# ss
 import time, asyncio, uuid
 from .constants import Costants
 from channels.layers import get_channel_layer
@@ -69,6 +70,7 @@ class Player:
     def __init__(self, name : str, vector : Vector2D) -> None:
         self.name : str = name
         self.position : Vector2D = vector
+        self.ready = False
         self.speed = Costants.MOVSPEED
         self.size = Costants.PADDLE_SIZE
         self.half_size = self.size / 2
@@ -101,6 +103,8 @@ class Match:
         self.player1 : Player = Player(str(uuid.uuid4()) ,Vector2D(Costants.MIN_WIDTH, 0))
         self.player2 : Player = Player(str(uuid.uuid4()), Vector2D(Costants.MAX_WIDTH, 0))
         self.ball : Ball = Ball()
+        self.ball_await = Costants.BALL_AWAIT
+        self.update_ball_await = time.time()
         self.score1 = 0
         self.score2 = 0
         self.channel_layer = get_channel_layer()
@@ -109,7 +113,7 @@ class Match:
         self.full = False
         self.event_update = False
         self.start_time = time.time()
-        self.update_time = time.time()
+        self.update_time = None
         self.exchanges : int = 0
         self.task = None
         self.state = {
@@ -117,6 +121,15 @@ class Match:
             "player_two": {"x": self.player2.position.x, "y": self.player2.position.y, "score": self.score2,},
             "ball": {"x": self.ball.position.x, "y": self.ball.position.y,"dirX": self.ball.direction.x, "dirY": self.ball.direction.y, "speed": self.ball.speed,},
         }
+
+    def ready(self, consumer):
+        if not consumer:
+            return self.player1.ready and self.player2.ready
+        if consumer == self.player1.consumer:
+            self.player1.ready = True
+        elif consumer == self.player2.consumer:
+            self.player2.ready = True
+
 
     def set_task(self, task):
         self.task = task
@@ -231,7 +244,7 @@ class Match:
                 'message' : {
                     'exchanges' : self.exchanges,
                 },
-                
+
             })
 
     async def ball_player_collision(self):
@@ -243,9 +256,9 @@ class Match:
                 await self.handle_player_collision(self.player2)
             elif self.ball.direction.x < 0:
                 await self.handle_player_collision(self.player1)
-            
+
             await self.channel_layer.group_send(self.id , {
-                'type' :  "game_message", 
+                'type' :  "game_message",
                 'event' : "soundCollision",
                 'message' : {},
             })
@@ -272,7 +285,7 @@ class Match:
             self.ball.direction.y *= -1
             self.ball.position.y = limit
             await self.channel_layer.group_send(self.id,  {
-                'type' : 'game_message', 
+                'type' : 'game_message',
                 'event' : 'soundWallCollision',
                 'message' : {},
                 })
@@ -292,6 +305,8 @@ class Match:
             self.player1.reset()
             self.player2.reset()
             self.ball.reset()
+            self.ball_await = Costants.BALL_AWAIT
+            self.update_ball_await = time.time()
 
             # Sound point event send
             await self.channel_layer.group_send(self.id, {
@@ -360,24 +375,35 @@ class Match:
             elif data['mode'] == 'keydown':
                 player.move['down'] = True
 
+# c
     async def update(self):
-        now = time.time()
-        time_since_update = now - self.update_time
-        if time_since_update < Costants.REFRESH_RATE:
-            await asyncio.sleep(Costants.REFRESH_RATE - (time_since_update))
+
+        if not self.update_time:
+            self.update_time = time.time()
+
+        now = time.time() - self.update_time
+
+        if now < Costants.REFRESH_RATE:
+            await asyncio.sleep(Costants.REFRESH_RATE - now)
 
         delta_time = time.time() - self.update_time
+        self.update_player(delta_time)
+
+        if self.ball_await > 0 and time.time() - self.update_ball_await < self.ball_await:
+            self.update_time = time.time()
+            return
+
+        self.ball_await = 0
 
         self.ball.update(delta_time)
-        self.update_player(delta_time)
-    
+
         self.event_update = False
+
+        await self.wall_collision()
 
         await self.ball_player_collision()
 
         await self.check_point()
-
-        await self.wall_collision()
 
         self.update_state()
 

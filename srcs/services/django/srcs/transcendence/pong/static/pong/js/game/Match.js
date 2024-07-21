@@ -34,7 +34,7 @@ export class Match {
         this.waitPowerup = 0;
         this.activePowerUp = false;
         this.meshPowerUp = null;
-		
+
 		// Update mesh with username
 		if (this.world.username1 && window.username){
 			this.world.setUsernameFont('one', window.username);
@@ -52,14 +52,18 @@ export class Match {
         }
     }
 
+	sendReady(){
+		return;
+	}
+
 	initHtmlInterface(htmlElement){
-		this.htmlElement = htmlElement;
+		/*this.htmlElement = htmlElement;
 		// console.log(this.htmlElement);
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
 		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
 		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username.toString(), 4) + '[2.0]';
 		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
-		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;*/
 	}
 
 	updateHtmlInterface(){
@@ -78,7 +82,7 @@ export class Match {
 		const geometry = new TextGeometry( "0", {
 			font: this.exchangesFont,
 			size: 8,
-			height: 1,
+			depth: 1,
 		})
 		const emissive_color = 0x4DE8FF;
 		const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
@@ -105,7 +109,7 @@ export class Match {
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
 			size: 8,
-			height: 1,
+			depth: 1,
 		});
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
@@ -117,7 +121,7 @@ export class Match {
 		const geometry = new TextGeometry( "0 - 0", {
 			font: this.exchangesFont,
 			size: 20,
-			height: 1,
+			depth: 1,
 		})
 		const emissive_color = 0xFFD33D;
 		const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
@@ -140,7 +144,7 @@ export class Match {
 		const geometry = new TextGeometry( this.score1.toString() + " - "  + this.score2.toString(), {
 			font: this.exchangesFont,
 			size: 20,
-			height : 1,
+			depth : 1,
 		})
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
@@ -163,7 +167,7 @@ export class Match {
 		this.world.soundPoint.play();
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
-		this.ball.mesh.position.z = 0;
+		this.ball.mesh.position.z = this.ball.getZ();
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
 		this.player1.powerUp = null;
@@ -171,6 +175,7 @@ export class Match {
 		this.player1.speed = UTILS.MOVSPEED;
 		this.player2.speed = UTILS.MOVSPEED;
 		this.ball.speed = UTILS.STARTINGSPEED;
+		this.ball.isReady = false;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
 		this.world.resetMesh();
@@ -189,6 +194,7 @@ export class Match {
 	}
 
 	onKeyDown(event) {
+		event.preventDefault();
 		if (event.which == this.player1.upKey){
 			this.player1.moves.up = true;
         }
@@ -230,6 +236,7 @@ export class Match {
 	}
 
 	onKeyUp(event) {
+		event.preventDefault();
 		if (event.which == this.player1.upKey)
 			this.player1.moves.up = false;
 		if (event.which == this.player1.downKey)
@@ -423,21 +430,38 @@ export class Match {
 		this.updateMovements(deltaTime);
 
 		this.world.rotatePowerUp();
+
+		if (this.ball.isReady)
+			{
+				this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
+				this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
+				this.ball.mesh.position.z = this.ball.getZ();
+			}
+			else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER)
+			{
+				if (!this.ball.startTimer)
+					this.ball.startTimer = currentTime;
+				else
+				{
+					this.ball.isReady = true;
+					this.ball.startTimer = null;
+				}
+			}
 		//salvo pos futura
-		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
+/* 		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
 		let futureY = this.ball.mesh.position.y + this.ball.speed * this.ball.direction.y * deltaTime;
 		//check se è oltre la racchetta
-/* 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
+ 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
 			// Paddle in ball trajectory
 			if (){
-				
+
 			}
-		} */
+		}
 		//se si teletrasporto dove mi pare
 		//se no salvo pos futura in pos della ball
 		this.ball.mesh.position.x = futureX;
 		this.ball.mesh.position.y = futureY;
-		this.ball.mesh.position.z = this.ball.getZ();
+		this.ball.mesh.position.z = this.ball.getZ(); */
 
 		if(this.ball.mesh.position.z < 0){
             if (this.world.soundWallCollision.isPlaying)

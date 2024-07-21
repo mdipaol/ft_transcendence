@@ -1,4 +1,4 @@
-
+# s
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -28,10 +28,13 @@ class Costants:
 
     BALL_SPEED = 100
 
+    BALL_AWAIT = 3
+
     MAX_WIDTH = (TABLE_WIDTH / 2)
     MIN_WIDTH = -(TABLE_WIDTH / 2)
 
     MAX_SCORE = 20
+
 
     INITIAL_STATE = {
         "player_one": {"x": MIN_WIDTH, "y": 0, "score": 0,},

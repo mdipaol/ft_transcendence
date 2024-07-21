@@ -11,7 +11,7 @@ from django.db.models import F
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 
-# Game sockets with asyncio
+# Game sockets with asyncioss
 
 class AsyncGameConsumer(AsyncWebsocketConsumer):
 
@@ -43,10 +43,17 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         # direction = json.loads(text_data).get("direction")
         data = json.loads(text_data)
+        print(data)
         # self.match.paddle_move(self.player_id, direction)
-        self.match.move(self, data)
+        if not data['type']:
+            return
+        if data['type'] == 'input':
+            self.match.move(self, data)
+        if data['type'] == 'ready':
+            print('culo---------------------------------------------------')
+            self.match.ready(self)
 
-    # Channel layers message handlers
+    # Channel layers message handlerss
 
     async def game_start(self, event):
 
@@ -144,7 +151,7 @@ class OnlineConsumer(WebsocketConsumer):
     #     json_data = json.loads(text_data)
     #     # status = json_data.get('status')
     #     user = self.scope['user']
-        
+
     #     # print('scope')
     #     # print(self.scope)
     #     # print(status)

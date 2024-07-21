@@ -16,12 +16,21 @@ export class OnlineMatch extends Match {
 
 		this.started = false;
 
+		this.connected = new Promise(function(resolve, reject) {});
+
         this.socket.addEventListener("open", (event) => this.onOpen(event) );
         this.socket.addEventListener("close", (event) => this.onClose(event) );
         this.socket.addEventListener("message", (event) => this.onMessage(event) );
         this.socket.addEventListener("error", (event) => this.onError(event) );
 	}
 
+	sendReady(){
+		this.connected.then(() => {
+			console.log("sending ready");
+			this.socket.send(JSON.stringify({ 'type': 'ready'}));
+			console.log("sent ready");
+		});
+	}
 
 	gameMessage(msg) {
 		if (msg.event == "state")
@@ -46,7 +55,7 @@ export class OnlineMatch extends Match {
 			this.world.soundCollision.play();
 		}
 		else if (msg.event == "soundWallCollision"){
-			
+
 			if (this.world.soundWallCollision.isPlaying)
 				this.world.soundWallCollision.stop();
 			this.world.soundWallCollision.play();
@@ -65,7 +74,10 @@ export class OnlineMatch extends Match {
 	}
 
     onOpen(event) {
-        console.log("Connected to the server");
+		console.log("Connected to the server");
+		console.log(this.connected);
+		this.connected = new Promise(function(resolve, reject) { resolve(); });
+		console.log(this.connected);
     }
 
 	onClose(event) {
@@ -87,7 +99,7 @@ export class OnlineMatch extends Match {
 			else if (msg.player == "player_two"){
 				this.superPlayer = this.player2;
 			}
-			
+
 			if (this.world.username1)
 				this.world.setUsernameFont('one', msg.username_one)
 			if (this.world.username2)
@@ -114,6 +126,7 @@ export class OnlineMatch extends Match {
     }
 
 	onKeyDown(event) {
+		event.preventDefault();
 		if (!this.started)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
@@ -150,6 +163,7 @@ export class OnlineMatch extends Match {
 	}
 
 	onKeyUp(event) {
+		event.preventDefault();
 		if (!this.started)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
@@ -217,7 +231,7 @@ export class OnlineMatch extends Match {
 		// this.updateMovements();
 		this.world.rotatePowerUp();
 		this.ball.mesh.position.z = this.ball.getZ();
-		
+
 		// Update game interface
 		this.updateHtmlInterface();
 		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;

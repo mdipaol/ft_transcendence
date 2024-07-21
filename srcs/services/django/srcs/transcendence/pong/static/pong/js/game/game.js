@@ -16,28 +16,28 @@ import { MatchBot } from './Bot.js';
 
 let isPlaying = false;
 export async function startGame(gameMode, worldMap){
-	
+
 	// page_root cleaning
 	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
-	
+
 	// Loading page
 	// ...
-	
+
 	//---------INIT----------
 	let world = null;
 	if (worldMap == 'underground'){
-		
+
 		world = new World();
 	}
 	else{
-		
+
 		world = new World1();
 	}
 
 	await world.worldReady();
 	console.log("Meshes loaded");
-	
+
 	let match = null;
 
 	switch (gameMode) {
@@ -100,6 +100,8 @@ export async function startGame(gameMode, worldMap){
 		}
 	};
 
+	match.sendReady();
+	console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})

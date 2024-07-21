@@ -6,11 +6,12 @@ export const MOVSPEED = 85;
 export const STARTINGSPEED = 100;
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
+export const BALLTIMER = 3000;
 export const BOXSIZE = 250;
 export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;
 export const POSITION_Z_W1 = -7;
-export const POSITION_Z_W = -10; 
+export const POSITION_Z_W = -10;
 export const MAX_SIZEY = (TABLE_HEIGHT / 2);
 export const MIN_SIZEY = - (TABLE_HEIGHT / 2);
 export const PADDLE_SIZE = 5;
@@ -118,7 +119,7 @@ export function truncateString(str, num) {
       return str;
     }
   }
-  
+
 export function timeToString(time) {
     let diffInMin = time / 60000;
     let mm = Math.floor(diffInMin);

@@ -439,7 +439,7 @@ export class World1 {
 					console.log(this.paddle);
 					console.log(this.paddle2);
 					// console.log(this.paddle);
-					
+
 					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
 					// this.paddle.children[0].geometry.computeBoundingBox();
 					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
@@ -473,7 +473,7 @@ export class World1 {
 					const geometry = new TextGeometry( 'PONG', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 
 					});
 					const emissive_color = 0xA020F0;

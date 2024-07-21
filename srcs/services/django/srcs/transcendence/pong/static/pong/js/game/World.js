@@ -47,7 +47,7 @@ export class World {
 		this.username1Mirror = null;
 		this.username2 = null;
 		this.username2Mirror = null;
-		
+
 		this.powerUp = null;
 		this.skyboxInit();
 		this.posterInit();
@@ -70,7 +70,7 @@ export class World {
 		if (!this.paddle || !this.paddle2){
 			return;
 		}
-		
+
 		this.paddle.position.z = UTILS.POSITION_Z_W;
 		this.paddle2.position.z = UTILS.POSITION_Z_W;
 	}
@@ -81,7 +81,7 @@ export class World {
 			const geometry = new TextGeometry( UTILS.truncateString(playerName, 10) , {
 				font: this.usernameFont,
 				size: 22,
-				height: 1,
+				depth: 1,
 			})
 
 			geometry.computeBoundingBox();
@@ -96,7 +96,7 @@ export class World {
 			const geometry = new TextGeometry( UTILS.truncateString(playerName, 10) , {
 				font: this.usernameFont,
 				size: 22,
-				height: 1,
+				depth: 1,
 			})
 
 			geometry.computeBoundingBox();
@@ -501,7 +501,7 @@ export class World {
 					const geometry = new TextGeometry( 'PONG', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 
 					});
 					const emissive_color = 0xA020F0;
@@ -548,7 +548,7 @@ export class World {
 					const geometry = new TextGeometry( 'NickName 1', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0x6AE258, emissive: 0x6AE258, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -572,8 +572,8 @@ export class World {
 		}),
 		(error)=> reject(error);
 	}
-	
-	
+
+
 
 	loadNickName_2() {
 		return new Promise((resolve, reject) => {
@@ -583,7 +583,7 @@ export class World {
 					const geometry = new TextGeometry( 'NickName 2', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -614,7 +614,7 @@ export class World {
 					const geometry = new TextGeometry( 'Vguidoni', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const emissiv_color = 0x000000;
 					const material = new THREE.MeshPhongMaterial( { color: emissiv_color, emissive: emissiv_color, emissiveIntensity: 1} );
@@ -632,7 +632,7 @@ export class World {
 					const geometry = new TextGeometry( 'Ivana', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -649,7 +649,7 @@ export class World {
 					const geometry = new TextGeometry( 'AleGreci', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -666,7 +666,7 @@ export class World {
 					const geometry = new TextGeometry( 'Manuel', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -683,7 +683,7 @@ export class World {
 					const geometry = new TextGeometry( 'dcolucci', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0x56D6DF, emissive: 0x56D6DF, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -700,7 +700,7 @@ export class World {
 					const geometry = new TextGeometry( 'POLLETTI', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 					});
 					const material = new THREE.MeshPhongMaterial( { color: 0xB92727, emissive: 0xB92727, emissiveIntensity: 1} );
 					const text = new THREE.Mesh( geometry, material );
@@ -721,7 +721,7 @@ export class World {
 			const sound = new THREE.Audio(this.listener);
 			//this.mainCamera.add( this.listener);
 			this.sound = sound;
-			this.audioLoader.load('/static/pong/js/Pong_Fake/music/2_Jazz.mp3', function(buffer) {
+			this.audioLoader.load('/static/pong/js/Pong_Fake/music/undergroundSound.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
 				sound.setVolume(0.08);

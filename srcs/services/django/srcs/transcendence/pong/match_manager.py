@@ -84,6 +84,9 @@ class MatchManager:
             'username_two' : match.player2.consumer.username,
         })
 
+        # while match.ready(None):
+        #     await asyncio.sleep(0.5)
+
         while not match.is_ended():
 
             await match.update()

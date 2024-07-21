@@ -41,7 +41,7 @@ const Play = {
     },
 
     startBotGame: async () => {
-        await startGame('bot', '1');
+        await startGame('bot', 'underground');
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape' || event.code === 'Escape'){
                 stopGame();
@@ -49,7 +49,7 @@ const Play = {
             }
         })
     },
-    
+
     after_render: async () => {
         const localGameButton = document.getElementById('btn-local-game');
         const remoteGameButton = document.getElementById('btn-remote-game');

@@ -6,6 +6,7 @@ export const MOVSPEED = 85;
 export const STARTINGSPEED = 100;//speed ball
 export const ACCELERATION  = 2;
 export const POWERUPDURATION = 2;
+export const BALLTIMER = 3000;
 export const BOXSIZE = 250;
 export const TABLE_HEIGHT = 54;
 export const TABLE_WIDTH = 108;

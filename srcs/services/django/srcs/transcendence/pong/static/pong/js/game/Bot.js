@@ -16,11 +16,11 @@ export class Bot extends Player{
 export class MatchBot extends Match {
     constructor(world) {
         super(world);
-        
+
         if (this.world.username1){
             this.world.setUsernameFont('two', 'Mario Bus')
         }
-        
+
         this.bot2 = this.player2;
         this.activeBot1 = false;
         this.activeBot2 = false;
@@ -28,7 +28,7 @@ export class MatchBot extends Match {
         const time_end = false;
         let animationFrame = null;
 
-        
+
 
         this.update_time_ball = new Date();
 
@@ -58,6 +58,7 @@ export class MatchBot extends Match {
 
 
     onKeyDown(event) {
+        event.preventDefault();
         if (event.which == this.player1.upKey){
 			this.player1.moves.up = true;
         }
@@ -88,6 +89,7 @@ export class MatchBot extends Match {
 	}
 
     onKeyUp(event) {
+        event.preventDefault();
 		if (event.which == this.player1.upKey)
 			this.player1.moves.up = false;
 		if (event.which == this.player1.downKey)
@@ -232,7 +234,7 @@ export class MatchBot extends Match {
         this.world.soundPoint.play();
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
-		this.ball.mesh.position.z = 0;
+		this.ball.mesh.position.z = this.ball.getZ();
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
 		this.player1.mesh.position.z = -10;
@@ -242,6 +244,7 @@ export class MatchBot extends Match {
 		this.player1.speed  = UTILS.MOVSPEED;
 		this.player2.speed = UTILS.MOVSPEED;
 		this.ball.speed = UTILS.STARTINGSPEED;
+        this.ball.isReady = false;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
 		this.world.resetMesh();
@@ -281,10 +284,23 @@ export class MatchBot extends Match {
         this.updateMovements(deltaTime);
 		this.world.rotatePowerUp();
 
+        if (this.ball.isReady)
+        {
+            this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
+            this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
+            this.ball.mesh.position.z = this.ball.getZ();
+        }
+        else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER)
+        {
+            if (!this.ball.startTimer)
+                this.ball.startTimer = currentTime;
+            else
+            {
+                this.ball.isReady = true;
+                this.ball.startTimer = null;
+            }
+        }
 
-		this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
-		this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
-		this.ball.mesh.position.z = this.ball.getZ();
         if(this.ball.mesh.position.z < 0){
             if (this.world.soundWallCollision.isPlaying)
                 this.world.soundWallCollision.stop();
@@ -427,7 +443,7 @@ export class MatchBot extends Match {
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
-        
+
         // Update game interface
         this.updateHtmlInterface();
 	}
