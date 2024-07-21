@@ -6,37 +6,62 @@ export class OnlineMatch extends Match {
     constructor(world) {
         super(world);
 
-        this.socket = new WebSocket(
-            "wss://"
-            + window.location.host
-            + "/ws/game/"
-        );
+        this.socket = null;
 
 		this.superPlayer = null;
 
 		this.started = false;
+		
 
-		this.connected = new Promise(function(resolve, reject) {});
+		this.connected = false;
+		this.culo = null;
 
-        this.socket.addEventListener("open", (event) => this.onOpen(event) );
-        this.socket.addEventListener("close", (event) => this.onClose(event) );
-        this.socket.addEventListener("message", (event) => this.onMessage(event) );
-        this.socket.addEventListener("error", (event) => this.onError(event) );
+        // this.socket.addEventListener("open", (event) => this.onOpen(event) );
+        // this.socket.addEventListener("close", (event) => this.onClose(event) );
+        // this.socket.addEventListener("message", (event) => this.onMessage(event) );
+        // this.socket.addEventListener("error", (event) => this.onError(event) );
 	}
 
-	sendReady(){
-		this.connected.then(() => {
-			console.log("sending ready");
-			this.socket.send(JSON.stringify({ 'type': 'ready'}));
-			console.log("sent ready");
+
+	async ready(){
+		return new Promise((resolve, reject) => {
+			this.socket = new WebSocket(
+				"wss://"
+				+ window.location.host
+				+ "/ws/game/"
+			);
+			// this.socket.addEventListener("open", (event) => this.onOpen(event) );
+			// this.socket.addEventListener("close", (event) => this.onClose(event) );
+			// this.socket.addEventListener("message", (event) => this.onMessage(event) );
+			// this.socket.addEventListener("error", (event) => this.onError(event) );
+
+			this.socket.onopen = () => {
+				console.log('WebSocket connection opened');
+				this.socket.send(JSON.stringify({ 'type': 'ready'}));
+				this.connected = true;
+				resolve();
+			};
+
+			this.socket.onerror = (err) => {
+				console.error('WebSocket error:', err);
+				reject(err);
+			};
+	
+			this.socket.onclose = () => {
+				console.log('WebSocket connection closed');
+			};
+
+			this.socket.onmessage = (event) => {
+				this.onMessage(event);
+			}
 		});
-	}
+		}
 
 	gameMessage(msg) {
 		if (msg.event == "state")
 			this.updateState(msg);
 		else if(msg.event == "exchanges"){
-			this.exchanges = msg.message.exchanges;
+			this.exchanges = msg.message.exchanges - 1;
 			this.updateExchanges();
 		}
 		else if (msg.event == "score")
@@ -75,9 +100,10 @@ export class OnlineMatch extends Match {
 
     onOpen(event) {
 		console.log("Connected to the server");
-		console.log(this.connected);
-		this.connected = new Promise(function(resolve, reject) { resolve(); });
-		console.log(this.connected);
+		// console.log(this.connected);
+		// this.connected = new Promise(function(resolve, reject) { resolve(); });
+		// console.log(this.connected);
+		this.connected = true;
     }
 
 	onClose(event) {
@@ -105,6 +131,11 @@ export class OnlineMatch extends Match {
 			if (this.world.username2)
 				this.world.setUsernameFont('two', msg.username_two)
 
+			if (this.htmlElement){
+				this.htmlElement.querySelector('#interface-player1').innerHTML = msg.username_one;
+				this.htmlElement.querySelector('#interface-player2').innerHTML = msg.username_two;
+			}
+
 			this.started = true;
 		}
 		else if (msg.type == "game_end")
@@ -126,13 +157,18 @@ export class OnlineMatch extends Match {
     }
 
 	onKeyDown(event) {
-		event.preventDefault();
-		if (!this.started)
+		if (!this.started || !this.connected)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
+		{
+			event.preventDefault();
 			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'up', 'mode' : 'keydown' }));
+		}
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
+		{
+			event.preventDefault();
 			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'down', 'mode' : 'keydown' }));
+		}
 
 		if (event.which == UTILS.TWO)//first person with '2' key
 		{
@@ -163,13 +199,18 @@ export class OnlineMatch extends Match {
 	}
 
 	onKeyUp(event) {
-		event.preventDefault();
-		if (!this.started)
+		if (!this.started || !this.connected)
 			return;
 		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
+		{
+			event.preventDefault();
 			this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up', 'mode' : 'keyup' }));
+		}
 		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
+		{
+			event.preventDefault();
 			this.socket.send(JSON.stringify({ 'type': 'input', 'direction': 'down', 'mode' : 'keyup' }));
+		}
 	}
 
     // updateMovements() {
@@ -229,7 +270,7 @@ export class OnlineMatch extends Match {
 
     update() {
 		// this.updateMovements();
-		this.world.rotatePowerUp();
+!		this.world.rotatePowerUp();
 		this.ball.mesh.position.z = this.ball.getZ();
 
 		// Update game interface
@@ -347,7 +388,6 @@ export class OnlineMatch extends Match {
 
 	render() {
 		// console.log(this.started);
-		if (this.started)
-    		this.world.renderer.render(this.world.scene, this.world.activeCamera);
+		this.world.renderer.render(this.world.scene, this.world.activeCamera);
 	}
 }

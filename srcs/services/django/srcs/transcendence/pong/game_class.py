@@ -1,4 +1,4 @@
-# ss
+# sssasaaswssssss
 import time, asyncio, uuid
 from .constants import Costants
 from channels.layers import get_channel_layer
@@ -124,6 +124,10 @@ class Match:
 
     def ready(self, consumer):
         if not consumer:
+            print('----')
+            print(self.player1.ready)
+            print(self.player2.ready)
+            print('>>>>')
             return self.player1.ready and self.player2.ready
         if consumer == self.player1.consumer:
             self.player1.ready = True

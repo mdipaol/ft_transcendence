@@ -58,12 +58,16 @@ export class MatchBot extends Match {
 
 
     onKeyDown(event) {
-        event.preventDefault();
+        
         if (event.which == this.player1.upKey){
+            event.preventDefault();
 			this.player1.moves.up = true;
         }
 		if (event.which == this.player1.downKey)
+        {
+            event.preventDefault();
 			this.player1.moves.down = true;
+        }
 
 		if (event.which == UTILS.TWO)//first person with '2' key
 		{
@@ -89,7 +93,6 @@ export class MatchBot extends Match {
 	}
 
     onKeyUp(event) {
-        event.preventDefault();
 		if (event.which == this.player1.upKey)
 			this.player1.moves.up = false;
 		if (event.which == this.player1.downKey)

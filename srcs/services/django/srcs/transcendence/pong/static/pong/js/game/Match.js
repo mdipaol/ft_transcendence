@@ -52,18 +52,20 @@ export class Match {
         }
     }
 
-	sendReady(){
+	async ready(){
 		return;
 	}
 
 	initHtmlInterface(htmlElement){
-		/*this.htmlElement = htmlElement;
+		if (!htmlElement)
+			return;
+		this.htmlElement = htmlElement;
 		// console.log(this.htmlElement);
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
 		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
 		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username.toString(), 4) + '[2.0]';
 		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
-		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;*/
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
 	}
 
 	updateHtmlInterface(){
@@ -194,18 +196,22 @@ export class Match {
 	}
 
 	onKeyDown(event) {
-		event.preventDefault();
 		if (event.which == this.player1.upKey){
+			event.preventDefault();
 			this.player1.moves.up = true;
         }
-		if (event.which == this.player1.downKey)
+		if (event.which == this.player1.downKey){
+			event.preventDefault();
 			this.player1.moves.down = true;
-
+		}
 		if (event.which == this.player2.upKey){
+			event.preventDefault();
 			this.player2.moves.up = true;
         }
-		if (event.which == this.player2.downKey)
+		if (event.which == this.player2.downKey){
+			event.preventDefault();
 			this.player2.moves.down = true;
+		}
 
 		if (event.which == UTILS.TWO)//first person with '2' key
 		{
@@ -236,7 +242,6 @@ export class Match {
 	}
 
 	onKeyUp(event) {
-		event.preventDefault();
 		if (event.which == this.player1.upKey)
 			this.player1.moves.up = false;
 		if (event.which == this.player1.downKey)

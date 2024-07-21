@@ -94,14 +94,23 @@ export async function startGame(gameMode, worldMap){
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
 			match.render();
+			/*if (match.connected && !match.culo)
+				{
+					//this.socket.send(JSON.stringify({ 'type': 'ready'}));
+					console.log("..");
+					match.culo = true;     
+					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
+					I PLAYER ABBIANO RENDERIZZATO TUTTO
+				}*/
+
 		}
 		else {
 			resolve();
 		}
 	};
 
-	match.sendReady();
-	console.log("sicurissimo non arriva");
+	await match.ready();
+	// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})

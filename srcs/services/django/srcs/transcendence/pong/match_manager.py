@@ -1,4 +1,4 @@
-
+import time
 import asyncio
 from asgiref.sync import sync_to_async
 from datetime import datetime
@@ -84,8 +84,10 @@ class MatchManager:
             'username_two' : match.player2.consumer.username,
         })
 
-        # while match.ready(None):
-        #     await asyncio.sleep(0.5)
+        while not match.ready(None):
+            await asyncio.sleep(0.5)
+
+        match.update_ball_await = time.time()
 
         while not match.is_ended():
 
