@@ -9,7 +9,7 @@ from transcendence import settings
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
@@ -429,6 +429,26 @@ def tournament_leave(request, name):
 		partecipant = TournamentPartecipant.objects.get(user=request.user, tournament=tournament)
 		partecipant.delete()
 		tournament_info(request, name)
+
+@login_required
+def edit_account(request):
+	if request.method == 'GET':
+		user = request.user
+		return render(request, 'pong/spa/edit_account.html', {
+			'nickname' : user.username,
+			'img' : user.image,
+			'email' : user.email,
+		})
+	if request.method == 'POST':
+		user = request.user
+		form = EditProfileForm(request.POST, request.FILES, instance=user)
+		if form.is_valid():
+			form.save()
+			return redirect('/#/account')
+		else:
+			form = EditProfileForm(instance=user)
+
+		return render(request, 'edit_account.html', {'form': form, 'img': user.image})
 
 @login_required
 def notification(request, username):

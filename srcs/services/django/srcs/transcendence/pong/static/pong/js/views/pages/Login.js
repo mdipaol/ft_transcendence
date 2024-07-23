@@ -36,15 +36,16 @@ const Login = {
                     body: formData
                 });
 
-                if (response.ok) {
+                // if (response.ok) {
 
-                    triggerHashChange('/home/');
+                //     triggerHashChange('/home/');
 
-                } else {
-                    const errorForm = await response.text();
-                    document.getElementById('page_root').innerHTML = errorForm;
-                    await Login.after_render();
-                }
+                // } else {
+                //     const errorForm = await response.text();
+                //     document.getElementById('page_root').innerHTML = errorForm;
+                //     await Login.after_render();
+                // }
+                triggerHashChange('/account/');
             } catch (error) {
                 console.log(error);
             }

@@ -40,6 +40,7 @@ urlpatterns = [
     path('tournament_info/<str:name>/', views.tournament_info, name='tournament_info'),
     path('tournament_leave', views.tournament_leave, name='tournament_leave'),
     path('notification/<str:username>/', views.notification, name='notification'),
+    path('edit_account/', views.edit_account, name='edit_account'),
 ]
 
 # To serve media files in development, because they are not served by default in development

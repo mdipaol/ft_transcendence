@@ -14,6 +14,11 @@ password_policy = PasswordPolicy.from_names(
 	special=1,
 )
 
+class	EditProfileForm(forms.ModelForm):
+	class Meta:
+		model = BaseUser
+		fields = ['image', 'username', 'email']
+
 class RegistrationForm(forms.Form):
 	username = forms.CharField(label="Enter your username", max_length=20)
 	email = forms.EmailField(label="Enter your email address")
