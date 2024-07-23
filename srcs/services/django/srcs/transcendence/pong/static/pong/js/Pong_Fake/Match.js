@@ -30,7 +30,6 @@ export class Match {
         // PowerUps
         this.waitPowerup = 0;
         this.activePowerUp = false;
-        this.meshPowerUp = null;
 
         // Triple Ball init
         this.tripleEnabled = false;

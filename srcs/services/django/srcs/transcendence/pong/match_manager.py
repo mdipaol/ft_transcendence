@@ -20,11 +20,11 @@ class MatchManager:
         return None
 
     @classmethod
-    def get_avaiable_match(cls) -> Match:
+    def get_avaiable_match(cls, consumer) -> Match:
         for item in cls.matches:
-            if not item.is_started():
+            if not item.is_started() and item.powerup_mode == consumer.powerup_mode:
                 return item
-        match = Match()
+        match = Match(consumer.powerup_mode)
         cls.matches.append(match)
         return match
 
@@ -39,7 +39,7 @@ class MatchManager:
 
     @classmethod
     async def add_player(cls, consumer):
-        match: Match = cls.get_avaiable_match()
+        match: Match = cls.get_avaiable_match(consumer)
         match.add_player(consumer)
         await match.channel_layer.group_add(match.id, consumer.channel_name)
         if match.is_full():

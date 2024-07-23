@@ -4,18 +4,9 @@ import { Ball } from './Ball.js';
 import { Match } from './Match.js';
 import { World } from './World.js';
 
-
-export class Bot extends Player{
-    constructor(paddle){
-        super(paddle);
-
-        this.destinationY = 0
-    }
-}
-
-export class MatchBot extends Match {
-    constructor(world) {
-        super(world);
+export class BotMatch extends Match {
+    constructor(world, powerUpMode) {
+        super(world, powerUpMode);
 
         if (this.world.username1){
             this.world.setUsernameFont('two', 'Mario Bus')

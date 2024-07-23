@@ -10,12 +10,18 @@ import { Match } from './Match.js';
 import { World } from './World.js';
 import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
-import { MatchBot } from './Bot.js';
+import { BotMatch } from './BotMatch.js';
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 let isPlaying = false;
-export async function startGame(gameMode, worldMap){
+/**
+	@description This function start a game selecting the match, the map and if powerUps will be active
+	@param {String} gameMode Choose between 'local', 'remote', 'bot'
+	@param {String} worldMap Choose 'underground' for the first map, 'thefinals' for the second map.
+	@param {Boolean} powerUpMode True for the powerUp game mode
+**/
+export async function startGame(gameMode, worldMap, powerUpMode){
 
 	// page_root cleaning
 	const content = null || document.getElementById('page_root');
@@ -42,16 +48,16 @@ export async function startGame(gameMode, worldMap){
 
 	switch (gameMode) {
 		case 'local':
-		  match = new Match(world);
+		  match = new Match(world, powerUpMode);
 		  break;
 		case 'remote':
-		  match = new OnlineMatch(world);
+		  match = new OnlineMatch(world, powerUpMode);
 		  break;
 		case 'bot':
-		  match  = new MatchBot(world);
+		  match  = new BotMatch(world, powerUpMode);
 		  break;
 		default:
-		  match = new Match(world);
+		  match = new Match(world, powerUpMode);
 	  }
 
 

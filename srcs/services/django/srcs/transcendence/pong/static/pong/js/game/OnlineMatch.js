@@ -3,8 +3,8 @@ import * as UTILS from './utils.js'
 
 // exchanges
 export class OnlineMatch extends Match {
-    constructor(world) {
-        super(world);
+    constructor(world, powerUpMode) {
+        super(world, powerUpMode);
 
         this.socket = null;
 
@@ -25,10 +25,15 @@ export class OnlineMatch extends Match {
 
 	async ready(){
 		return new Promise((resolve, reject) => {
+
+			let powerUpMode = '/ws/game/normal/';
+			if (this.powerUpMode)
+				powerUpMode = '/ws/game/powerup/'
+
 			this.socket = new WebSocket(
 				"wss://"
 				+ window.location.host
-				+ "/ws/game/"
+				+ powerUpMode
 			);
 			// this.socket.addEventListener("open", (event) => this.onOpen(event) );
 			// this.socket.addEventListener("close", (event) => this.onClose(event) );
@@ -57,12 +62,65 @@ export class OnlineMatch extends Match {
 		});
 		}
 
+	addPowerUp(data){
+		let meshPowerUp = null;
+		console.log(data);
+		switch (data.powerup_type) {
+			case 'scale':
+				if (data.effect == 'good')
+					meshPowerUp = this.world.arrayPowerup[6];
+				else
+					meshPowerUp = this.world.arrayPowerup[7];
+				console.log("Scale picked");
+				break;
+			case 'triple':
+				if (data.effect == 'good')
+					meshPowerUp = this.world.arrayPowerup[4];
+				else
+					meshPowerUp = this.world.arrayPowerup[5];
+				console.log("Triple picked");
+				break;
+			case 'slowness':
+				if (data.effect == 'good')
+					meshPowerUp = this.world.arrayPowerup[2];
+				else
+					meshPowerUp = this.world.arrayPowerup[3];
+				console.log("Slowness picked");
+				break;
+			case 'power':
+				if (data.effect == 'good')
+					meshPowerUp = this.world.arrayPowerup[0];
+				else
+					meshPowerUp = this.world.arrayPowerup[1];
+				console.log("Power picked");
+				break;
+			default:
+				break;
+			}
+			if (meshPowerUp){
+				console.log(data);
+				console.log(this.world.arrayPowerup);
+				this.world.powerUp = meshPowerUp;
+				meshPowerUp.mesh.position.set(0, data.powerup_position, 15);
+				this.world.add(meshPowerUp.mesh);
+			}
+		}
+
 	gameMessage(msg) {
 		if (msg.event == "state")
 			this.updateState(msg);
 		else if(msg.event == "exchanges"){
 			this.exchanges = msg.message.exchanges - 1;
 			this.updateExchanges();
+
+			if (msg.message.add_powerup){
+				this.addPowerUp(msg.message);
+			}
+
+			// Sound collision
+			if (this.world.soundCollision.isPlaying)
+				this.world.soundCollision.stop();
+			this.world.soundCollision.play();
 		}
 		else if (msg.event == "score")
 			this.updateScore(msg);
@@ -73,11 +131,6 @@ export class OnlineMatch extends Match {
 			this.world.powerUp.mesh.position.y = msg.message.y;
 			this.world.powerUp.mesh.position.z = 10;
 			this.world.add(this.world.powerUp.mesh);
-		}
-		else if (msg.event == "soundCollision"){
-			if (this.world.soundCollision.isPlaying)
-				this.world.soundCollision.stop();
-			this.world.soundCollision.play();
 		}
 		else if (msg.event == "soundWallCollision"){
 

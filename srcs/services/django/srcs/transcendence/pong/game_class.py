@@ -1,5 +1,5 @@
 # sssasaaswssssss
-import time, asyncio, uuid
+import time, asyncio, uuid, random
 from .constants import Costants
 from channels.layers import get_channel_layer
 
@@ -96,25 +96,38 @@ class Player:
             return True
         return False
 
+class PowerUp:
+    def __init__(self) -> None:
+        self.player : Player = None
+        self.position = random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
+        self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
+        self.effect = random.choice(['good', 'bad'])
+        self.duration = Costants.POWERUP_DURATION
+
 class Match:
 
-    def __init__(self) -> None:
+    def __init__(self, powerup_mode : str) -> None:
         self.id = str(uuid.uuid4())
         self.player1 : Player = Player(str(uuid.uuid4()) ,Vector2D(Costants.MIN_WIDTH, 0))
         self.player2 : Player = Player(str(uuid.uuid4()), Vector2D(Costants.MAX_WIDTH, 0))
         self.ball : Ball = Ball()
         self.ball_await = Costants.BALL_AWAIT
         self.update_ball_await = time.time()
-        self.score1 = 0
-        self.score2 = 0
+        self.score1 : int = 0
+        self.score2 : int = 0
         self.channel_layer = get_channel_layer()
-        self.started = False
-        self.ended = False
-        self.full = False
-        self.event_update = False
-        self.start_time = time.time()
-        self.update_time = None
+        self.started : bool = False
+        self.ended : bool = False
+        self.full : bool = False
+        self.event_update : bool = False
+        self.start_time :float = time.time()
+        self.update_time : float = None
         self.exchanges : int = 0
+
+        self.powerup_mode : bool = powerup_mode
+        self.active_powerup : PowerUp = None
+        self.wait_powerup : int = 0
+
         self.task = None
         self.state = {
             "player_one": {"x": self.player1.position.x, "y": self.player1.position.y, "score": self.score1,},
@@ -228,8 +241,15 @@ class Match:
     async def check_powerup(self):
         ...
 
-    def handle_powerup():
-        ...
+
+    def handle_powerup(self):
+        """
+        Handle changes in ball speed, in players speed and scale and in triple ball event
+
+        """
+        if not self.active_powerup:
+            return
+        
 
     async def handle_player_collision(self, player : Player):
 
@@ -241,14 +261,30 @@ class Match:
 
             self.exchanges += 1
 
-            # Send exchanges
+            powerup_active = self.active_powerup
+            powerup_type = None
+            powerup_effect = None
+            powerup_position = None
+
+            if not self.active_powerup and self.powerup_mode:
+                self.wait_powerup += 1
+                if self.wait_powerup >= Costants.WAIT_POWERUP:
+                    self.active_powerup = PowerUp()
+                    powerup_type = self.active_powerup.type
+                    powerup_effect = self.active_powerup.effect
+                    powerup_position = self.active_powerup.position
+
+            # Send exchanges + powerup
             await self.channel_layer.group_send(self.id, {
                 'type' : 'game_message',
                 'event' : 'exchanges',
                 'message' : {
                     'exchanges' : self.exchanges,
+                    'add_powerup' : powerup_active != self.active_powerup, # occhio
+                    'powerup_type' : powerup_type,
+                    'powerup_effect' : powerup_effect,
+                    'powerup_position' : powerup_position,
                 },
-
             })
 
     async def ball_player_collision(self):
@@ -261,24 +297,6 @@ class Match:
             elif self.ball.direction.x < 0:
                 await self.handle_player_collision(self.player1)
 
-            await self.channel_layer.group_send(self.id , {
-                'type' :  "game_message",
-                'event' : "soundCollision",
-                'message' : {},
-            })
-            # print('funcion called')
-            # player1 = self.player1.ball_collision(self.ball)
-            # player2 = self.player2.ball_collision(self.ball)
-            # print(player1)
-            # print(player2)
-            # if player1 or player2:
-            #     self.event_update = True
-            #     if player1:
-            #         self.handle_player_collision(player1)
-            #     elif player2:
-            #         self.handle_player_collision(player2)
-            # else:
-            #     print('no player')
 
     async def wall_collision(self):
         if self.event_update:
@@ -342,15 +360,18 @@ class Match:
             if self.score1 == Costants.MAX_SCORE or self.score2 == Costants.MAX_SCORE:
                 self.ended = True
 
-    def update_player(self, deltaTime):
+    def update_ball(self, delta_time):
+        self.ball.update(delta_time)
+
+    def update_player(self, delta_time):
         if self.player1.move['up'] and self.player1.position.y < Costants.MAX_PADDLE_Y:
-            self.player1.position.y += self.player1.speed * deltaTime
+            self.player1.position.y += self.player1.speed * delta_time
         if self.player1.move['down'] and self.player1.position.y > Costants.MIN_PADDLE_Y:
-            self.player1.position.y -= self.player1.speed * deltaTime
+            self.player1.position.y -= self.player1.speed * delta_time
         if self.player2.move['up'] and self.player2.position.y < Costants.MAX_PADDLE_Y:
-            self.player2.position.y += self.player2.speed * deltaTime
+            self.player2.position.y += self.player2.speed * delta_time
         if self.player2.move['down'] and self.player2.position.y > Costants.MIN_PADDLE_Y:
-            self.player2.position.y -= self.player2.speed * deltaTime
+            self.player2.position.y -= self.player2.speed * delta_time
 
     def move(self, consumer, data):
 
@@ -379,7 +400,6 @@ class Match:
             elif data['mode'] == 'keydown':
                 player.move['down'] = True
 
-# c
     async def update(self):
 
         if not self.update_time:
@@ -399,13 +419,15 @@ class Match:
 
         self.ball_await = 0
 
-        self.ball.update(delta_time)
+        self.update_ball(delta_time)
 
         self.event_update = False
 
         await self.wall_collision()
 
         await self.ball_player_collision()
+
+        # await self.powerup_collision()
 
         await self.check_point()
 

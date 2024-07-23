@@ -6,8 +6,11 @@ import { Player } from './Player.js';
 
 
 export class Match {
-    constructor(world) {
-        this.world = world;
+    constructor(world, powerUpMode) {
+
+		this.world = world;
+		this.powerUpMode = powerUpMode;
+
 		this.start = new Date();
 		this.htmlElement = null;
 
@@ -33,7 +36,6 @@ export class Match {
         // PowerUps
         this.waitPowerup = 0;
         this.activePowerUp = false;
-        this.meshPowerUp = null;
 
 		// Update mesh with username
 		if (this.world.username1 && window.username){
@@ -265,17 +267,18 @@ export class Match {
 
 	addPowerUp() {
 
-		this.waitPowerup++;
-		if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0) && (!this.player1.powerUp && !this.player2.powerUp)){
-			if (this.activePowerUp == false) {
+		if (this.powerUpMode && this.activePowerUp == false) {
+			if (!this.player1.powerUp && !this.player2.powerUp)
+				this.waitPowerup++;
+			if ((this.waitPowerup >= 5) && (!this.player1.powerUp && !this.player2.powerUp)) {
 
 				this.activePowerUp = true;
 
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
 				// console.log(this.world.PowerUp);
-				const max = 27;
-				const min = -27;
+				const max = UTILS.MAX_SIZEY;
+				const min = UTILS.MIN_SIZEY;
 				const y = Math.floor(Math.random() * (max - min + 1)) + min;
 				const z = 15;
 				this.world.powerUp.mesh.position.set(0, y, z);

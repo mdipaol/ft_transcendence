@@ -35,6 +35,8 @@ class Costants:
 
     MAX_SCORE = 20
 
+    POWERUP_DURATION = 2
+    WAIT_POWERUP = 5
 
     INITIAL_STATE = {
         "player_one": {"x": MIN_WIDTH, "y": 0, "score": 0,},

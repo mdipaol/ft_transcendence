@@ -142,7 +142,7 @@ export class World {
 
 	powerUpsInit(){
 		//const mesh_array =[];
-		const arrayPowerup=[]
+		const arrayPowerup=[null, null, null, null, null, null, null, null];
 		const posColor = 0x00ff00;
 		const negColor = 0xff0000;
 		const posLineColor = 0x03c03c;
@@ -152,29 +152,32 @@ export class World {
 		//speed///
 		const Fulmine_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
 		Fulmine_P.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("speed", mesh, "positive"));
+			// arrayPowerup.push(new PowerUp("speed", mesh, "positive"));
+			arrayPowerup[0] = new PowerUp("speed", mesh, "positive");
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		})
 
 		const Fulmine_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
 		Fulmine_N.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("speed", mesh, "negative"));
+			// arrayPowerup.push(new PowerUp("speed", mesh, "negative"));
+			arrayPowerup[1] = new PowerUp("speed", mesh, "negative");
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
 		//slow////
-		const Tartole_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
-		Tartole_P.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
+		const Turtle_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		Turtle_P.then((mesh)=>{
+			arrayPowerup[2] = new PowerUp("slowness", mesh, "positive");
+			// arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
-		const Tartole_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
-		Tartole_N.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("slowness", mesh, "negative"));
+		const Turtle_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		Turtle_N.then((mesh)=>{
+			arrayPowerup[3] = new PowerUp("slowness", mesh, "negative");
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
@@ -182,14 +185,14 @@ export class World {
 		//triple
 		const Triple_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
 		Triple_P.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("triple", mesh, "positive"));
+			arrayPowerup[4] = new PowerUp("triple", mesh, "positive");
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
 		const Triple_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
 		Triple_N.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("triple", mesh, "negative"));
+			arrayPowerup[5] = new PowerUp("triple", mesh, "negative");
 			//this.scene.add(mesh);
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
@@ -198,13 +201,13 @@ export class World {
 		//scale
 		const Scale_P = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_P.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("scale", mesh, "positive"));
+			arrayPowerup[6] = new PowerUp("scale", mesh, "positive");
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 		const Scale_N = this.setMeshGLTF('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_N.then((mesh)=>{
-			arrayPowerup.push(new PowerUp("scale", mesh, "negative"));
+			arrayPowerup[7] = new PowerUp("scale", mesh, "negative");
 
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
