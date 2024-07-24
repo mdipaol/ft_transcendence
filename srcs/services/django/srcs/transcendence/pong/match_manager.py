@@ -9,7 +9,7 @@ from channels.db import database_sync_to_async
 class MatchManager:
 
     pendingPlayers = []
-    matches = []
+    matches : list[Match] = []
     active_monitoring = False
 
     @classmethod

@@ -433,7 +433,7 @@ export class Match {
 
 		const currentTime = new Date()
         const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
-            this.update_time_ball = currentTime;
+        this.update_time_ball = currentTime;
 
 		this.updateMovements(deltaTime);
 

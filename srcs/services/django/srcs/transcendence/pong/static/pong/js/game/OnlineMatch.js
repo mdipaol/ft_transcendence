@@ -15,11 +15,6 @@ export class OnlineMatch extends Match {
 
 		this.connected = false;
 		this.culo = null;
-
-        // this.socket.addEventListener("open", (event) => this.onOpen(event) );
-        // this.socket.addEventListener("close", (event) => this.onClose(event) );
-        // this.socket.addEventListener("message", (event) => this.onMessage(event) );
-        // this.socket.addEventListener("error", (event) => this.onError(event) );
 	}
 
 
@@ -35,10 +30,6 @@ export class OnlineMatch extends Match {
 				+ window.location.host
 				+ powerUpMode
 			);
-			// this.socket.addEventListener("open", (event) => this.onOpen(event) );
-			// this.socket.addEventListener("close", (event) => this.onClose(event) );
-			// this.socket.addEventListener("message", (event) => this.onMessage(event) );
-			// this.socket.addEventListener("error", (event) => this.onError(event) );
 
 			this.socket.onopen = () => {
 				console.log('WebSocket connection opened');
@@ -100,11 +91,50 @@ export class OnlineMatch extends Match {
 			if (meshPowerUp){
 				console.log(data);
 				console.log(this.world.arrayPowerup);
-				this.world.powerUp = meshPowerUp;
 				meshPowerUp.mesh.position.set(0, data.powerup_position, 15);
+				this.world.powerUp = meshPowerUp.mesh;
 				this.world.add(meshPowerUp.mesh);
 			}
 		}
+
+	removePowerUp(){
+		if (this.world.powerUp){
+			this.world.remove(this.world.powerUp);
+			this.world.powerUp = null;
+		}
+	}
+
+
+	/** 
+	 * @description Powerup event handler
+	 * @param {Object} data Expecting from the server the following object: 
+	 * {
+	 * 		type : ...,
+	 * 		action : ..., ('add' or 'remove' if type is triple)
+	 * }
+	**/
+	handlePowerUp( data ){
+		if (data.type == 'powerup_taken'){
+			this.removePowerUp();
+		}
+		else if (data.type == 'reset'){
+			// Scale, triple 
+			// The mesh of the powerup shall remain on the field
+			console.log('reset');
+			this.remove_triple();
+		}
+		else if (data.type == 'triple'){
+			if (data.action == 'add'){
+				this.add_triple();
+				console.log('triple enabled');
+			}
+			else if (data.action == 'remove'){
+				console.log('triple removed');
+				this.remove_triple();
+			}
+		}
+
+	}
 
 	gameMessage(msg) {
 		if (msg.event == "state")
@@ -124,14 +154,6 @@ export class OnlineMatch extends Match {
 		}
 		else if (msg.event == "score")
 			this.updateScore(msg);
-		else if (msg.event == "powerUpSpawn") {
-			console.log(msg);
-			this.world.powerUp = this.world.arrayPowerup[msg.message.powerUp];
-			this.world.powerUp.mesh.position.x = msg.message.x;
-			this.world.powerUp.mesh.position.y = msg.message.y;
-			this.world.powerUp.mesh.position.z = 10;
-			this.world.add(this.world.powerUp.mesh);
-		}
 		else if (msg.event == "soundWallCollision"){
 
 			if (this.world.soundWallCollision.isPlaying)
@@ -143,25 +165,11 @@ export class OnlineMatch extends Match {
 				this.world.soundPoint.stop();
 			this.world.soundPoint.play();
 		}
-		else if (msg.event == "powerUpTaken"){
-			const data = msg.messagge;
-		}
-		else if (msg.event == "powerUpSpawn"){
-
+		// Powerup events
+		else if (msg.event == "handle_powerup"){
+			this.handlePowerUp(msg.message);
 		}
 	}
-
-    onOpen(event) {
-		console.log("Connected to the server");
-		// console.log(this.connected);
-		// this.connected = new Promise(function(resolve, reject) { resolve(); });
-		// console.log(this.connected);
-		this.connected = true;
-    }
-
-	onClose(event) {
-        console.log("Connection closed");
-    }
 
 	onMessage(event) {
 		const msg = JSON.parse(event.data);
@@ -203,10 +211,6 @@ export class OnlineMatch extends Match {
 
 
 		}
-    }
-
-	onError(event) {
-        console.log(event);
     }
 
 	onKeyDown(event) {
@@ -321,13 +325,84 @@ export class OnlineMatch extends Match {
 		this.exchangesText = this.exchangesTextInit();
 	}
 
+	/**
+	 * @override
+	 */
+
+	add_triple() {
+		this.tripleEnabled = true;
+
+		const b1 = this.fakeBalls[0];
+		const b2 = this.fakeBalls[1];
+
+		b1.mesh.position.x = this.ball.mesh.position.x;
+		b1.mesh.position.y = this.ball.mesh.position.y;
+		b1.mesh.position.z = this.ball.mesh.position.z;
+		b1.speed = this.ball.speed;
+
+		b2.mesh.position.x = this.ball.mesh.position.x;
+		b2.mesh.position.y = this.ball.mesh.position.y;
+		b2.mesh.position.z = this.ball.mesh.position.z;
+		b2.speed = this.ball.speed;
+
+		b1.direction = UTILS.rotateVector(this.ball.direction.x, this.ball.direction.y, 20);
+		b2.direction = UTILS.rotateVector(this.ball.direction.x, this.ball.direction.y, -20);
+
+		this.world.add(b1.mesh);
+		this.world.add(b2.mesh);
+	}
+
+	tripleUpdate(deltaTime){
+		if (!this.tripleEnabled){
+			this.remove_triple()
+			return ;
+		}
+
+		const ball1 = this.fakeBalls[0];
+		const ball2 = this.fakeBalls[1];
+
+		// ball1.mesh.position.x += ball1.speed * ball1.direction.x * deltaTime;
+		ball1.mesh.position.x = this.ball.mesh.position.x
+		ball1.mesh.position.y += ball1.speed * ball1.direction.y * deltaTime;
+		ball1.mesh.position.z = ball1.getZ();
+
+		// ball2.mesh.position.x += ball2.speed * ball2.direction.x * deltaTime;
+		ball2.mesh.position.x = this.ball.mesh.position.x
+		ball2.mesh.position.y += ball2.speed * ball2.direction.y * deltaTime;
+		ball2.mesh.position.z = ball2.getZ();
+
+		const b1 = this.fakeBalls[0];
+		const b2 = this.fakeBalls[1];
+
+		// Triple ball wall collision
+		if (UTILS.wallCollision(b1))
+			b1.direction.y *= -1;
+		if (UTILS.wallCollision(b2))
+			b2.direction.y *= -1;
+
+		// Triple ball table limit
+		if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
+			this.world.remove(b1.mesh);
+		if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
+			this.world.remove(b2.mesh);
+
+	}
+
     update() {
-		// this.updateMovements();
+		const currentTime = new Date();
+		const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
+
+		this.update_time_ball = currentTime;
+
 !		this.world.rotatePowerUp();
+		this.tripleUpdate(deltaTime);
 		this.ball.mesh.position.z = this.ball.getZ();
 
 		// Update game interface
 		this.updateHtmlInterface();
+
+		
+
 		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
 		// this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
 
