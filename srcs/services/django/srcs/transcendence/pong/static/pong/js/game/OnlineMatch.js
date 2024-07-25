@@ -117,10 +117,20 @@ export class OnlineMatch extends Match {
 		if (data.type == 'powerup_taken'){
 			this.removePowerUp();
 		}
+		else if (data.type == 'powerup_remove'){
+			this.removePowerUp();
+		}
 		else if (data.type == 'reset'){
 			// Scale, triple 
 			// The mesh of the powerup shall remain on the field
 			console.log('reset');
+			this.player1.mesh.scale.x = this.player1.originScale[0]
+			this.player1.mesh.scale.y = this.player1.originScale[1]
+			this.player1.mesh.scale.z = this.player1.originScale[2]
+
+			this.player2.mesh.scale.x = this.player2.originScale[0]
+			this.player2.mesh.scale.y = this.player2.originScale[1]
+			this.player2.mesh.scale.z = this.player2.originScale[2]
 			this.remove_triple();
 		}
 		else if (data.type == 'triple'){
@@ -132,6 +142,18 @@ export class OnlineMatch extends Match {
 				console.log('triple removed');
 				this.remove_triple();
 			}
+		}
+		else if (data.type == 'scale'){
+			let taker = null;
+			if(data.player == 'player_one')
+				taker = this.player1.mesh;
+			else
+				taker = this.player2.mesh;
+			taker.scale.set(0.7, 0.7, 0.7);
+			taker.position.z = -6;
+		}
+		else if (data.type == 'slowness'){
+
 		}
 
 	}
@@ -328,7 +350,6 @@ export class OnlineMatch extends Match {
 	/**
 	 * @override
 	 */
-
 	add_triple() {
 		this.tripleEnabled = true;
 

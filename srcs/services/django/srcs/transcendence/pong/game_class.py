@@ -70,7 +70,7 @@ class PowerUp:
         self.player : Player = None
         self.position = 0 #random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
         # self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
-        self.type = 'triple'
+        self.type = random.choice(['scale', 'slowness'])
         self.effect = random.choice(['good', 'bad'])
         self.duration = Costants.POWERUP_DURATION
 
@@ -319,10 +319,18 @@ class Match:
 
         if self.active_powerup.type == 'scale':
             self.active_powerup.player = oppenent if good else taker
-            self.active_powerup.player.size /= 1.7
+            self.active_powerup.player.size *= 0.7
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'handle_powerup',
+                'message' : {
+                    'type' : 'scale',
+                    'player' : 'player_one' if self.active_powerup.player == self.player1 else 'player_two' ,
+                }
+            })
         elif self.active_powerup.type == 'slowness':
             self.active_powerup.player = oppenent if good else taker
-            self.active_powerup.player.speed /= 1.5
+            self.active_powerup.player.speed /= 3
         elif self.active_powerup.type == 'triple':
             self.active_powerup.player = taker if good else oppenent
             if self.active_powerup.player == taker:
@@ -346,8 +354,8 @@ class Match:
             return
         if not self.powerup_mode or not self.active_powerup or self.active_powerup.player:
             return
-        if self.ball.position.x > -2.5 and self.ball.position.x < 2.5:
-            if self.ball.position.y > self.active_powerup.position - 2.5 and self.ball.position.y < self.active_powerup.position + 2.5:
+        if self.ball.position.x > -3 and self.ball.position.x < 3:
+            if self.ball.position.y > self.active_powerup.position - 3 and self.ball.position.y < self.active_powerup.position + 3:
                 self.event_update = True
                 print('powerup_taken')
                 await self.powerup_taken()
@@ -466,6 +474,16 @@ class Match:
 
             # Powerup reset
             await self.reset_powerup_changes()
+            self.active_powerup = None
+            self.wait_powerup = 0
+
+            await self.channel_layer.group_send(self.id, {
+                'type' : 'game_message',
+                'event' : 'handle_powerup',
+                'message' : {
+                    'type' : 'powerup_remove',
+                },
+            })
 
             # Check game ended
             if self.score1 == Costants.MAX_SCORE or self.score2 == Costants.MAX_SCORE:
