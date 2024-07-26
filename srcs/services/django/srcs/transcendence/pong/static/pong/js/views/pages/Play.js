@@ -31,7 +31,7 @@ const Play = {
     },
 
     startRemoteGame: async () => {
-        await startGame('remote', 's', true);
+        await startGame('remote', 's', false);
         document.addEventListener('keydown', function(event){
             if (event.key === 'Escape' || event.code === 'Escape'){
                 stopGame();

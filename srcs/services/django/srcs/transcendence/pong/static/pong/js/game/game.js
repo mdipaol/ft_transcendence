@@ -12,6 +12,8 @@ import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
 import { BotMatch } from './BotMatch.js';
 
+import triggerHashChange from '../services/utils.js';
+
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 let isPlaying = false;
@@ -116,6 +118,11 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	};
 
 	await match.ready();
+
+	// window.addEventListener('hashchange', () =>{
+	// 	stopGame();
+	// });
+
 	// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
@@ -125,6 +132,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		console.log("Game stopped");
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
+		triggerHashChange('/home/'); // Perche non funzionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?
 	})
 }
 export function stopGame(){

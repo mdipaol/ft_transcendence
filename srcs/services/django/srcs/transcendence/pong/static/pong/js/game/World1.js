@@ -99,7 +99,7 @@ export class World1 {
 			emissiveIntensity: M_emissiveIntensity,
 			roughness: M_roughness,
 			metalness: M_metalness,
-			reflectivity: M_reflectivity
+			//reflectivity: M_reflectivity
 		});
 	}
 
@@ -133,7 +133,7 @@ export class World1 {
 				(object)=>{
 
 					const obj = object.scene;
-					obj.rotation.set(rotation[0], rotation[1], rotation[1]);
+					obj.rotation.set(rotation[0], rotation[1], rotation[2]);
 					obj.scale.multiplyScalar(scale);
 
 
@@ -320,7 +320,7 @@ export class World1 {
 			emissiveIntensity: 15,
             roughness: 1,
         	metalness: 1,
-			reflectivity: 0,
+			//reflectivity: 0,
 			envMapIntensity: 1,
             side: THREE.DoubleSide
         })
@@ -355,14 +355,14 @@ export class World1 {
 
 					roughness: 0,
 					metalness:1,
-					reflectivity: 1,
+					//reflectivity: 1,
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
 				const material_rete = new THREE.MeshStandardMaterial({
 					roughness: 0,
 					metalness:1,
-					reflectivity: 1,
+					//reflectivity: 1,
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
@@ -397,7 +397,7 @@ export class World1 {
 						emissiveIntensity: 0.1,
 						roughness: 0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					});
@@ -406,10 +406,10 @@ export class World1 {
 						color: 0xffffff,
 						metalness: 1,
 						roughness: 0,
-						transmission: 1,
+						//transmission: 1,
 						opacity: 0.5,
 						transparent: true,
-						reflectivity: 1,
+						//reflectivity: 1,
 						side: THREE.DoubleSide,
 						envMapIntensity: 1
 					});
@@ -419,10 +419,10 @@ export class World1 {
 						color: 0xffffff,
 						metalness: 1,
 						roughness: 0,
-						transmission: 1,
+						//transmission: 1,
 						opacity: 0.1,
 						transparent: true,
-						reflectivity: 1,
+						//reflectivity: 1,
 						side: THREE.DoubleSide,
 						envMapIntensity: 1
 					});
@@ -431,7 +431,7 @@ export class World1 {
 						emissiveIntensity:0.1,
 						roughness: 0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					})
@@ -472,8 +472,6 @@ export class World1 {
 					this.spotLight2.target = this.paddle2; // world1
 					this.spotLightWall2.target = this.paddle2; // world1
 
-					console.log(this.paddle);
-					console.log(this.paddle2);
 					// console.log(this.paddle);
 
 					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
@@ -489,7 +487,7 @@ export class World1 {
 							emissiveIntensity: 10,
 							roughness: 0,
 							metalness:1,
-							reflectivity: 1,
+							//reflectivity: 1,
 							envMapIntensity: 1,
 							side: THREE.DoubleSide
 						})
@@ -558,7 +556,7 @@ export class World1 {
 						//color: 0x000000,
 						roughness:0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					})

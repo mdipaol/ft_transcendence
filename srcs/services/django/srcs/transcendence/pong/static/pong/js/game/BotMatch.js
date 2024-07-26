@@ -74,6 +74,7 @@ export class BotMatch extends Match {
 		}
 		if (event.which == UTILS.SPACE)
 		{
+            event.preventDefault();
 			this.world.setCamera(this.world.mainCamera);
 			this.world.mainCamera.position.set(0, -10, 70);
 			this.world.mainCamera.lookAt(0, 0, 0);
@@ -332,7 +333,7 @@ export class BotMatch extends Match {
 
 			this.handlePowerUp(this.player1);
 			this.addPowerUp();
-
+            console.log('vivo');
 
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)

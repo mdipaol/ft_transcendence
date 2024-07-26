@@ -1,4 +1,3 @@
-# sssasaaswssssss
 import time, asyncio, uuid, random, pprint
 from .constants import Costants
 from channels.layers import get_channel_layer
@@ -70,7 +69,6 @@ class PowerUp:
         self.player : Player = None
         self.position = 0 #random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
         self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
-        # self.type = random.choice(['scale', 'slowness'])
         self.effect = random.choice(['good', 'bad'])
         self.duration = Costants.POWERUP_DURATION
 
@@ -138,6 +136,9 @@ class Match:
             "player_two": {"x": self.player2.position.x, "y": self.player2.position.y, "score": self.score2,},
             "ball": {"x": self.ball.position.x, "y": self.ball.position.y,"dirX": self.ball.direction.x, "dirY": self.ball.direction.y, "speed": self.ball.speed,},
         }
+
+    def __str__(self) -> str:
+        return f'[{self.start_time}]->{self.id}'
 
     def ready(self, consumer):
         if not consumer:
@@ -227,8 +228,13 @@ class Match:
 
     async def end_match(self):
         if self.task:
-            asyncio.cancel(self.task)
-            self.task = None
+            self.task.cancel(self.task)
+            try:
+                await self.task
+            except asyncio.CancelledError:
+                print("Task has been cancelled")
+        
+        self.task = None
         self.ended = True
         self.player1 = None
         self.player2 = None
@@ -259,7 +265,6 @@ class Match:
         })
 
     def powerup_power(self):
-        print('ball speed changed')
         self.ball.speed = Costants.BALL_SPEED
         self.ball.speed *= 1.5
 
@@ -310,7 +315,7 @@ class Match:
             return
         
         taker = self.player1 if self.ball.direction.x > 0 else self.player2
-        oppenent = self.player2 if taker == self.player1 else self.player2
+        oppenent = self.player2 if taker == self.player1 else self.player1
 
         good = self.active_powerup.effect == 'good'
 
@@ -319,6 +324,7 @@ class Match:
 
         if self.active_powerup.type == 'scale':
             self.active_powerup.player = oppenent if good else taker
+            print(f'scale on : {self.active_powerup.player}')
             self.active_powerup.player.size *= 0.7
             await self.channel_layer.group_send(self.id, {
                 'type' : 'game_message',
@@ -363,8 +369,6 @@ class Match:
     async def handle_player_collision(self, player : Player):
 
         if player.ball_collision(self.ball):
-            if self.active_powerup:
-                print((self.active_powerup.__dict__))
             self.ball.speed = Costants.BALL_SPEED
             self.event_update = True
             self.ball.direction.y = (self.ball.position.y - player.position.y) / 10
@@ -373,7 +377,7 @@ class Match:
 
             self.exchanges += 1
 
-            powerup_active = self.active_powerup
+            powerup_add = False
             powerup_type = None
             powerup_effect = None
             powerup_position = None
@@ -383,11 +387,12 @@ class Match:
                 await self.reset_powerup_changes()
                 if self.wait_powerup >= Costants.WAIT_POWERUP:
                     self.active_powerup = PowerUp()
+                    print(self.active_powerup.__dict__)
+                    powerup_add = True
                     powerup_type = self.active_powerup.type
                     powerup_effect = self.active_powerup.effect
                     powerup_position = self.active_powerup.position
             elif self.powerup_mode:
-                print('enetring powerup handler')
                 await self.handle_powerup(player)
 
             # Send exchanges + powerup
@@ -396,7 +401,7 @@ class Match:
                 'event' : 'exchanges',
                 'message' : {
                     'exchanges' : self.exchanges,
-                    'add_powerup' : powerup_active != self.active_powerup, # occhio
+                    'add_powerup' : powerup_add,
                     'powerup_type' : powerup_type,
                     'powerup_effect' : powerup_effect,
                     'powerup_position' : powerup_position,

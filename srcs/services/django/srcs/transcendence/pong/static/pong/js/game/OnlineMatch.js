@@ -156,6 +156,7 @@ export class OnlineMatch extends Match {
 			}
 		}
 		else if (data.type == 'scale'){
+			console.log(data)
 			let taker = null;
 			if(data.player == 'player_one')
 				taker = this.player1.mesh;
@@ -178,6 +179,8 @@ export class OnlineMatch extends Match {
 			this.updateExchanges();
 
 			if (msg.message.add_powerup){
+				console.log("powerup added")
+				console.log(msg.message);
 				this.addPowerUp(msg.message);
 			}
 
@@ -235,12 +238,13 @@ export class OnlineMatch extends Match {
 		}
 		else if (msg.type == "game_end")
 		{
-			console.log(msg)
-			if (msg.message.player_one.score > msg.message.player_two.score)
-				alert("Player One WINS")
+			if (msg.message.type == "disconnection")
+				alert("Oppenent disconnected! YOU WIN!")
 			else
-				alert("Player Two WINS")
-			this.gameEnd();
+				{
+					// alert("Game ended! " + msg.message.winner + " wins!");
+				}
+			console.log(msg)
 			this.started = false;
 
 
@@ -279,6 +283,7 @@ export class OnlineMatch extends Match {
 		}
 		if (event.which == UTILS.SPACE)
 		{
+			event.preventDefault();
 			this.world.setCamera(this.world.mainCamera);
 			this.world.mainCamera.position.set(0, -10, 70);
 			this.world.mainCamera.lookAt(0, 0, 0);

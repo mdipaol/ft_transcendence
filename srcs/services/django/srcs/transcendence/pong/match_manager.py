@@ -41,6 +41,7 @@ class MatchManager:
     async def add_player(cls, consumer):
         match: Match = cls.get_avaiable_match(consumer)
         match.add_player(consumer)
+        consumer.match = match
         await match.channel_layer.group_add(match.id, consumer.channel_name)
         if match.is_full():
             cls.start_match(match)
@@ -51,19 +52,17 @@ class MatchManager:
         match: Match = consumer.match
         if not match:
             return
-        if match.is_ended():
-            match.end_match()
-        # capire chi ha vinto oppure disconnessione
-        if match.is_empty():
+        if match in cls.matches:
             cls.matches.remove(match)
-        else:
-            await match.channel_layer.group_send(
-                match.id, {
-                    'type' : 'game_end',
-                    'message' : {}
-                })
-            consumer.match = None
 
+        await match.channel_layer.group_send(match.id, {
+            'type' : 'game_end',
+            'message' : {
+                'type' : 'disconnection'
+            }
+        })
+
+        await match.end_match()
 
     @classmethod
     async def game_loop(cls, match: Match):
@@ -95,12 +94,13 @@ class MatchManager:
 
             await match.send_game_state()
 
-
         await match.channel_layer.group_send(match.id, {
             'type' : 'game_end',
-            'message' : match.state,
+            'message' : {
+                'type' : 'win',
+                'winner' : match.player1.consumer.username if match.score1 > match.score2 else match.player2.consumer.username ,
+            }
         })
-
         # new_match = await database_sync_to_async(ModelMatch.objects.create)(
         # player1=match.player1.consumer.user,
         # player2=match.player2.consumer.user,
@@ -151,14 +151,18 @@ class MatchManager:
         except Exception as e:
             print(f"Error saving match: {e}")
 
+        cls.matches.remove(match)
+        await match.end_match()
+
     @classmethod
     async def monitoring(cls):
         while True:
-            print("monitoring")
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             print ("matches")
             print(cls.matches, sep=', ')
-            print(" players")
-            print(cls.pendingPlayers, sep=', ')
-            print("end monitoring")
+            # tasks = asyncio.all_tasks()
+            tasks = [task for task in asyncio.all_tasks() if not task.done() and task != asyncio.current_task()]
+            print(f"Active tasks: {tasks}")
+            print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
             # print(asyncio.all_tasks())
             await asyncio.sleep(5)

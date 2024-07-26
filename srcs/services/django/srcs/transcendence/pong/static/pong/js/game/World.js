@@ -115,7 +115,7 @@ export class World {
 			emissiveIntensity: M_emissiveIntensity,
 			roughness: M_roughness,
 			metalness: M_metalness,
-			reflectivity: M_reflectivity
+			//reflectivity: M_reflectivity
 		});
 	}
 
@@ -361,7 +361,6 @@ export class World {
 			this.gltfLoader.load(
 				'/static/pong/js/Pong_Fake/UtilsMesh/pianta_vik.glb',
 				(object)=>{
-					console.log(object);
 					const threeObj = object.scene.children[0];
 					threeObj.rotation.set(Math.PI / 2, 0, 0);
 					threeObj.scale.multiplyScalar(13);
@@ -875,12 +874,6 @@ export class World {
 			});
 		});
 	}
-
-
-
-
-
-
 
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
