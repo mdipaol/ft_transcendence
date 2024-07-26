@@ -69,8 +69,8 @@ class PowerUp:
     def __init__(self) -> None:
         self.player : Player = None
         self.position = 0 #random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
-        # self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
-        self.type = random.choice(['scale', 'slowness'])
+        self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
+        # self.type = random.choice(['scale', 'slowness'])
         self.effect = random.choice(['good', 'bad'])
         self.duration = Costants.POWERUP_DURATION
 

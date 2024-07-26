@@ -54,47 +54,59 @@ export class OnlineMatch extends Match {
 		}
 
 	addPowerUp(data){
-		let meshPowerUp = null;
-		console.log(data);
-		switch (data.powerup_type) {
-			case 'scale':
-				if (data.effect == 'good')
-					meshPowerUp = this.world.arrayPowerup[6];
-				else
-					meshPowerUp = this.world.arrayPowerup[7];
-				console.log("Scale picked");
-				break;
-			case 'triple':
-				if (data.effect == 'good')
-					meshPowerUp = this.world.arrayPowerup[4];
-				else
-					meshPowerUp = this.world.arrayPowerup[5];
-				console.log("Triple picked");
-				break;
-			case 'slowness':
-				if (data.effect == 'good')
-					meshPowerUp = this.world.arrayPowerup[2];
-				else
-					meshPowerUp = this.world.arrayPowerup[3];
-				console.log("Slowness picked");
-				break;
-			case 'power':
-				if (data.effect == 'good')
-					meshPowerUp = this.world.arrayPowerup[0];
-				else
-					meshPowerUp = this.world.arrayPowerup[1];
-				console.log("Power picked");
-				break;
-			default:
-				break;
+		// console.log(data);
+		// let meshPowerUp = null;
+		
+		// switch (data.powerup_type) {
+		// 	case 'scale':
+		// 		if (data.effect == 'good')
+		// 			meshPowerUp = this.world.arrayPowerup[6];
+		// 		else
+		// 			meshPowerUp = this.world.arrayPowerup[7];
+		// 		console.log("Scale picked");
+		// 		break;
+		// 	case 'triple':
+		// 		if (data.effect == 'good')
+		// 			meshPowerUp = this.world.arrayPowerup[4];
+		// 		else
+		// 			meshPowerUp = this.world.arrayPowerup[5];
+		// 		console.log("Triple picked");
+		// 		break;
+		// 	case 'slowness':
+		// 		if (data.effect == 'good')
+		// 			meshPowerUp = this.world.arrayPowerup[2];
+		// 		else
+		// 			meshPowerUp = this.world.arrayPowerup[3];
+		// 		console.log("Slowness picked");
+		// 		break;
+		// 	case 'power':
+		// 		if (data.effect == 'good')
+		// 			meshPowerUp = this.world.arrayPowerup[0];
+		// 		else
+		// 			meshPowerUp = this.world.arrayPowerup[1];
+		// 		console.log("Power picked");
+		// 		break;
+		// 	default:
+		// 		break;
+		// 	}
+
+			const effect = data.powerup_effect == 'good' ? 'Positive' : 'Negative'
+			console.log(data.powerup_type + effect)
+			const powerUp = this.world.mapPowerUp.get(data.powerup_type + effect);
+
+			if (powerUp){
+				powerUp.mesh.position.set(0, data.powerup_position, 15);
+				this.world.powerUp = powerUp.mesh;
+				this.world.add(powerUp.mesh)
 			}
-			if (meshPowerUp){
-				console.log(data);
-				console.log(this.world.arrayPowerup);
-				meshPowerUp.mesh.position.set(0, data.powerup_position, 15);
-				this.world.powerUp = meshPowerUp.mesh;
-				this.world.add(meshPowerUp.mesh);
-			}
+
+			// if (meshPowerUp){
+			// 	console.log(data);
+			// 	console.log(this.world.arrayPowerup);
+			// 	meshPowerUp.mesh.position.set(0, data.powerup_position, 15);
+			// 	this.world.powerUp = meshPowerUp.mesh;
+			// 	this.world.add(meshPowerUp.mesh);
+			// }
 		}
 
 	removePowerUp(){
@@ -107,8 +119,8 @@ export class OnlineMatch extends Match {
 
 	/** 
 	 * @description Powerup event handler
-	 * @param {Object} data Expecting from the server the following object: 
-	 * {
+	 * @param {Object} data Expecting from the server the following object: {
+	 * 		
 	 * 		type : ...,
 	 * 		action : ..., ('add' or 'remove' if type is triple)
 	 * }

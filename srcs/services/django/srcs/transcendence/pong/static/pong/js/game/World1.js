@@ -45,6 +45,7 @@ export class World1 {
 		this.powerUp = null;
 		this.skyboxInit();
 		//gest cube powerup
+		this.mapPowerUp = new Map();
 		this.arrayPowerup = this.powerUpsInit();
 
         this.scene.add(new THREE.AmbientLight(0xFFDE00, 0.5));
@@ -125,7 +126,42 @@ export class World1 {
 	}
 
 
+	loadPowerUpMap(path, type, scale, rotation){
+		return new Promise((resolve, reject)=>{
+			this.gltfLoader.load(
+				path,
+				(object)=>{
 
+					const obj = object.scene;
+					obj.rotation.set(rotation[0], rotation[1], rotation[1]);
+					obj.scale.multiplyScalar(scale);
+
+
+					const posColor = 0x00ff00;
+					const negColor = 0xff0000;
+					const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
+					const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
+					const negativePowerUp = obj.clone();
+
+					obj.traverse((child)=>{
+						if(child.isMesh)
+							child.material = PosMaterial
+					});
+					negativePowerUp.traverse((child)=>{
+						if(child.isMesh)
+							child.material = NegMaterial
+					});
+					//this.scene.add(obj);
+					this.mapPowerUp.set(type + "Positive", new PowerUp(type, obj, 'positive'));
+					this.mapPowerUp.set(type + "Negative", new PowerUp(type, negativePowerUp, 'negative'));
+					resolve();
+				});
+				undefined,
+				(error)=>{
+					reject(error);
+				}
+		});
+	}
 
 
 	powerUpsInit(){
@@ -724,7 +760,11 @@ export class World1 {
 			this.loadSoundPowerUpP(),
 			this.loadSoundPowerUpN(),
 			this.loadSounPoint(),
-			this.loadSoundEndMach()
+			this.loadSoundEndMach(),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");

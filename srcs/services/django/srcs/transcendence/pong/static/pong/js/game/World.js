@@ -54,6 +54,7 @@ export class World {
 		//gest cube powerup
 		const spotLight = new THREE.SpotLight(0x00ff00, 15, 10000, Math.PI/2, 1,  1);
 		this.spotLight = spotLight;
+		this.mapPowerUp = new Map();
 		this.arrayPowerup = this.powerUpsInit();
 		//end gest cube
 
@@ -132,6 +133,43 @@ export class World {
 					});
 					//this.scene.add(obj);
 					resolve(obj);
+				});
+				undefined,
+				(error)=>{
+					reject(error);
+				}
+		});
+	}
+
+	loadPowerUpMap(path, type, scale, rotation){
+		return new Promise((resolve, reject)=>{
+			this.gltfLoader.load(
+				path,
+				(object)=>{
+
+					const obj = object.scene;
+					obj.rotation.set(rotation[0], rotation[1], rotation[1]);
+					obj.scale.multiplyScalar(scale);
+
+
+					const posColor = 0x00ff00;
+					const negColor = 0xff0000;
+					const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
+					const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
+					const negativePowerUp = obj.clone();
+
+					obj.traverse((child)=>{
+						if(child.isMesh)
+							child.material = PosMaterial
+					});
+					negativePowerUp.traverse((child)=>{
+						if(child.isMesh)
+							child.material = NegMaterial
+					});
+					//this.scene.add(obj);
+					this.mapPowerUp.set(type + "Positive", new PowerUp(type, obj, 'positive'));
+					this.mapPowerUp.set(type + "Negative", new PowerUp(type, negativePowerUp, 'negative'));
+					resolve();
 				});
 				undefined,
 				(error)=>{
@@ -862,7 +900,11 @@ export class World {
 			this.loadSoundPowerUpN(),
 			this.loadSoundPowerUpP(),
 			this.loadSoundWallCollision(),
-			this.loadSounPoint()
+			this.loadSounPoint(),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
