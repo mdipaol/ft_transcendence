@@ -2,7 +2,6 @@
 import triggerHashChange from "../../services/utils.js";
 
 import {startGame} from "../../game/game.js";
-import {stopGame} from "../../game/game.js";
 
 import { Player } from '../../game/Player.js';
 import { Ball } from '../../game/Ball.js';
@@ -22,32 +21,14 @@ const Play = {
 
     startLocalGame: async () => {
         await startGame('local', 'underground', false);
-        document.addEventListener('keydown', function(event){
-            if (event.key === 'Escape' || event.code === 'Escape'){
-                stopGame();
-                triggerHashChange('/home/');
-            }
-        })
     },
 
     startRemoteGame: async () => {
-        await startGame('remote', 's', false);
-        document.addEventListener('keydown', function(event){
-            if (event.key === 'Escape' || event.code === 'Escape'){
-                stopGame();
-                triggerHashChange('/home/');
-            }
-        })
+        await startGame('remote', 's', true);
     },
 
     startBotGame: async () => {
         await startGame('bot', 'underground', true);
-        document.addEventListener('keydown', function(event){
-            if (event.key === 'Escape' || event.code === 'Escape'){
-                stopGame();
-                triggerHashChange('/home/');
-            }
-        })
     },
 
     after_render: async () => {

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 //---------COSTANTS--------
-export const MAXSCORE = 500;
+export const MAXSCORE = 5;
 export const MOVSPEED = 85;
 export const STARTINGSPEED = 100;
 export const ACCELERATION  = 2;
@@ -132,3 +132,4 @@ export function timeToString(time) {
 
     return `${formattedMM}:${formattedSS}`;
 }
+

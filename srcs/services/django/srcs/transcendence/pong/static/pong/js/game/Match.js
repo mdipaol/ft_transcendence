@@ -21,6 +21,8 @@ export class Match {
 		this.player2.upKey = UTILS.ARROWUP;
 		this.player2.downKey = UTILS.ARROWDOWN;
 
+		this.ended = false;
+
         this.ball = new Ball(0xf06400);
         this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
@@ -598,16 +600,11 @@ export class Match {
 	}
 
 	gameEnd() {
-		if (this.score1 > this.score2)
-			alert("Player 1 wins!");
-		else
-			alert("Player 2 wins!");
-
-			/* while(this.world.door.position.x > -2){
-			this.world.door.position.x -= 0.000001;
-		}
-		this.score1 = 0;
-		this.score2 = 0;
-		this.updateScoreText(); */
+		// if (this.score1 > this.score2)
+		// 	alert("Player 1 wins!");
+		// else
+			// alert("Player 2 wins!");
+		
+		this.ended = true;
 	}
 }

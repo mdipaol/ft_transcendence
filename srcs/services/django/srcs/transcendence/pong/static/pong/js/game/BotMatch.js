@@ -219,7 +219,7 @@ export class BotMatch extends Match {
             if(this.world.sound.isPlaying){
                 this.world.sound.stop();
             }
-            this.world.soundEndMach.play();
+            // this.world.soundEndMach.play();
 			this.gameEnd();
         }
 

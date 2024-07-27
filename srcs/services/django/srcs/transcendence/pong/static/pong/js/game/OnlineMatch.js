@@ -241,13 +241,12 @@ export class OnlineMatch extends Match {
 			if (msg.message.type == "disconnection")
 				alert("Oppenent disconnected! YOU WIN!")
 			else
-				{
-					// alert("Game ended! " + msg.message.winner + " wins!");
-				}
+			{
+				// alert("Game ended! " + msg.message.winner + " wins!");
+			}
 			console.log(msg)
 			this.started = false;
-
-
+			this.gameEnd();
 		}
     }
 

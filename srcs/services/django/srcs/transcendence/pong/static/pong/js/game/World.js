@@ -865,7 +865,7 @@ export class World {
 			this.soundEndMach = sound;
 			this.audioLoader.load('/static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
-				sound.setLoop(true);
+				sound.setLoop(false);
 				sound.setVolume(1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
@@ -889,11 +889,11 @@ export class World {
 			this.loadNameTeem(),
 			this.loadAudio_world(),
 			this.loadSoundCollision(),
-			this.loadSoundEndMach(),
 			this.loadSoundPowerUpN(),
 			this.loadSoundPowerUpP(),
 			this.loadSoundWallCollision(),
 			this.loadSounPoint(),
+			this.loadSoundEndMach(),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
@@ -904,6 +904,25 @@ export class World {
 		resolve();
 		});
 	});
+	}
 
+	destroySoundWorld(){
+		// Audio delete
+		this.sound.stop();
+		this.sound.disconnect();
+		this.soundCollision.stop();
+		this.soundCollision.disconnect();
+		this.soundPowerUpNegative.stop();
+		this.soundPowerUpNegative.disconnect();
+		this.soundPowerUpPositive.stop();
+		this.soundPowerUpPositive.disconnect();
+		this.soundWallCollision.stop();
+		this.soundWallCollision.disconnect();
+		this.soundPoint.stop();
+		this.soundPoint.disconnect();
+		this.soundEndMach.stop();
+		this.soundEndMach.disconnect();
+		this.soundEndMach.stop();
+		this.soundEndMach.disconnect();
 	}
 }

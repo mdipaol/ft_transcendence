@@ -16,7 +16,6 @@ import triggerHashChange from '../services/utils.js';
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
-let isPlaying = false;
 /**
 	@description This function start a game selecting the match, the map and if powerUps will be active
 	@param {String} gameMode Choose between 'local', 'remote', 'bot'
@@ -34,14 +33,10 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
 	//---------INIT----------
 	let world = null;
-	if (worldMap == 'underground'){
-
+	if (worldMap == 'underground')
 		world = new World();
-	}
-	else{
-
+	else
 		world = new World1();
-	}
 
 	await world.worldReady();
 	console.log("Meshes loaded");
@@ -96,9 +91,8 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	world.add(match.player2.mesh);
 	world.add(match.ball.mesh);
 
-	isPlaying = true;
 	const gameLoop = function(resolve) {
-		if (isPlaying) {
+		if (!match.ended) {
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
 			match.render();
@@ -109,8 +103,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 					match.culo = true;     
 					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
 					I PLAYER ABBIANO RENDERIZZATO TUTTO
-				}*/
-
+			}*/
 		}
 		else {
 			resolve();
@@ -128,13 +121,24 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		gameLoop(resolve)
 	})
 
-	gameStatus.then(() => {
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	gameStatus.then(async () => {
 		console.log("Game stopped");
+		match.world.soundEndMach.play();
+		// if(match.world.soundEndMach.isPlaying){
+		// 	match.world.destroySoundWorld();
+		// }
+		// else{
+		// 	match.world.soundEndMach.stop()
+		// 	match.world.soundEndMach.disconnect();
+		// }
+		await sleep(5000);
+		match.world.destroySoundWorld();
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
-		triggerHashChange('/home/'); // Perche non funzionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?
+		triggerHashChange('/play/'); // Perche non funzionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?
 	})
-}
-export function stopGame(){
-	isPlaying = false;
 }
