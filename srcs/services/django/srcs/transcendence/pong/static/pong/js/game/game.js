@@ -127,18 +127,22 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
 	gameStatus.then(async () => {
 		console.log("Game stopped");
+		if(match.world.soundPoint.isPlaying){
+			match.world.soundPoint.stop();
+			match.world.soundPoint.disconnect();
+		}
 		match.world.soundEndMach.play();
-		// if(match.world.soundEndMach.isPlaying){
-		// 	match.world.destroySoundWorld();
-		// }
-		// else{
-		// 	match.world.soundEndMach.stop()
-		// 	match.world.soundEndMach.disconnect();
-		// }
+
 		await sleep(5000);
 		match.world.destroySoundWorld();
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
-		triggerHashChange('/play/'); // Perche non funzionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?
+		//console.log("Before destroy:");
+		//console.log(match.world.renderer.info.memory);
+		//await sleep(5000);
+		match.destroy(match.world.scene);
+		//console.log("After destroy:");
+		//console.log(match.world.renderer.info.memory)
+		triggerHashChange('/play/');
 	})
 }

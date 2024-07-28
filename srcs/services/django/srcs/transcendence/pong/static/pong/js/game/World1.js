@@ -465,12 +465,33 @@ export class World1 {
 					this.paddle.position.x = -51;
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
+				// 	const box = new THREE.Box3().setFromObject(this.paddle);
+				// 	const size = new THREE.Vector3();
+				// 	box.getSize(size);
+				// 	console.log(this.paddle);
+				// 	console.log(size);
 
-					this.paddle2 = this.paddle.clone();
-					this.paddle2.position.x = 55.5;
-					this.paddle2.rotation.x = Math.PI / 2; // world1
-					this.spotLight2.target = this.paddle2; // world1
-					this.spotLightWall2.target = this.paddle2; // world1
+				// const targetWidth = UTILS.PADDLE_SIZE_X;
+				// const targetHeight = UTILS.PADDLE_SIZE_Y;
+				// const targetDepth = UTILS.PADDLE_SIZE_Z;
+
+				// // Calculate the scaling factors
+				// const scaleX = targetWidth / size.x;
+				// const scaleY = targetHeight / size.y;
+				// const scaleZ = targetDepth / size.z;
+
+				// this.paddle.scale.set(scaleX, scaleY, scaleZ);
+				// const box1 = new THREE.Box3().setFromObject(this.paddle);
+				// const size1 = new THREE.Vector3();
+				// box1.getSize(size1);
+				// console.log('after scale');
+				// console.log(size1);
+				
+				this.paddle2 = this.paddle.clone();
+				this.paddle2.position.x = 55.5;
+				this.paddle2.rotation.x = Math.PI / 2; // world1
+				this.spotLight2.target = this.paddle2; // world1
+				this.spotLightWall2.target = this.paddle2; // world1
 
 					// console.log(this.paddle);
 
@@ -735,7 +756,7 @@ export class World1 {
 			this.audioLoader.load('static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
-				sound.setVolume(1);
+				sound.setVolume(0.1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -786,5 +807,8 @@ export class World1 {
 		this.soundPoint.disconnect();
 		this.soundEndMach.stop();
 		this.soundEndMach.disconnect();
+	}
+	destroySoundWorld(){
+		
 	}
 }

@@ -209,7 +209,12 @@ export class BotMatch extends Match {
         this.bot2.destinationY = (this.pointPrediction());
     }
 
-    updateScore() {
+    updateScore() { 
+
+        if(this.world.soundPoint.isPlaying){
+            this.world.soundPoint.stop();
+        }
+
 		if (this.ball.mesh.position.x < 0)
 			this.score2++;
 		else
@@ -218,15 +223,13 @@ export class BotMatch extends Match {
 		if (this.score1 == this.maxScore || this.score2 == this.maxScore){
             if(this.world.sound.isPlaying){
                 this.world.sound.stop();
-            }
+            }                  
             // this.world.soundEndMach.play();
 			this.gameEnd();
         }
+        else if(this.score1 != this.maxScore && this.score1 != this.maxScore)
+            this.world.soundPoint.play();
 
-        if(this.world.soundPoint.isPlaying){
-            this.world.soundPoint.stop();
-        }
-        this.world.soundPoint.play();
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
 		this.ball.mesh.position.z = this.ball.getZ();

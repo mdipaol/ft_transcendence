@@ -56,6 +56,7 @@ export class World {
 		this.spotLight = spotLight;
 		this.mapPowerUp = new Map();
 		this.arrayPowerup = this.powerUpsInit();
+
 		//end gest cube
 
 		this.loadObjects();
@@ -87,7 +88,8 @@ export class World {
 
 			geometry.computeBoundingBox();
 			geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
-
+			this.username1.geometry.dispose();
+			this.username1Mirror.geometry.dispose();
 			this.username1.geometry = geometry;
 			this.username1Mirror.geometry = geometry;
 
@@ -103,6 +105,8 @@ export class World {
 			geometry.computeBoundingBox();
 			geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 
+			this.username2.geometry.dispose();
+			this.username2Mirror.geometry.dispose();
 			this.username2.geometry = geometry;
 			this.username2Mirror.geometry = geometry;
 		}
@@ -179,12 +183,9 @@ export class World {
 	}
 
 	powerUpsInit(){
-		//const mesh_array =[];
 		const arrayPowerup=[null, null, null, null, null, null, null, null];
 		const posColor = 0x00ff00;
 		const negColor = 0xff0000;
-		const posLineColor = 0x03c03c;
-		const negLineColor = 0xa2231d;
 		const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
 		const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
 		//speed///
@@ -460,7 +461,7 @@ export class World {
 			(object)=>{
 
 				const threeObj = object.scene.children[0];
-
+				this.table = threeObj;
 				const geometry = threeObj.children[0].geometry;
 				const desiredWidth = 104;
 				geometry.computeBoundingBox();
@@ -517,9 +518,39 @@ export class World {
 						}
 					});
 				this.paddle = object;
+				// const box2 = new THREE.Box3().setFromObject(this.paddle);
+				// const size2 = new THREE.Vector3();
+				// box2.getSize(size2);
+				// console.log(size2);
 				this.paddle.rotation.z = Math.PI / 2;
 				this.paddle.position.x = -54;
 				this.paddle.position.z = UTILS.POSITION_Z_W;
+				// const box = new THREE.Box3().setFromObject(this.paddle);
+				// const size = new THREE.Vector3();
+				// box.getSize(size);
+				// console.log(this.paddle);
+				// console.log(size);
+
+				// const targetWidth = UTILS.PADDLE_SIZE_X;
+				// const targetHeight = UTILS.PADDLE_SIZE_Y;
+				// const targetDepth = UTILS.PADDLE_SIZE_Z;
+
+				// // Calculate the scaling factors
+				// const scaleX = targetWidth / size.x;
+				// const scaleY = targetHeight / size.y;
+				// const scaleZ = targetDepth / size.z;
+				// object.scale.set(scaleX, scaleY, scaleZ);
+				// // object.scale.set(1, scaleY, 1);
+				// // object.scale.set(1, 1, scaleZ);
+
+				// console.log('after scale');
+
+				// const box1 = new THREE.Box3().setFromObject(this.paddle);
+				// const size1 = new THREE.Vector3();
+				// box1.getSize(size1);
+
+				// console.log(size1);
+				
 				this.paddle2 = this.paddle.clone();
 				this.paddle2.position.x = 54;
 				this.paddle2.rotation.z = Math.PI / 2;
@@ -894,11 +925,13 @@ export class World {
 			this.loadSoundWallCollision(),
 			this.loadSounPoint(),
 			this.loadSoundEndMach(),
+			// // TEMPORANEO PER TEST
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
-		];
+			
+			];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
 		resolve();

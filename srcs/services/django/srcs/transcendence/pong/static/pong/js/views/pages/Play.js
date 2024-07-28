@@ -20,7 +20,7 @@ const Play = {
     },
 
     startLocalGame: async () => {
-        await startGame('local', 'underground', false);
+        await startGame('local', 'underground', true);
     },
 
     startRemoteGame: async () => {
@@ -28,7 +28,7 @@ const Play = {
     },
 
     startBotGame: async () => {
-        await startGame('bot', 'underground', true);
+        await startGame('bot', 'underground', false);
     },
 
     after_render: async () => {

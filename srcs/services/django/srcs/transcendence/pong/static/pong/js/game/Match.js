@@ -85,6 +85,8 @@ export class Match {
 
 	exchangesTextInit() {
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
+			this.exchangesText[0].geometry.dispose();
+			this.exchangesText[1].geometry.dispose();
 			this.world.remove(this.exchangesText[0]);
 			this.world.remove(this.exchangesText[1]);
 		}
@@ -114,7 +116,8 @@ export class Match {
 
 	updateExchanges() {
 		this.exchanges++;
-
+		this.exchangesText[0].geometry.dispose();
+		this.exchangesText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
 			size: 8,
@@ -150,6 +153,8 @@ export class Match {
 	}
 
 	updateScoreText(){
+		this.scoreText[0].geometry.dispose();
+		this.scoreText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.score1.toString() + " - "  + this.score2.toString(), {
 			font: this.exchangesFont,
 			size: 20,
@@ -162,18 +167,27 @@ export class Match {
 	}
 
 	updateScore() {
-		if (this.ball.mesh.position.x < 0)
-			this.score2++;
-		else
-			this.score1++;
-		this.updateScoreText();
-		if (this.score1 == this.maxScore || this.score2 == this.maxScore)
-			this.gameEnd();
+		
 		// Sound
 		if(this.world.soundPoint.isPlaying){
             this.world.soundPoint.stop();
         }
-		this.world.soundPoint.play();
+
+		if (this.ball.mesh.position.x < 0)
+			this.score2++;
+		else
+			this.score1++;
+
+		this.updateScoreText();
+		if (this.score1 == this.maxScore || this.score2 == this.maxScore){
+			if(this.world.sound.isPlaying)
+                this.world.sound.stop();   
+			this.gameEnd();
+		}
+		else
+			this.world.soundPoint.play();
+
+		
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
 		this.ball.mesh.position.z = this.ball.getZ();
@@ -195,7 +209,6 @@ export class Match {
 
 		// Triple Ball
 		this.remove_triple();
-
 
 		// Exchanges
 		this.exchanges = 0;
@@ -593,6 +606,35 @@ export class Match {
 
 		// Update game interface
 		this.updateHtmlInterface();
+	}
+
+
+
+	// non ti permettere heeeey
+	destroy(scene) {
+		while (scene.children.length > 0) {
+			let object = scene.children[0];
+			this.world.remove(object);
+			if (object.geometry)
+				object.geometry.dispose();
+			if (object.texture)
+				object.texture.dispose();
+			if (object.children && object.children.length > 0)
+				UTILS.childCleaner(object);
+		}
+		this.world.arrayPowerup.forEach(powerup => {
+			if (powerup.mesh.children[0].geometry)
+				powerup.mesh.children[0].geometry.dispose();
+		});
+		this.world.mapPowerUp.forEach(powerup => {
+			//console.log("sto per pulire:", powerup);
+			if (powerup.mesh.children[0].geometry)
+				powerup.mesh.children[0].geometry.dispose();
+		});
+		this.fakeBalls.forEach(ball => {
+			if (ball.mesh.geometry)
+				ball.mesh.geometry.dispose();
+		});
 	}
 
 	render() {
