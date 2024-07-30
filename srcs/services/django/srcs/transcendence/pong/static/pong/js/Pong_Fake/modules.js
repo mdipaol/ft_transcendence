@@ -153,7 +153,6 @@ export class Match {
 		// PowerUps
 		this.waitPowerup = 0;
 		this.activePowerUp = false;
-		this.meshPowerUp = null;
 		this.triple_enabled = false;
 		this.fake_balls = [new Ball(0xff0000), new Ball(0x0000ff)]
 

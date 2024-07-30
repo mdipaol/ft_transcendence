@@ -40,9 +40,12 @@ export class World1 {
 		this.dracoLoader.setDecoderConfig({type: 'js'});
 		this.gltfLoader.setDRACOLoader(this.dracoLoader);
 		this.font = null;
+		this.username1 = null;
+		this.username2 = null;
 		this.powerUp = null;
 		this.skyboxInit();
 		//gest cube powerup
+		this.mapPowerUp = new Map();
 		this.arrayPowerup = this.powerUpsInit();
 
         this.scene.add(new THREE.AmbientLight(0xFFDE00, 0.5));
@@ -73,8 +76,20 @@ export class World1 {
 		this.loadObjects();
 	}
 
+
+
 	async worldReady(){
 		return this.ready;
+	}
+
+	resetMesh(){
+
+		if (!this.paddle || !this.paddle2){
+			return;
+		}
+
+		this.paddle.position.z = UTILS.POSITION_Z_W1;
+		this.paddle2.position.z = UTILS.POSITION_Z_W1;
 	}
 
 	setMeshStandardMaterial(M_color, M_color_emissive, M_emissiveIntensity, M_roughness, M_metalness, M_reflectivity){
@@ -84,7 +99,7 @@ export class World1 {
 			emissiveIntensity: M_emissiveIntensity,
 			roughness: M_roughness,
 			metalness: M_metalness,
-			reflectivity: M_reflectivity
+			//reflectivity: M_reflectivity
 		});
 	}
 
@@ -111,7 +126,42 @@ export class World1 {
 	}
 
 
+	loadPowerUpMap(path, type, scale, rotation){
+		return new Promise((resolve, reject)=>{
+			this.gltfLoader.load(
+				path,
+				(object)=>{
 
+					const obj = object.scene;
+					obj.rotation.set(rotation[0], rotation[1], rotation[2]);
+					obj.scale.multiplyScalar(scale);
+
+
+					const posColor = 0x00ff00;
+					const negColor = 0xff0000;
+					const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
+					const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
+					const negativePowerUp = obj.clone();
+
+					obj.traverse((child)=>{
+						if(child.isMesh)
+							child.material = PosMaterial
+					});
+					negativePowerUp.traverse((child)=>{
+						if(child.isMesh)
+							child.material = NegMaterial
+					});
+					//this.scene.add(obj);
+					this.mapPowerUp.set(type + "Positive", new PowerUp(type, obj, 'positive'));
+					this.mapPowerUp.set(type + "Negative", new PowerUp(type, negativePowerUp, 'negative'));
+					resolve();
+				});
+				undefined,
+				(error)=>{
+					reject(error);
+				}
+		});
+	}
 
 
 	powerUpsInit(){
@@ -270,7 +320,7 @@ export class World1 {
 			emissiveIntensity: 15,
             roughness: 1,
         	metalness: 1,
-			reflectivity: 0,
+			//reflectivity: 0,
 			envMapIntensity: 1,
             side: THREE.DoubleSide
         })
@@ -300,19 +350,19 @@ export class World1 {
 			(object)=>{
 				object.scene.rotation.x =Math.PI/2;
 				object.scene.scale.multiplyScalar(21.5);
-				object.scene.position.set(0, 0 , -2);
+				object.scene.position.set(0, 0 , 0);
 				const material_bordi = new THREE.MeshStandardMaterial({
 
 					roughness: 0,
 					metalness:1,
-					reflectivity: 1,
+					//reflectivity: 1,
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
 				const material_rete = new THREE.MeshStandardMaterial({
 					roughness: 0,
 					metalness:1,
-					reflectivity: 1,
+					//reflectivity: 1,
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
@@ -347,7 +397,7 @@ export class World1 {
 						emissiveIntensity: 0.1,
 						roughness: 0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					});
@@ -356,10 +406,10 @@ export class World1 {
 						color: 0xffffff,
 						metalness: 1,
 						roughness: 0,
-						transmission: 1,
+						//transmission: 1,
 						opacity: 0.5,
 						transparent: true,
-						reflectivity: 1,
+						//reflectivity: 1,
 						side: THREE.DoubleSide,
 						envMapIntensity: 1
 					});
@@ -369,10 +419,10 @@ export class World1 {
 						color: 0xffffff,
 						metalness: 1,
 						roughness: 0,
-						transmission: 1,
+						//transmission: 1,
 						opacity: 0.1,
 						transparent: true,
-						reflectivity: 1,
+						//reflectivity: 1,
 						side: THREE.DoubleSide,
 						envMapIntensity: 1
 					});
@@ -381,7 +431,7 @@ export class World1 {
 						emissiveIntensity:0.1,
 						roughness: 0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					})
@@ -401,7 +451,7 @@ export class World1 {
 						object.scene.children[3].material = material_manico;
 					//object.scene.add(PointLight2);
 
-					object.scene.scale.multiplyScalar(0.85);
+					//object.scene.scale.multiplyScalar(0.85);
 					this.paddle = object.scene;
 					this.paddle.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
@@ -409,25 +459,46 @@ export class World1 {
 						}
 					});
 					// region MeshPhysicalMaterial
-					this.paddle2 = this.paddle.clone();
-
-					this.paddle.position.x = -51;
-					this.paddle2.position.x = 55.5;
-					this.paddle.rotation.x = Math.PI / 2; // world1
-					this.paddle2.rotation.x = Math.PI / 2; // world1
-					this.spotLight.target = this.paddle; // world1
-					this.spotLight2.target = this.paddle2; // world1
-					// world.spotLightCenter1.target = this.player1.mesh; // world1
-					// world.spotLightCenter2.target = this.player2.mesh; // world1
 					this.spotLightWall1.target = this.paddle; // world1
-					this.spotLightWall2.target = this.paddle2; // world1
+					this.spotLight.target = this.paddle; // world1
+					this.paddle.rotation.x = Math.PI / 2; // world1
+					this.paddle.position.x = -51;
+					this.paddle.position.z = UTILS.POSITION_Z_W1;
+					this.paddle.scale.multiplyScalar(0.85);
+				// 	const box = new THREE.Box3().setFromObject(this.paddle);
+				// 	const size = new THREE.Vector3();
+				// 	box.getSize(size);
+				// 	console.log(this.paddle);
+				// 	console.log(size);
+
+				// const targetWidth = UTILS.PADDLE_SIZE_X;
+				// const targetHeight = UTILS.PADDLE_SIZE_Y;
+				// const targetDepth = UTILS.PADDLE_SIZE_Z;
+
+				// // Calculate the scaling factors
+				// const scaleX = targetWidth / size.x;
+				// const scaleY = targetHeight / size.y;
+				// const scaleZ = targetDepth / size.z;
+
+				// this.paddle.scale.set(scaleX, scaleY, scaleZ);
+				// const box1 = new THREE.Box3().setFromObject(this.paddle);
+				// const size1 = new THREE.Vector3();
+				// box1.getSize(size1);
+				// console.log('after scale');
+				// console.log(size1);
+				
+				this.paddle2 = this.paddle.clone();
+				this.paddle2.position.x = 55.5;
+				this.paddle2.rotation.x = Math.PI / 2; // world1
+				this.spotLight2.target = this.paddle2; // world1
+				this.spotLightWall2.target = this.paddle2; // world1
 
 					// console.log(this.paddle);
-					
+
 					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
 					// this.paddle.children[0].geometry.computeBoundingBox();
 					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
-					// const scaleFactor = 15 / currentWidth;
+					// const scaleFactor = (15) / currentWidth;
 					// this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
 					if (this.paddle2.children[0]){
@@ -437,7 +508,7 @@ export class World1 {
 							emissiveIntensity: 10,
 							roughness: 0,
 							metalness:1,
-							reflectivity: 1,
+							//reflectivity: 1,
 							envMapIntensity: 1,
 							side: THREE.DoubleSide
 						})
@@ -457,7 +528,7 @@ export class World1 {
 					const geometry = new TextGeometry( 'PONG', {
 						font: font,
 						size: 22,
-						height: 1,
+						depth: 1,
 
 					});
 					const emissive_color = 0xA020F0;
@@ -506,7 +577,7 @@ export class World1 {
 						//color: 0x000000,
 						roughness:0,
 						metalness:1,
-						reflectivity: 1,
+						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					})
@@ -685,7 +756,7 @@ export class World1 {
 			this.audioLoader.load('static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
-				sound.setVolume(1);
+				sound.setVolume(0.1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {
@@ -708,13 +779,36 @@ export class World1 {
 			this.loadSoundPowerUpP(),
 			this.loadSoundPowerUpN(),
 			this.loadSounPoint(),
-			this.loadSoundEndMach()
+			this.loadSoundEndMach(),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
 		resolve();
 		});
-	});
-
+	});	
+	}
+	destroyWorld(){
+		// Audio delete
+		this.sound.stop();
+		this.sound.disconnect();
+		this.soundCollision.stop();
+		this.soundCollision.disconnect();
+		this.soundPowerUpNegative.stop();
+		this.soundPowerUpNegative.disconnect();
+		this.soundPowerUpPositive.stop();
+		this.soundPowerUpPositive.disconnect();
+		this.soundWallCollision.stop();
+		this.soundWallCollision.disconnect();
+		this.soundPoint.stop();
+		this.soundPoint.disconnect();
+		this.soundEndMach.stop();
+		this.soundEndMach.disconnect();
+	}
+	destroySoundWorld(){
+		
 	}
 }

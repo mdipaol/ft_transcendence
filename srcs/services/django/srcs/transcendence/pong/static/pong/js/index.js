@@ -15,6 +15,7 @@ import Footer from './views/components/Footer.js';
 import Play from './views/pages/Play.js';
 
 import { parseRequestUrl } from './services/utils.js';
+import MyWebsocket from './services/MyWebsocket.js';
 
 // List of supported routes. Any url other than these will render 404 page.
 const routes = {
@@ -62,6 +63,15 @@ const router = async () => {
     (resource ? '/' + resource : '/') +
     (id ? '/:id' : '') +
     (verb ? '/' + verb : '');
+
+  // Websocket connection if the user is authenticated
+  const authenticated = await fetch(`https://${window.location.host}/authenticated/`);
+  const data = await authenticated.json();
+  if (data.authenticated)
+    // MyWebsocket.startConnection returns if there is a connection already
+    MyWebsocket.startConnection();
+  else
+    MyWebsocket.removeConnection();
 
   // Render the page from map of supported routes or render 404 page.
   const page = routes[parsedUrl] || Error404;

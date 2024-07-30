@@ -6,14 +6,22 @@ import { Player } from './Player.js';
 
 
 export class Match {
-    constructor(world) {
-        this.world = world;
+    constructor(world, powerUpMode) {
+
+		this.world = world;
+		this.powerUpMode = powerUpMode;
+
+		this.start = new Date();
+		this.htmlElement = null;
+
         this.player1 = new Player(world.paddle);
         this.player2 = new Player(world.paddle2);
 		this.player1.upKey = UTILS.W;
 		this.player1.downKey = UTILS.S;
 		this.player2.upKey = UTILS.ARROWUP;
 		this.player2.downKey = UTILS.ARROWDOWN;
+
+		this.ended = false;
 
         this.ball = new Ball(0xf06400);
         this.maxScore = UTILS.MAXSCORE;
@@ -30,7 +38,12 @@ export class Match {
         // PowerUps
         this.waitPowerup = 0;
         this.activePowerUp = false;
-        this.meshPowerUp = null;
+
+		// Update mesh with username
+		if (this.world.username1 && window.username){
+			this.world.setUsernameFont('one', window.username);
+			this.world.setUsernameFont('two', UTILS.truncateString(window.username, 4) + '[2.0]')
+		}
 
         // Triple Ball init
         this.tripleEnabled = false;
@@ -43,15 +56,44 @@ export class Match {
         }
     }
 
+	async ready(){
+		return;
+	}
+
+	initHtmlInterface(htmlElement){
+		if (!htmlElement)
+			return;
+		this.htmlElement = htmlElement;
+		if (!window.username){
+			window.username = 'pippo'
+		}
+		// console.log(this.htmlElement);
+		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
+		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
+		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username.toString(), 4) + '[2.0]';
+		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
+	}
+
+	updateHtmlInterface(){
+		if (!this.htmlElement)
+			return;
+		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
+		this.htmlElement.querySelector('#interface-score').innerHTML = `${this.score1}` + "-" + `${this.score2}`;
+		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
+	}
+
 	exchangesTextInit() {
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
+			this.exchangesText[0].geometry.dispose();
+			this.exchangesText[1].geometry.dispose();
 			this.world.remove(this.exchangesText[0]);
 			this.world.remove(this.exchangesText[1]);
 		}
 		const geometry = new TextGeometry( "0", {
 			font: this.exchangesFont,
 			size: 8,
-			height: 1,
+			depth: 1,
 		})
 		const emissive_color = 0x4DE8FF;
 		const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
@@ -74,11 +116,12 @@ export class Match {
 
 	updateExchanges() {
 		this.exchanges++;
-
+		this.exchangesText[0].geometry.dispose();
+		this.exchangesText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.exchanges.toString(), {
 			font: this.exchangesFont,
 			size: 8,
-			height: 1,
+			depth: 1,
 		});
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
@@ -90,7 +133,7 @@ export class Match {
 		const geometry = new TextGeometry( "0 - 0", {
 			font: this.exchangesFont,
 			size: 20,
-			height: 1,
+			depth: 1,
 		})
 		const emissive_color = 0xFFD33D;
 		const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
@@ -110,10 +153,12 @@ export class Match {
 	}
 
 	updateScoreText(){
+		this.scoreText[0].geometry.dispose();
+		this.scoreText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.score1.toString() + " - "  + this.score2.toString(), {
 			font: this.exchangesFont,
 			size: 20,
-			height : 1,
+			depth : 1,
 		})
 		geometry.computeBoundingBox();
 		geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
@@ -122,32 +167,41 @@ export class Match {
 	}
 
 	updateScore() {
-		if (this.ball.mesh.position.x < 0)
-			this.score2++;
-		else
-			this.score1++;
-		this.updateScoreText();
-		if (this.score1 == this.maxScore || this.score2 == this.maxScore)
-			this.gameEnd();
+		
 		// Sound
 		if(this.world.soundPoint.isPlaying){
             this.world.soundPoint.stop();
         }
-		this.world.soundPoint.play();
+
+		if (this.ball.mesh.position.x < 0)
+			this.score2++;
+		else
+			this.score1++;
+
+		this.updateScoreText();
+		if (this.score1 == this.maxScore || this.score2 == this.maxScore){
+			if(this.world.sound.isPlaying)
+                this.world.sound.stop();   
+			this.gameEnd();
+		}
+		else
+			this.world.soundPoint.play();
+
+		
 		this.ball.mesh.position.x = 0;
 		this.ball.mesh.position.y = 0;
-		this.ball.mesh.position.z = 0;
+		this.ball.mesh.position.z = this.ball.getZ();
 		this.player1.mesh.position.y = 0;
 		this.player2.mesh.position.y = 0;
-		this.player1.mesh.position.z = -10;
-		this.player2.mesh.position.z = -10;
 		this.player1.powerUp = null;
 		this.player2.powerUp = null;
 		this.player1.speed = UTILS.MOVSPEED;
 		this.player2.speed = UTILS.MOVSPEED;
 		this.ball.speed = UTILS.STARTINGSPEED;
+		this.ball.isReady = false;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
+		this.world.resetMesh();
 		// Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
@@ -156,7 +210,6 @@ export class Match {
 		// Triple Ball
 		this.remove_triple();
 
-
 		// Exchanges
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
@@ -164,16 +217,21 @@ export class Match {
 
 	onKeyDown(event) {
 		if (event.which == this.player1.upKey){
+			event.preventDefault();
 			this.player1.moves.up = true;
         }
-		if (event.which == this.player1.downKey)
+		if (event.which == this.player1.downKey){
+			event.preventDefault();
 			this.player1.moves.down = true;
-
+		}
 		if (event.which == this.player2.upKey){
+			event.preventDefault();
 			this.player2.moves.up = true;
         }
-		if (event.which == this.player2.downKey)
+		if (event.which == this.player2.downKey){
+			event.preventDefault();
 			this.player2.moves.down = true;
+		}
 
 		if (event.which == UTILS.TWO)//first person with '2' key
 		{
@@ -193,6 +251,7 @@ export class Match {
 		}
 		if (event.which == UTILS.SPACE)
 		{
+			event.preventDefault();
 			this.world.setCamera(this.world.mainCamera);
 			this.world.mainCamera.position.set(0, -10, 70);
 			this.world.mainCamera.lookAt(0, 0, 0);
@@ -227,17 +286,18 @@ export class Match {
 
 	addPowerUp() {
 
-		this.waitPowerup++;
-		if ((this.waitPowerup >= 5) && (this.exchanges % 5 == 0) && (!this.player1.powerUp && !this.player2.powerUp)){
-			if (this.activePowerUp == false) {
+		if (this.powerUpMode && this.activePowerUp == false) {
+			if (!this.player1.powerUp && !this.player2.powerUp)
+				this.waitPowerup++;
+			if ((this.waitPowerup >= 5) && (!this.player1.powerUp && !this.player2.powerUp)) {
 
 				this.activePowerUp = true;
 
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
 				// console.log(this.world.PowerUp);
-				const max = 27;
-				const min = -27;
+				const max = UTILS.MAX_SIZEY;
+				const min = UTILS.MIN_SIZEY;
 				const y = Math.floor(Math.random() * (max - min + 1)) + min;
 				const z = 15;
 				this.world.powerUp.mesh.position.set(0, y, z);
@@ -381,7 +441,7 @@ export class Match {
 			opp.speed = UTILS.MOVSPEED;
 			if (player.powerUp.name == "scale"){
 				opp.mesh.scale.multiplyScalar(1 / 0.7);
-            	opp.mesh.position.z = -10;
+            	this.world.resetMesh();
 			}
 			player.powerUp = null;
 		}
@@ -392,26 +452,43 @@ export class Match {
 
 		const currentTime = new Date()
         const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
-            this.update_time_ball = currentTime;
+        this.update_time_ball = currentTime;
 
 		this.updateMovements(deltaTime);
 
 		this.world.rotatePowerUp();
+
+		if (this.ball.isReady)
+			{
+				this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
+				this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
+				this.ball.mesh.position.z = this.ball.getZ();
+			}
+			else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER)
+			{
+				if (!this.ball.startTimer)
+					this.ball.startTimer = currentTime;
+				else
+				{
+					this.ball.isReady = true;
+					this.ball.startTimer = null;
+				}
+			}
 		//salvo pos futura
-		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
+/* 		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
 		let futureY = this.ball.mesh.position.y + this.ball.speed * this.ball.direction.y * deltaTime;
 		//check se è oltre la racchetta
-/* 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
+ 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
 			// Paddle in ball trajectory
 			if (){
-				
+
 			}
-		} */
+		}
 		//se si teletrasporto dove mi pare
 		//se no salvo pos futura in pos della ball
 		this.ball.mesh.position.x = futureX;
 		this.ball.mesh.position.y = futureY;
-		this.ball.mesh.position.z = this.ball.getZ();
+		this.ball.mesh.position.z = this.ball.getZ(); */
 
 		if(this.ball.mesh.position.z < 0){
             if (this.world.soundWallCollision.isPlaying)
@@ -483,6 +560,7 @@ export class Match {
 			this.waitPowerup = 0;
 			//assegnazione powerUp Player
 			this.powerUpTaken();
+
 		}
 
 
@@ -525,6 +603,38 @@ export class Match {
 
 		if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
 			this.collision = false;
+
+		// Update game interface
+		this.updateHtmlInterface();
+	}
+
+
+
+	// non ti permettere heeeey
+	destroy(scene) {
+		while (scene.children.length > 0) {
+			let object = scene.children[0];
+			this.world.remove(object);
+			if (object.geometry)
+				object.geometry.dispose();
+			if (object.texture)
+				object.texture.dispose();
+			if (object.children && object.children.length > 0)
+				UTILS.childCleaner(object);
+		}
+		this.world.arrayPowerup.forEach(powerup => {
+			if (powerup.mesh.children[0].geometry)
+				powerup.mesh.children[0].geometry.dispose();
+		});
+		this.world.mapPowerUp.forEach(powerup => {
+			//console.log("sto per pulire:", powerup);
+			if (powerup.mesh.children[0].geometry)
+				powerup.mesh.children[0].geometry.dispose();
+		});
+		this.fakeBalls.forEach(ball => {
+			if (ball.mesh.geometry)
+				ball.mesh.geometry.dispose();
+		});
 	}
 
 	render() {
@@ -532,33 +642,11 @@ export class Match {
 	}
 
 	gameEnd() {
-		/* if (this.score1 > this.score2)
-			alert("Player 1 wins!");
-		else
-			alert("Player 2 wins!"); */
-			this.world.setCamera(this.world.DoorExit);
-			this.world.DoorExit.position.set(0, 10, 50);
-
-			this.world.DoorExit.lookAt(0,-20,50);
-		 	this.world.DoorExit.rotation.z += THREE.MathUtils.degToRad(180);
-
-			function animateDoor() {
-				if (this.world.door.position.x > -2) {
-					this.world.door.position.x -= 0.05; // Velocità di spostamento della porta
-					requestAnimationFrame(animateDoor.bind(this));
-				}
-				else{
-					this.score1 = 0;
-					this.score2 = 0;
-					this.updateScoreText();
-				}
-			}
-			animateDoor.call(this);
-			/* while(this.world.door.position.x > -2){
-			this.world.door.position.x -= 0.000001;
-		}
-		this.score1 = 0;
-		this.score2 = 0;
-		this.updateScoreText(); */
+		// if (this.score1 > this.score2)
+		// 	alert("Player 1 wins!");
+		// else
+			// alert("Player 2 wins!");
+		
+		this.ended = true;
 	}
 }

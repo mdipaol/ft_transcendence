@@ -1,4 +1,4 @@
-
+# ss
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -7,8 +7,8 @@ class Costants:
     TABLE_WIDTH = 108
     TABLE_HEIGTH = 54
 
-    MAX_PADDLE_Y = 27
-    MIN_PADDLE_Y = -27
+    MAX_PADDLE_Y = TABLE_HEIGTH / 2
+    MIN_PADDLE_Y = - TABLE_HEIGTH / 2
 
     PADDLE_SIZE = 15
     PADDLE_HALF = PADDLE_SIZE / 2
@@ -21,17 +21,22 @@ class Costants:
     PADDLE_HEIGHT = 50
 
     REFRESH_RATE = 0.01
-    MOVSPEED = 1.3
+    MOVSPEED = 50
 
     BALL_WIDTH = 10
     BALL_HEIGHT = 10
 
-    BALL_SPEED = 1
+    BALL_SPEED = 100
+
+    BALL_AWAIT = 3
 
     MAX_WIDTH = (TABLE_WIDTH / 2)
     MIN_WIDTH = -(TABLE_WIDTH / 2)
 
     MAX_SCORE = 5
+
+    POWERUP_DURATION = 2
+    WAIT_POWERUP = 2
 
     INITIAL_STATE = {
         "player_one": {"x": MIN_WIDTH, "y": 0, "score": 0,},

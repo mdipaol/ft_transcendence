@@ -1,4 +1,4 @@
-
+#sssoooooioioioiossscsass
 import time, asyncio, uuid, re, copy, random
 from . import constants
 from .models import Match
@@ -21,7 +21,7 @@ class Match:
 
         self.exchanges : int = 0
 
-        # PowerUp
+        # PowerUpas
         self.activePowerUp = False
         self.waitPowerUp : int = 0
         self.powerUp : int = 0

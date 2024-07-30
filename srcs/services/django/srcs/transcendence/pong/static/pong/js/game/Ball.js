@@ -11,8 +11,10 @@ export class Ball {
 		this.mesh.add(new THREE.PointLight(color, 5, 100, 1))
 		this.speed = UTILS.STARTINGSPEED;
 		this.mesh.position.z = 10;
+		this.startTimer = null;
+		this.isReady = false;
 		this.direction = {
-			x: 1,
+			x: Math.random() > 0.5 ? 1 : -1,
 			y: 0
 		}
 		this.posCurve = new THREE.CatmullRomCurve3(
@@ -29,7 +31,7 @@ export class Ball {
 				new THREE.Vector3( 45, 0, 10),
 				new THREE.Vector3( 0, 0, 15 ),
 				new THREE.Vector3( -25, 0, -1),
-				new THREE.Vector3( -54, 0, 8 ),
+				new THREE.Vector3( -54, 0, 8),
 				new THREE.Vector3(-65, 0, 12)
 			]
 		)
@@ -38,7 +40,7 @@ export class Ball {
 	getZ()
 	{
 		let z;
-		if (this.direction.x > 0 )
+		if (this.direction.x > 0)
 			z = this.posCurve.getPointAt(UTILS.roundPos((this.mesh.position.x + 45)/100)).z;
 		else
 			z = this.negCurve.getPointAt(UTILS.roundPos((-this.mesh.position.x + 45)/100)).z;

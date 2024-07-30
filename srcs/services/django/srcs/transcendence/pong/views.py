@@ -9,7 +9,7 @@ from transcendence import settings
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, View
@@ -77,7 +77,7 @@ class CallbackView(View):
 		# print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 		# 	"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		# }).text), indent=4)))
-
+		print(response)
 		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text)
@@ -279,9 +279,15 @@ def item_show(request):
 		}
 		return render(request, 'pong/spa/item_show.html', context)
 
+@login_required
 def play(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/play.html')
+
+@login_required
+def interface_underground(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/interface_underground.html')
 
 def account(request):
 	if request.method == 'GET':
@@ -438,6 +444,26 @@ def tournament_leave(request, name):
 				return tournaments_list(request)
 			else:
 				return tournament_info(request, name)
+
+@login_required
+def edit_account(request):
+	if request.method == 'GET':
+		user = request.user
+		return render(request, 'pong/spa/edit_account.html', {
+			'nickname' : user.username,
+			'img' : user.image,
+			'email' : user.email,
+		})
+	if request.method == 'POST':
+		user = request.user
+		form = EditProfileForm(request.POST, request.FILES, instance=user)
+		if form.is_valid():
+			form.save()
+			return redirect('/#/account')
+		else:
+			form = EditProfileForm(instance=user)
+
+		return render(request, 'edit_account.html', {'form': form, 'img': user.image})
 
 @login_required
 def notification(request, username):

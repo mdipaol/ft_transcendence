@@ -20,7 +20,6 @@ mimetypes.add_type("text/html", ".html", True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -32,14 +31,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:39075']
+# Generate a list of all possible ports for localhost
+CSRF_TRUSTED_ORIGINS = ['https://localhost'] + [f'https://localhost:{port}' for port in range(65536)]
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
     'friendship',
-	'pong.apps.PongConfig',
+    'pong.apps.PongConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,10 +90,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ['POSTGRES_DB'],
-		'USER': os.environ['POSTGRES_USER'],
+        'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-		'HOST': 'postgres',
-		'PORT': '5432',
+        'HOST': 'postgres',
+        'PORT': '5432',
     }
 }
 
@@ -141,7 +141,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 

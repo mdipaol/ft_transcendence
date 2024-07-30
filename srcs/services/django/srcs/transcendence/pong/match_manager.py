@@ -1,4 +1,4 @@
-
+import time
 import asyncio
 from asgiref.sync import sync_to_async
 from datetime import datetime
@@ -9,7 +9,7 @@ from channels.db import database_sync_to_async
 class MatchManager:
 
     pendingPlayers = []
-    matches = []
+    matches : list[Match] = []
     active_monitoring = False
 
     @classmethod
@@ -20,11 +20,11 @@ class MatchManager:
         return None
 
     @classmethod
-    def get_avaiable_match(cls) -> Match:
+    def get_avaiable_match(cls, consumer) -> Match:
         for item in cls.matches:
-            if not item.is_started():
+            if not item.is_started() and item.powerup_mode == consumer.powerup_mode:
                 return item
-        match = Match()
+        match = Match(consumer.powerup_mode)
         cls.matches.append(match)
         return match
 
@@ -39,8 +39,9 @@ class MatchManager:
 
     @classmethod
     async def add_player(cls, consumer):
-        match: Match = cls.get_avaiable_match()
+        match: Match = cls.get_avaiable_match(consumer)
         match.add_player(consumer)
+        consumer.match = match
         await match.channel_layer.group_add(match.id, consumer.channel_name)
         if match.is_full():
             cls.start_match(match)
@@ -51,15 +52,17 @@ class MatchManager:
         match: Match = consumer.match
         if not match:
             return
-        if match.is_ended():
-            match.end_match()
-        # capire chi ha vinto oppure disconnessione
-        if match.is_empty():
+        if match in cls.matches:
             cls.matches.remove(match)
-        else:
-            match.send_to_channel("game_end", {})
-            consumer.match = None
 
+        await match.channel_layer.group_send(match.id, {
+            'type' : 'game_end',
+            'message' : {
+                'type' : 'disconnection'
+            }
+        })
+
+        await match.end_match()
 
     @classmethod
     async def game_loop(cls, match: Match):
@@ -68,13 +71,22 @@ class MatchManager:
 
         await match.channel_layer.send( match.player1.consumer.channel_name, {
             'type' : 'game_start',
-            'player' : 'player_one'
+            'player' : 'player_one',
+            'username_one' : match.player1.consumer.username,
+            'username_two' : match.player2.consumer.username,
         })
 
         await match.channel_layer.send( match.player2.consumer.channel_name, {
             'type' : 'game_start',
-            'player' : 'player_two'
+            'player' : 'player_two',
+            'username_one' : match.player1.consumer.username,
+            'username_two' : match.player2.consumer.username,
         })
+
+        while not match.ready(None):
+            await asyncio.sleep(0.5)
+
+        match.update_ball_await = time.time()
 
         while not match.is_ended():
 
@@ -82,12 +94,13 @@ class MatchManager:
 
             await match.send_game_state()
 
-
         await match.channel_layer.group_send(match.id, {
             'type' : 'game_end',
-            'message' : match.state,
+            'message' : {
+                'type' : 'win',
+                'winner' : match.player1.consumer.username if match.score1 > match.score2 else match.player2.consumer.username ,
+            }
         })
-
         # new_match = await database_sync_to_async(ModelMatch.objects.create)(
         # player1=match.player1.consumer.user,
         # player2=match.player2.consumer.user,
@@ -138,14 +151,18 @@ class MatchManager:
         except Exception as e:
             print(f"Error saving match: {e}")
 
+        cls.matches.remove(match)
+        await match.end_match()
+
     @classmethod
     async def monitoring(cls):
         while True:
-            print("monitoring")
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             print ("matches")
             print(cls.matches, sep=', ')
-            print(" players")
-            print(cls.pendingPlayers, sep=', ')
-            print("end monitoring")
+            # tasks = asyncio.all_tasks()
+            tasks = [task for task in asyncio.all_tasks() if not task.done() and task != asyncio.current_task()]
+            print(f"Active tasks: {tasks}")
+            print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
             # print(asyncio.all_tasks())
             await asyncio.sleep(5)

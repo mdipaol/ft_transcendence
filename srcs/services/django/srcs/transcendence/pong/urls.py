@@ -33,12 +33,14 @@ urlpatterns = [
     path('navbar/', views.navbar, name='navbar'),
     path('script_game/', views.scripts_view, name='scripts_view'),
     path('play/', views.play, name='play'),
+    path('interface_underground/', views.interface_underground, name='interface_underground'),
     path('tournament_create/', views.tournament_create, name='tournament_create'),
     path('tournaments_list/', views.tournaments_list, name='tournaments_list'),
     path('tournament_join/<str:name>/', views.tournament_join, name='tournament_join'),
     path('tournament_info/<str:name>/', views.tournament_info, name='tournament_info'),
     path('tournament_leave/<str:name>/', views.tournament_leave, name='tournament_leave'),
     path('notification/<str:username>/', views.notification, name='notification'),
+    path('edit_account/', views.edit_account, name='edit_account'),
 ]
 
 # To serve media files in development, because they are not served by default in development

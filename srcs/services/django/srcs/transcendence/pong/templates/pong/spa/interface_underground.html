@@ -1,0 +1,64 @@
+{% load static %}
+
+<style>
+
+    #interface{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+	#interface-top{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+    #interface-player1{
+        position: absolute;
+        font-size: 5vw;
+        left: 10%;
+    }
+    #interface-info{
+    	position: absolute;
+    }
+    #interface-player2{
+    	position: absolute;
+        font-size: 5vw;
+        right: 10%;
+    }
+    #interface-timer{
+        width: 10%;
+        position: relative;
+        left: 45%;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        font: monospace;
+        font-size: 3vw;
+    }
+    #interface-keys{
+        bottom: 0;
+        width: 100%;
+        position: absolute;
+        text-align: center;
+        font-size: 3vw;
+
+    }
+</style>
+
+<div id="interface">
+    <!-- Score, time, nickname info -->
+    <div id="interface-timer">15:15</div>
+    <div id="interface-top">
+        <div id="interface-player1">Player1</div>
+        <div id="interface-info">
+            <div id="interface-score">10 - 2</div>
+            <div id="interface-exchanges">12</div>
+        </div>
+        <div id="interface-player2">Player2</div>
+    </div>
+ <div id="interface-keys">
+    <p> space <img src="{% static 'pong/images/camera.png' %}">1️⃣   1 [ <img src="{% static 'pong/images/camera.png' %}"> 2️⃣]  2 [ <img src="{% static 'pong/images/camera.png' %}"> 3️⃣] </p>
+</div>
+</div>

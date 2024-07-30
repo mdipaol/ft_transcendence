@@ -10,40 +10,70 @@ import { Match } from './Match.js';
 import { World } from './World.js';
 import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
-import { MatchBot } from './Bot.js';
+import { BotMatch } from './BotMatch.js';
+
+import triggerHashChange from '../services/utils.js';
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
-const content = null || document.getElementById('page_root');
-let isPlaying = false;
-export async function startGame(gameMode){
+/**
+	@description This function start a game selecting the match, the map and if powerUps will be active
+	@param {String} gameMode Choose between 'local', 'remote', 'bot'
+	@param {String} worldMap Choose 'underground' for the first map, 'thefinals' for the second map.
+	@param {Boolean} powerUpMode True for the powerUp game mode
+**/
+export async function startGame(gameMode, worldMap, powerUpMode){
+
+	// page_root cleaning
+	const content = null || document.getElementById('page_root');
+	content.replaceChildren();
+
+	// Loading page
+	// ...
 
 	//---------INIT----------
-	const world = new World1();
-
-	content.replaceChildren();
+	let world = null;
+	if (worldMap == 'underground')
+		world = new World();
+	else
+		world = new World1();
 
 	await world.worldReady();
 	console.log("Meshes loaded");
+
 	let match = null;
 
 	switch (gameMode) {
 		case 'local':
-		  match = new Match(world);
+		  match = new Match(world, powerUpMode);
 		  break;
 		case 'remote':
-		  match = new OnlineMatch(world);
+		  match = new OnlineMatch(world, powerUpMode);
 		  break;
 		case 'bot':
-		  match  = new MatchBot(world);
+		  match  = new BotMatch(world, powerUpMode);
 		  break;
 		default:
-		  match = new Match(world);
+		  match = new Match(world, powerUpMode);
 	  }
 
-	// canvas dom element
 
-	content.replaceChildren(world.renderer.domElement);
+	const response = await fetch(`https://${window.location.host}/interface_underground/`);
+	// userInterface.innerHTML = await response.text();
+	// canvas dom element
+	const html = await response.text();
+	const parser = new DOMParser();
+
+    // Parse the text
+    const doc = parser.parseFromString(html, "text/html");
+	const interfaceUser = doc.getElementById('interface');
+
+	// Set match html variable with interface html element
+	match.initHtmlInterface(interfaceUser);
+
+	content.appendChild(interfaceUser);
+	content.appendChild(world.renderer.domElement);
+	// content.appendChild(userInterface);
 
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
@@ -61,28 +91,58 @@ export async function startGame(gameMode){
 	world.add(match.player2.mesh);
 	world.add(match.ball.mesh);
 
-	isPlaying = true;
 	const gameLoop = function(resolve) {
-		if (isPlaying) {
+		if (!match.ended) {
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
 			match.render();
+			/*if (match.connected && !match.culo)
+				{
+					//this.socket.send(JSON.stringify({ 'type': 'ready'}));
+					console.log("..");
+					match.culo = true;     
+					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
+					I PLAYER ABBIANO RENDERIZZATO TUTTO
+			}*/
 		}
 		else {
 			resolve();
 		}
 	};
 
+	await match.ready();
+
+	// window.addEventListener('hashchange', () =>{
+	// 	stopGame();
+	// });
+
+	// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})
 
-	gameStatus.then(() => {
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	gameStatus.then(async () => {
 		console.log("Game stopped");
+		if(match.world.soundPoint.isPlaying){
+			match.world.soundPoint.stop();
+			match.world.soundPoint.disconnect();
+		}
+		match.world.soundEndMach.play();
+
+		await sleep(5000);
+		match.world.destroySoundWorld();
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
+		//console.log("Before destroy:");
+		//console.log(match.world.renderer.info.memory);
+		//await sleep(5000);
+		match.destroy(match.world.scene);
+		//console.log("After destroy:");
+		//console.log(match.world.renderer.info.memory)
+		triggerHashChange('/play/');
 	})
-}
-export function stopGame(){
-	isPlaying = false;
 }

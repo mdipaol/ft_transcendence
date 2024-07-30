@@ -13,7 +13,6 @@ export class Player {
 			up: false,
 			down:false
 		}
-		this.mesh.position.z = -10;
 		this.powerUp = null;
 		this.upKey = null;
 		this.downKey = null;

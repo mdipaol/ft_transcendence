@@ -64,7 +64,7 @@ export class World {
 			emissiveIntensity: M_emissiveIntensity,
 			roughness: M_roughness,
 			metalness: M_metalness,
-			reflectivity: M_reflectivity
+			//reflectivity: M_reflectivity
 		});
 	}
 

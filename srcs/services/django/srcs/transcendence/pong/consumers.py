@@ -20,10 +20,12 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         self.username: str = 'Anonymous'
         self.player_id: str = str(uuid.uuid4())
         self.match: Match = None
+        self.powerup_mode = False
 
     async def connect(self):
 
         self.user = self.scope['user']
+        self.powerup_mode = self.scope["url_route"]["kwargs"]["powerup_mode"] == 'powerup'
 
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
@@ -40,18 +42,21 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-
-        direction = json.loads(text_data).get("direction")
-        # self.match.paddle_move(self.player_id, direction)
-        self.match.move(self, direction)
-
-    # Channel layers message handlers
+        data = json.loads(text_data)
+        if not data['type']:
+            return
+        if data['type'] == 'input':
+            self.match.move(self, data)
+        if data['type'] == 'ready':
+            self.match.ready(self)
 
     async def game_start(self, event):
 
         await self.send(text_data=json.dumps({
             "type": "game_start",
-            "player": event['player']
+            "player": event['player'],
+            'username_one' : event['username_one'],
+            'username_two' : event['username_two'],
             }))
 
     async def game_message(self, event):
@@ -118,9 +123,10 @@ class OnlineConsumer(WebsocketConsumer):
         if user.is_authenticated:
             self.add_connection(user)
             async_to_sync(self.channel_layer.group_add)(
-                f"notifications_{user.username}", self.channel_name
+                f"notifications_{str(user.id)}", self.channel_name
             )
             self.accept()
+            self.send(text_data=json.dumps({'username' : user.username}))
         else:
             self.close()
 
@@ -128,7 +134,7 @@ class OnlineConsumer(WebsocketConsumer):
         user = self.scope['user']
         if not user.is_anonymous:
             async_to_sync(self.channel_layer.group_discard)(
-                f"notifications_{user.username}", self.channel_name
+                f"notifications_{str(user.id)}", self.channel_name
             )
         self.del_connection(user)
 
@@ -140,7 +146,7 @@ class OnlineConsumer(WebsocketConsumer):
     #     json_data = json.loads(text_data)
     #     # status = json_data.get('status')
     #     user = self.scope['user']
-        
+
     #     # print('scope')
     #     # print(self.scope)
     #     # print(status)
