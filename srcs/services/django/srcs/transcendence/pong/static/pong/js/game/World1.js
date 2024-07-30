@@ -809,6 +809,21 @@ export class World1 {
 		this.soundEndMach.disconnect();
 	}
 	destroySoundWorld(){
-		
+		this.sound.stop();
+		this.sound.disconnect();
+		this.soundCollision.stop();
+		this.soundCollision.disconnect();
+		this.soundPowerUpNegative.stop();
+		this.soundPowerUpNegative.disconnect();
+		this.soundPowerUpPositive.stop();
+		this.soundPowerUpPositive.disconnect();
+		this.soundWallCollision.stop();
+		this.soundWallCollision.disconnect();
+		this.soundPoint.stop();
+		this.soundPoint.disconnect();
+		this.soundEndMach.stop();
+		this.soundEndMach.disconnect();
+		this.soundEndMach.stop();
+		this.soundEndMach.disconnect();
 	}
 }

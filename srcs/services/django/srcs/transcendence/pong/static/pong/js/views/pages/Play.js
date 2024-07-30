@@ -1,13 +1,5 @@
 
-import triggerHashChange from "../../services/utils.js";
-
 import {startGame} from "../../game/game.js";
-
-import { Player } from '../../game/Player.js';
-import { Ball } from '../../game/Ball.js';
-import { Match } from '../../game/Match.js';
-import { World } from '../../game/World.js';
-import { OnlineMatch } from '../../game/OnlineMatch.js';
 
 const Play = {
 

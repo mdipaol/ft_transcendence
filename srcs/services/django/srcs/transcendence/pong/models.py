@@ -20,10 +20,14 @@ class Tournament(models.Model):
 	end_date = models.DateField(null=True)
 	winner = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='winner', null=True, blank=True) # A winner can be a non partecipant?
 	finished = models.BooleanField(default=False)
+	match1 = models.ForeignKey('Match', related_name='match1', on_delete=models.CASCADE, null=True, blank=True)
+	match2 = models.ForeignKey('Match', related_name='match2', on_delete=models.CASCADE, null=True, blank=True)
+	the_finals = models.ForeignKey('Match', related_name='the_finals', on_delete=models.CASCADE, null=True, blank=True)
+
 
 	def __str__(self):
 		return self.name
-	
+
 	class Meta:
 		ordering = ['name']
 

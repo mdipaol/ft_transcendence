@@ -28,6 +28,11 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
 
+	const div = document.createElement('div');
+	div.setAttribute('id', 'game-container');
+	content.appendChild(div);
+	
+
 	// Loading page
 	// ...
 
@@ -72,7 +77,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	match.initHtmlInterface(interfaceUser);
 
 	content.appendChild(interfaceUser);
-	content.appendChild(world.renderer.domElement);
+	div.appendChild(world.renderer.domElement);
 	// content.appendChild(userInterface);
 
 	window.addEventListener('resize', function() {
@@ -135,12 +140,13 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
 		await sleep(5000);
 		match.world.destroySoundWorld();
+		match.destroy(match.world.scene);
+
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
 		//console.log("Before destroy:");
 		//console.log(match.world.renderer.info.memory);
 		//await sleep(5000);
-		match.destroy(match.world.scene);
 		//console.log("After destroy:");
 		//console.log(match.world.renderer.info.memory)
 		triggerHashChange('/play/');
