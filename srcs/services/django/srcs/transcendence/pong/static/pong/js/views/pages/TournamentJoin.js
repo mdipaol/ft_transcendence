@@ -55,7 +55,10 @@ const TournamentJoin = {
           const html = JsonResponse.html;
 
           div.innerHTML = html;
-          updateEventListeners(joinTournament);
+          updateEventListeners(buttonName);
+        }
+        else{
+          triggerHashChange('/tournament_join/')
         }
         });
       }});
@@ -63,7 +66,7 @@ const TournamentJoin = {
     }
 };
 
-function updateEventListeners(joinTournament) {
+function updateEventListeners(buttonName) {
   const backButton = document.getElementById("backButton");
   const joinButton = document.getElementById("joinButton");
   const leaveButton = document.getElementById("leaveButton");
@@ -81,24 +84,23 @@ function updateEventListeners(joinTournament) {
   if (leaveButton) {
     leaveButton.addEventListener('click', async () => {
 
-      // const buttonName = event.target.innerText;
-      // console.log(buttonName);
-
-      const response = await fetch( 'https://${window.location.host}/tournament_leave/', {
+      const response = await fetch(`https://${window.location.host}/tournament_leave/` + buttonName + `/`, {
         method: 'POST',
-        headers : {
+        headers:  {
           'X-CSRFToken' : getCookie('csrftoken')
         },
-    });
+      });
+
     if (response.ok) {
-      console.log(response);
-      const div = document.getElementById('tournament');
-      div.replaceChildren();
+      // console.log(response);
+      // const div = document.getElementById('tournament');
+      // div.replaceChildren();
 
-      const JsonResponse = await response.json();
-      const html = JsonResponse.html;
-
-      div.innerHTML = html;
+      // // const JsonResponse = await response.json();
+      // // const html = JsonResponse.html;
+      // const html = await response.text();
+      // div.innerHTML = html;
+      triggerHashChange('/tournament_join/')
     }
     });
   }

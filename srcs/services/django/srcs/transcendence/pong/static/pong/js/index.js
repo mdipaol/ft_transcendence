@@ -44,6 +44,10 @@ const router = async () => {
   const content = null || document.getElementById('page_root');
   const footer = null || document.getElementById('footer_root');
 
+  // header.replaceChildren();
+  // content.replaceChildren();
+  // footer.replaceChildren();
+
   // Render the header and footer of the page.
   header.innerHTML = await Navbar.render();
   await Navbar.after_render();

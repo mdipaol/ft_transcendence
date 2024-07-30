@@ -324,10 +324,14 @@ def tournament_join(request, name):
 	if request.method == 'POST':
 
 		# Not existing tournament
-		tournament = Tournament.objects.get(name=name)
-		if not tournament:
-			...
-		
+		try:
+			tournament = Tournament.objects.get(name=name)
+		except Exception as e:
+			print(e)
+			return JsonResponse(data={
+				'error' : 'Tournament not found'
+			}, status=404)
+
 		# User already in tournament
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		partecipant_user = [item.user for item in partecipant_list]
@@ -348,12 +352,12 @@ def tournament_join(request, name):
 		# Tournament full
 		if len(partecipant_list) >= tournament.number_of_partecipants:
 			...
-		
+
 		# Add new partecipant to database
 		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
 		partecipant.save()
-		
-		
+
+
 		# Creation of matches if tournament is full
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		user_partecipant = [item.user for item in partecipant_list]
@@ -381,13 +385,12 @@ def tournament_join(request, name):
 
 @login_required
 def tournaments_list(request):
-	if request.method == 'GET':
-		tournaments = Tournament.objects.all()
-		context = {
-			'tournaments' : tournaments,
-			'user' : request.user,
-		}
-		return render(request, 'pong/spa/tournament_list.html', context)
+	tournaments = Tournament.objects.all()
+	context = {
+		'tournaments' : tournaments,
+		'user' : request.user,
+	}
+	return render(request, 'pong/spa/tournament_list.html', context)
 
 @login_required(login_url='/')
 def online_users(request):
@@ -417,12 +420,24 @@ def tournament_info(request, name):
 
 @login_required
 def tournament_leave(request, name):
+
 	if request.method == 'POST':
-		print('suca')
 		tournament = Tournament.objects.get(name=name)
-		partecipant = TournamentPartecipant.objects.get(user=request.user, tournament=tournament)
-		partecipant.delete()
-		tournament_info(request, name)
+		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+		partecipant_user = [item.user for item in partecipant_list]
+		if request.user in partecipant_user:
+			print(request.user)
+			try:
+				TournamentPartecipant.objects.get(user=request.user, tournament=tournament).delete()
+			# partecipant.delete()
+			except Exception as e:
+				print(e)
+			partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+			if (len(partecipant_list) == 0):
+				tournament.delete()
+				return tournaments_list(request)
+			else:
+				return tournament_info(request, name)
 
 @login_required
 def notification(request, username):
@@ -438,5 +453,5 @@ def notification(request, username):
         }
     )
 	print(mes)
-	
+
 	return HttpResponse('Notification sent')

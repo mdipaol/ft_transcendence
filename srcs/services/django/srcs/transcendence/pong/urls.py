@@ -37,7 +37,7 @@ urlpatterns = [
     path('tournaments_list/', views.tournaments_list, name='tournaments_list'),
     path('tournament_join/<str:name>/', views.tournament_join, name='tournament_join'),
     path('tournament_info/<str:name>/', views.tournament_info, name='tournament_info'),
-    path('tournament_leave', views.tournament_leave, name='tournament_leave'),
+    path('tournament_leave/<str:name>/', views.tournament_leave, name='tournament_leave'),
     path('notification/<str:username>/', views.notification, name='notification'),
 ]
 
