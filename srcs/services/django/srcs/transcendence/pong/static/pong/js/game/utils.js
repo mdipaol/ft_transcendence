@@ -142,6 +142,12 @@ export function childCleaner(object) {
         child.geometry.dispose();
       if (child.texture)
         child.texture.dispose();
+      if (child.material)
+      {
+        if (child.material.map)
+          child.material.map.dispose();
+        child.material.dispose();
+      }
       object.remove(child);
       if (child.children && child.children.length > 0)
         childCleaner(child);

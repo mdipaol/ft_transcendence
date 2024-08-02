@@ -316,13 +316,15 @@ def tournament_create(request):
 			context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
-				'number_of_partecipants' : tournament.number_of_partecipants,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in user_partecipant,
 			}
-			return render(request, 'pong/spa/tournament_info.html', context)
+			return JsonResponse(data={
+				'html' : render_to_string('pong/spa/tournament_info.html', context),
+				'name' : tournament.name,
+			})
 		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
 
 @login_required
@@ -345,7 +347,6 @@ def tournament_join(request, name):
 			context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
-				'number_of_partecipants' : tournament.number_of_partecipants,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
 				'winner' : None,
 				'finished' : False,
@@ -354,10 +355,6 @@ def tournament_join(request, name):
 			return JsonResponse(data={
 				'html' : render_to_string('pong/spa/tournament_info.html', context)
 			})
-
-		# Tournament full
-		if len(partecipant_list) >= tournament.number_of_partecipants:
-			...
 
 		# Add new partecipant to database
 		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
@@ -368,7 +365,7 @@ def tournament_join(request, name):
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		user_partecipant = [item.user for item in partecipant_list]
 		print(user_partecipant)
-		if len(user_partecipant) == tournament.number_of_partecipants:
+		if len(user_partecipant) == 4:
 			sorted_user = sorted(user_partecipant, key=lambda user: user.level)
 			paired_user = [(sorted_user[i], sorted_user[i + 1]) for i in range(0, len(sorted_user) - 1, 2)]
 			for pair in paired_user:
@@ -445,16 +442,15 @@ def tournament_leave(request, name):
 			else:
 				return tournament_info(request, name)
 
-@login_required
+@login_required(login_url='/')
 def edit_account(request):
 	if request.method == 'GET':
 		user = request.user
-		return render(request, 'pong/spa/edit_account.html', {
-			'nickname' : user.username,
-			'img' : user.image,
-			'email' : user.email,
-		})
+		form = EditProfileForm(instance=user)
+		print(form)
+		return render(request, 'pong/spa/edit_account.html', { 'user' : user, 'form' : form })
 	if request.method == 'POST':
+		print(vars(request))
 		user = request.user
 		form = EditProfileForm(request.POST, request.FILES, instance=user)
 		if form.is_valid():
@@ -463,7 +459,7 @@ def edit_account(request):
 		else:
 			form = EditProfileForm(instance=user)
 
-		return render(request, 'edit_account.html', {'form': form, 'img': user.image})
+		return render(request, 'pong/spa/edit_account.html', {'form': form, 'img': user.image})
 
 @login_required
 def notification(request, username):
@@ -471,13 +467,12 @@ def notification(request, username):
 	if not user:
 		return HttpResponse('user not found')
 	channel_layer = get_channel_layer()
-	mes = async_to_sync(channel_layer.group_send)(
-        f"notifications_{user.username}",
+	# print(f"notifications_{str(user.id)}")
+	async_to_sync(channel_layer.group_send)(
+        f"notifications_{str(user.id)}",
         {
             "type": "send_notification",
             "message": {"message": "sono una puttana"}
         }
     )
-	print(mes)
-
 	return HttpResponse('Notification sent')

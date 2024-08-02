@@ -27,10 +27,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	// page_root cleaning
 	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
-
-	const div = document.createElement('div');
-	div.setAttribute('id', 'game-container');
-	content.appendChild(div);
 	
 
 	// Loading page
@@ -77,8 +73,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	match.initHtmlInterface(interfaceUser);
 
 	content.appendChild(interfaceUser);
-	div.appendChild(world.renderer.domElement);
-	// content.appendChild(userInterface);
+	content.appendChild(world.renderer.domElement)
 
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);

@@ -66,7 +66,7 @@ const TournamentJoin = {
     }
 };
 
-function updateEventListeners(buttonName) {
+export function updateEventListeners(buttonName) {
   const backButton = document.getElementById("backButton");
   const joinButton = document.getElementById("joinButton");
   const leaveButton = document.getElementById("leaveButton");

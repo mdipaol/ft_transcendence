@@ -4,36 +4,39 @@
     <section class="account-highlights account-section">
     <div class="profile-sidepanel account-highlights">
           <h6>Current Image:</h6>
-          <img src="{{img}}" alt="Current Image" class="account-image">
+          <img src="{{user.image}}" alt="Current Image" class="account-image">
         </div>
       <div class="form-container">
         <div class="input-form">
           <form method="POST" enctype="multipart/form-data" id="edit-form" action="/edit_account/">
             <!-- CSRF token -->
-             {% csrf_token %}
+            {% csrf_token %}
+            {{form}}
             <fieldset>
-              <legend class="neonbar neonbar-animated neonbar-medium neonbar-pink">Edit Profile</legend>
-              <div class="upload-btn-container">
+            <legend class="neonbar neonbar-animated neonbar-medium neonbar-pink">Edit Profile</legend>
+            <div class="upload-btn-container">
+                {{form.image.errors}}
                 <input type="file" id="image-upload" name="image" style="display: none;" />
                 <button type="button" class="glow-button cyan" onclick="document.getElementById('image-upload').click();">Upload new image</button>
-                <button class="glow-button cyan">Upload new image</button>
-              </div>
-              <div class="account-info-text">
-                <label for="nickname" class= "neonbar neonbar-small neonbar-pink" >Nickname</label>
-                <input type="text" id="nickname" name="nickname" value="{{nickname}}" required class="neonbar neonbar-blue">
+                <!-- <button class="glow-button cyan">Upload new image</button> -->
+            </div>
+            <div class="account-info-text">
+              <label for="username" class= "neonbar neonbar-small neonbar-pink" >Username</label>
+                {{form.username.errors}}
+                <input type="text" id="username" name="username" value="{{form.username}}" required class="neonbar neonbar-blue">
                 <label for="email" class= "neonbar neonbar-small neonbar-pink" >Email</label>
-                <input type="email" id="email" name="email" value="{{email}}" required class="neonbar neonbar-small neonbar-blue">
+                {{form.email.errors}}
+                <input type="email" id="email" name="email" value="{{form.email}}" required class="neonbar neonbar-small neonbar-blue">
                 <div>
                 <a class="glow-button purple" href="/#/account">Return</a>
                 <button class="glow-button green">Update</button>
                 <input type="submit" value="Submit">
                 </div>
-              </div>
-            </fieldset>
-              </form>
             </div>
+            </fieldset>
+        </form>
+        </div>
       </div>
       </section>
     </div>
-  `;
 

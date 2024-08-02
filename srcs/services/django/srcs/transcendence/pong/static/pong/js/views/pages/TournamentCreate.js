@@ -1,4 +1,5 @@
 import { parseRequestUrl } from '../../services/utils.js';
+import { updateEventListeners } from './TournamentList.js';
 import triggerHashChange from '../../services/utils.js';
 
 const TournamentCreate = {
@@ -20,12 +21,12 @@ const TournamentCreate = {
 
     if (listButton) {
       listButton.addEventListener('click', async () => {
-        triggerHashChange('/tournament_join');
+        triggerHashChange('/tournament_join/');
       });
     }
     if (createButton) {
       createButton.addEventListener('click', async () => {
-        triggerHashChange('/tournament_create');
+        triggerHashChange('/tournament_create/');
       });
     }
     const form = document.getElementById('tournament-form');
@@ -36,7 +37,7 @@ const TournamentCreate = {
 
         const formData = new FormData(form);
         const csrfToken = formData.get('csrfmiddlewaretoken');
-
+      
         try {
             const response = await fetch(form.action, {
                 method: 'POST',
@@ -47,12 +48,16 @@ const TournamentCreate = {
             });
 
             if (response.ok) {
-              console.log('tournament created');
+              console.log(response);
               const div = document.getElementById('tournament');
               div.replaceChildren();
-              const tournamentCreated = await response.text();
-              console.log(tournamentCreated);
-              div.innerHTML = tournamentCreated;
+    
+              const JsonResponse = await response.json();
+              const html = JsonResponse.html;
+              const name = JsonResponse.name;
+
+              div.innerHTML = html;
+              updateEventListeners(name);
             } else {
                 const errorData = await response.json();
                 errorMessageDiv.textContent = errorData.message || 'Si è verificato un errore. Riprova.';

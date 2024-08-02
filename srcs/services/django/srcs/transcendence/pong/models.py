@@ -15,7 +15,6 @@ class BaseUser(AbstractUser):
 class Tournament(models.Model):
 	name = models.CharField(max_length=255, unique=True)
 	creator = models.ForeignKey(BaseUser, related_name='creator', on_delete=models.CASCADE, null=True, blank=True)
-	number_of_partecipants = models.IntegerField(default=4)
 	start_date = models.DateField(default=timezone.now())
 	end_date = models.DateField(null=True)
 	winner = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name='winner', null=True, blank=True) # A winner can be a non partecipant?

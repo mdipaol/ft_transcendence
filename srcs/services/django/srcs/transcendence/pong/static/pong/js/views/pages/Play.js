@@ -12,7 +12,7 @@ const Play = {
     },
 
     startLocalGame: async () => {
-        await startGame('local', 'underground', true);
+        await startGame('local', 's', true);
     },
 
     startRemoteGame: async () => {

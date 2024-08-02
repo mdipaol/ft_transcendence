@@ -10,6 +10,7 @@ class MatchManager:
 
     pendingPlayers = []
     matches : list[Match] = []
+    invite_matches : list[Match] = []
     active_monitoring = False
 
     @classmethod

@@ -1,26 +1,4 @@
 
-// const socket = new WebSocket(
-//     'wss://'
-//     + window.location.host
-//     + '/ws/online/'
-//   );
-
-//   socket.onopen = function(event) {
-//     console.log('WebSocket is connected.');
-//   };
-  
-//   socket.onmessage = function(event) {
-//     console.log('Message from server')
-//   };
-  
-//   socket.onclose = function(event) {
-//     console.log('WebSocket is closed.');
-//   };
-  
-//   socket.onerror = function(error) {
-//     console.log('WebSocket error:', error);
-//   };
-
   const MyWebsocket = {
     socket : null,
 
@@ -40,10 +18,11 @@
       MyWebsocket.socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 
-        if (data.username)
+        if (data.username) {
           window.username = data.username;
-        
-        console.log('Connected as: ' + window.username);
+          console.log('Connected as: ' + window.username);
+        }
+        console.log(data);
       };
       
       MyWebsocket.socket.onclose = function(event) {

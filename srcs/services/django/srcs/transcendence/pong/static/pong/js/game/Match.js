@@ -619,16 +619,27 @@ export class Match {
 				object.geometry.dispose();
 			if (object.texture)
 				object.texture.dispose();
+			if ( object.material && object.material.length > 0)
+				object.material.forEach(mat => {
+					if(mat.map)
+						mat.map.dispose();	
+					mat.dispose();
+				})
+			else if (object.material)
+			{
+				if (object.material.map)
+					object.material.map.dispose();
+				object.material.dispose();
+			}
 			if (object.children && object.children.length > 0)
 				UTILS.childCleaner(object);
 		}
 		this.world.arrayPowerup.forEach(powerup => {
-			if (powerup.mesh.children[0].geometry)
+			if (powerup.mesh.children[0] && powerup.mesh.children[0].geometry)
 				powerup.mesh.children[0].geometry.dispose();
 		});
 		this.world.mapPowerUp.forEach(powerup => {
-			//console.log("sto per pulire:", powerup);
-			if (powerup.mesh.children[0].geometry)
+			if (powerup.mesh.children[0] && powerup.mesh.children[0].geometry)
 				powerup.mesh.children[0].geometry.dispose();
 		});
 		this.fakeBalls.forEach(ball => {

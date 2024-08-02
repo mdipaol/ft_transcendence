@@ -14,7 +14,7 @@ password_policy = PasswordPolicy.from_names(
 	special=1,
 )
 
-class	EditProfileForm(forms.ModelForm):
+class EditProfileForm(forms.ModelForm):
 	class Meta:
 		model = BaseUser
 		fields = ['image', 'username', 'email']
@@ -158,11 +158,10 @@ class CreateTournamentForm(forms.Form):
 
 	def save(self, user):
 		...
-		tournament = Tournament.objects.create(name=self.cleaned_data.get('name'), number_of_partecipants=self.cleaned_data.get('number_of_partecipants'), creator=user)
+		tournament = Tournament.objects.create(name=self.cleaned_data.get('name'), creator=user)
 		partecipant = TournamentPartecipant.objects.create(tournament=tournament, user=user)
 		tournament.save()
 		partecipant.save()
 		return tournament
 
 	name = forms.CharField(label='Enter tournament name', max_length=10)
-	number_of_partecipants = forms.ChoiceField(label='Select the number of players', choices=NUM_CHOICES)

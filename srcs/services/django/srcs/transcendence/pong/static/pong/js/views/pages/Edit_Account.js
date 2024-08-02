@@ -54,7 +54,6 @@ const Home = {
         const errorMessageDiv = document.getElementById('error-message');
 
         form.addEventListener('submit', async (event) => {
-            console.log('entro');
             event.preventDefault(); // Prevent the form's default submit behavior
 
             const formData = new FormData(form);
@@ -69,7 +68,7 @@ const Home = {
                     body: formData
                 });
                 if (response.ok) {
-                    triggerHashChange('/home/');
+                    triggerHashChange('/edit_account/');
                 } else {
                     const errorForm = await response.text();
                     document.getElementById('page_root').innerHTML = errorForm;

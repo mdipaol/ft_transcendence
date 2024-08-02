@@ -1,7 +1,6 @@
 <div class="tournament-info">
 	<h3>{{ name }}</h3>
 	<h3>{{ creator }}</h3>
-	<h3>{{ number_of_partecipants }}</h3>
 	<h3>List of partecipants</h3>
 		{% for item in partecipants %}
 			<h3>{{ item.user.username }}</h3>

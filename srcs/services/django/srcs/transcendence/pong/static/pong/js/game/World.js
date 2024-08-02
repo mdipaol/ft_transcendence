@@ -354,6 +354,7 @@ export class World {
 		poster.rotation.set(Math.PI/2, 0, 0);
 		poster.position.set(0, 124.5, 70);
 		poster.scale.set(1.5,1.5,1.5);
+		poster.name = "poster";
 		this.add(poster);
 	}
 
@@ -447,6 +448,8 @@ export class World {
 					threeObj.scale.multiplyScalar(25);
 					this.door.material.emissive = new THREE.Color(0x808080); // Colore emissivo (verde in questo caso)
                     this.door.material.emissiveIntensity = 0.025;
+					object.name = "door";
+					console.log(object);
 					this.add(object.scene);
 					resolve();
 				}
