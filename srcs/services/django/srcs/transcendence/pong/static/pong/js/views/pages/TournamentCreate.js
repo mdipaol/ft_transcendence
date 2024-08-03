@@ -16,8 +16,8 @@ const TournamentCreate = {
    * must be done after these elements have been fully rendered on the page.
    */
   after_render: async () => {
-    const listButton = document.getElementById("list");
-    const createButton = document.getElementById("create");
+    const listButton = document.getElementById("tournament-list");
+    const createButton = document.getElementById("tournament-create");
 
     if (listButton) {
       listButton.addEventListener('click', async () => {
