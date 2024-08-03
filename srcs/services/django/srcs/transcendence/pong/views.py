@@ -367,6 +367,10 @@ def tournament_join(request, name):
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+				'started' : tournament.started,
+				'match1' : tournament.match1,
+				'match2' : tournament.match2,
+				'the_finals' : tournament.the_finals,
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in partecipant_user,

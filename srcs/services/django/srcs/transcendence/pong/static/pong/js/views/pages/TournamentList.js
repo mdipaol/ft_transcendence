@@ -87,7 +87,7 @@ const TournamentJoin = {
      if (leaveButtons){
       leaveButtons.forEach(leave => {
         leave.addEventListener('click', async (event) => {
-          
+
           const response = await fetch('/tournament_leave/' + leave.getAttribute('data-id') + '/', {
             method: 'POST',
             headers : {
@@ -98,11 +98,11 @@ const TournamentJoin = {
         })
       })
     }
-    
+
     if (joinedButtons){
       joinedButtons.forEach(join => {
         join.addEventListener('click', async (event) => {
-          
+
           const response = await fetch('/tournament_join/' + join.getAttribute('data-id') + '/', {
             method: 'POST',
             headers : {
@@ -114,10 +114,10 @@ const TournamentJoin = {
             console.log(response);
             const div = document.getElementById('tournament');
             div.replaceChildren();
-  
+
             const JsonResponse = await response.json();
             const html = JsonResponse.html;
-  
+
             div.innerHTML = html;
             updateEventListeners(join.getAttribute('data-id'));
           }
