@@ -325,6 +325,11 @@ def tournament_create(request):
 			})
 		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
 
+
+@login_required(login_url='/')
+def tournament_alias(request):
+	return render(request, 'pong/spa/tournament_alias.html')
+
 @login_required(login_url='/')
 def tournament_join(request, name):
 	if request.method == 'GET':
@@ -341,6 +346,10 @@ def tournament_join(request, name):
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
+				'started' : tournament.started,
+				'match1' : tournament.match1,
+				'match2' : tournament.match2,
+				'the_finals' : tournament.the_finals,
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in partecipant_user,
@@ -379,8 +388,14 @@ def tournament_join(request, name):
 				'html' : render_to_string('pong/spa/tournament_info.html', context)
 			})
 
+
+		# Tournament full
+		if len(partecipant_user) >= 4:
+			return JsonResponse(data={'error' : 'Tournament is full'}, status=500)
+
 		# Add new partecipant to database
-		partecipant = TournamentPartecipant(user=request.user, tournament=tournament, alias=name)
+		alias = request.POST.get('alias')
+		partecipant = TournamentPartecipant(user=request.user, tournament=tournament)
 		partecipant.save()
 
 
@@ -402,6 +417,10 @@ def tournament_join(request, name):
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+				'started' : tournament.started,
+				'match1' : tournament.match1,
+				'match2' : tournament.match2,
+				'the_finals' : tournament.the_finals,
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in user_partecipant,

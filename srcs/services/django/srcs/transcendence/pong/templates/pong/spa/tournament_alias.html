@@ -1,0 +1,32 @@
+<style>
+		#alias-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.8);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		  }
+		  #overlay-content {
+			background: red;
+			padding: 20px;
+			border-radius: 8px;
+		  }
+		  #close-overlay {
+			margin-top: 10px;
+		  }
+</style>
+
+<div id="alias-overlay">
+	<form id="alias-form">
+		<div>
+			<label for="inputText">Enter an alias name for the tournament:</label>
+		</div>
+		<input type="text" id="alias" name="alias" required>
+		<!-- <button id="submit-alias-button">Submit</button> -->
+		<input type="submit" value="Submit">
+	</form>
+</div>

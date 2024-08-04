@@ -145,19 +145,7 @@ class UpdateAvatar(UpdateForm):
 
 class CreateTournamentForm(forms.Form):
 
-	NUM_CHOICES = [
-        (4, '4 Players'),
-        (8, '8 Players'),
-    ]
-
-	# def clean_name(self):
-	# 	...
-
-	# def clean(self):
-	# 	...
-
 	def save(self, user):
-		...
 		tournament = Tournament.objects.create(name=self.cleaned_data.get('name'), creator=user)
 		partecipant = TournamentPartecipant.objects.create(tournament=tournament, user=user)
 		tournament.save()

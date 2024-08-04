@@ -57,29 +57,23 @@ const TournamentJoin = {
         if (joinTournament) { joinTournament.addEventListener('dblclick', async (event) => {
 
           const buttonName = event.target.innerText;
-          console.log(buttonName);
 
-          const response = await fetch( '/tournament_join/' + buttonName + '/' , {
-            method: 'POST',
-            headers : {
-              'X-CSRFToken' : getCookie('csrftoken')
-            },
-        });
-        if (response.ok) {
-          // PARSARE ERRORI E VISUALIZZARE TORNEO
-          console.log(response);
-          const div = document.getElementById('tournament');
-          div.replaceChildren();
+          const alias = await fetch('/tournament_join/alias/');
+          if (!alias.ok)
+            triggerHashChange('/tournament_join/');
 
-          const JsonResponse = await response.json();
-          const html = JsonResponse.html;
+          const aliasOverlayHtml = await alias.text();
 
-          div.innerHTML = html;
-          updateEventListeners(buttonName);
-        }
-        else{
-          triggerHashChange('/tournament_join/')
-        }
+          // const div = document.getElementById('tournament');
+          // div.replaceChildren();
+
+          // div.innerHTML = aliasOverlayHtml;
+          document.getElementById('tournament').innerHTML += aliasOverlayHtml;
+
+          const tournamentName = buttonName;
+          await displayOverlay(aliasOverlayHtml, tournamentName);
+
+
         });
       }});
      };
@@ -191,3 +185,39 @@ function reattachEventListeners() {
   });
 }
 export default TournamentJoin;
+
+function displayOverlay(content, tournamentName) {
+  const overlay = document.getElementById('alias-overlay');
+
+  overlay.style.display = 'flex';
+
+  const aliasForm = document.getElementById('alias-form');
+  aliasForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    overlay.style.display = 'none';
+
+    const formData = new FormData(aliasForm);
+    const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
+      method: 'POST',
+      headers : {
+        'X-CSRFToken' : getCookie('csrftoken')
+      },
+      body: formData,
+      });
+    if (response.ok) {
+      // PARSARE ERRORI E VISUALIZZARE TORNEO
+      console.log(response);
+      const div = document.getElementById('tournament');
+      div.replaceChildren();
+
+      const JsonResponse = await response.json();
+      const html = JsonResponse.html;
+
+      div.innerHTML = html;
+      updateEventListeners(tournamentName);
+    }
+    else{
+      triggerHashChange('/tournament_join/')
+    }
+  });
+}
