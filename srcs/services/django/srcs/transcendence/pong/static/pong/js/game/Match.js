@@ -447,6 +447,37 @@ export class Match {
 		}
 	}
 
+	deltaErrorCheck() {
+		//add a little red cube at player position
+		let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+		let cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+		let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+		let cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+		cube2.position.x = this.player2.mesh.position.x;
+		cube2.position.y = this.player2.mesh.position.y;
+		cube2.position.z = this.player2.mesh.position.z;
+		cube.position.x = this.player1.mesh.position.x;
+		cube.position.y = this.player1.mesh.position.y;
+		cube.position.z = this.player1.mesh.position.z;
+		this.world.add(cube);
+		this.world.add(cube2);
+
+
+		if (this.ball.mesh.position.x > 0)
+		{
+			console.log(this.ball.mesh.position.y - this.player2.mesh.position.y);
+			if (Math.abs(this.ball.mesh.position.y - this.player2.mesh.position.y)< UTILS.PADDLE_SIZE_Y / 2)
+				return true;
+		}
+		else
+		{
+			console.log(this.ball.mesh.position.y - this.player1.mesh.position.y);
+			if (Math.abs(this.ball.mesh.position.y - this.player1.mesh.position.y) < UTILS.PADDLE_SIZE_Y / 2)
+				return true;
+		}
+		return false;
+	}
+
 	// region update()
 	update() {
 
@@ -511,7 +542,17 @@ export class Match {
 
 			// console.log(ball1.mesh.position);
 		}
-
+		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 2  || this.ball.mesh.position.x < this.player1.mesh.position.x - 2)
+		{
+			console.log("palla: " + this.ball.mesh.position.x + " player1: " + this.player1.mesh.position.x + " player2: " + this.player2.mesh.position.x);
+			if (this.deltaErrorCheck())
+			{
+				if (this.ball.mesh.position.x > 0)
+					this.ball.mesh.position.x = this.player2.mesh.position.x;
+				else
+					this.ball.mesh.position.x = this.player1.mesh.position.x;
+			}
+		}
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
 			/* if (ball.speed < 2)
