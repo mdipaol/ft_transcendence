@@ -18,6 +18,13 @@
 		  #close-overlay {
 			margin-top: 10px;
 		  }
+		  .error{
+			color: red;
+			display: none;
+		  }
+		  .error.visible {
+            display: block;
+        }
 </style>
 
 <div id="alias-overlay">
@@ -25,7 +32,10 @@
 		<div>
 			<label for="inputText">Enter an alias name for the tournament:</label>
 		</div>
-		<input type="text" id="alias" name="alias" required>
+		<span id="alias-error" class="error">Insert a correct alias name</span>
+		{% comment %} <input type="text" id="alias" name="alias" placeholder="Insert an alias Name" onvalid="this.setCustomValidity('')" required> {% endcomment %}
+		<input type="text" id="alias" name="alias" placeholder="Insert an alias Name" required maxlength="255" id="information_name" minlength="1" name="information[name]"
+			oninvalid="setCustomValidity('Should not be left empty or contain spaces.')"/>
 		<!-- <button id="submit-alias-button">Submit</button> -->
 		<input type="submit" value="Submit">
 	</form>
