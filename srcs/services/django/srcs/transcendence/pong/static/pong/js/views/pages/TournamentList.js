@@ -56,24 +56,39 @@ const TournamentJoin = {
       joinTournament.forEach(joinTournament => {
         if (joinTournament) { joinTournament.addEventListener('dblclick', async (event) => {
 
-          const buttonName = event.target.innerText;
+          const tournamentName = event.target.innerText;
 
-          const alias = await fetch('/tournament_join/alias/');
-          if (!alias.ok)
-            triggerHashChange('/tournament_join/');
-
-          const aliasOverlayHtml = await alias.text();
-
-          // const div = document.getElementById('tournament');
-          // div.replaceChildren();
-
-          // div.innerHTML = aliasOverlayHtml;
-          document.getElementById('tournament').innerHTML += aliasOverlayHtml;
-
-          const tournamentName = buttonName;
-          await displayOverlay(aliasOverlayHtml, tournamentName);
-
-
+          const alias = await fetch('/tournament_join/alias/' + tournamentName + '/');
+          if (!alias.ok){
+            if (alias.status == 400){
+              const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
+                method: 'GET',
+                headers : {
+                  'X-CSRFToken' : getCookie('csrftoken')
+                },
+                });
+              if (response.ok) {
+                // PARSARE ERRORI E VISUALIZZARE TORNEO
+                console.log(response);
+                const div = document.getElementById('tournament');
+                div.replaceChildren();
+          
+                const JsonResponse = await response.json();
+                const html = JsonResponse.html;
+          
+                div.innerHTML = html;
+                updateEventListeners(tournamentName);
+                return;
+              }
+              else
+                triggerHashChange('/tournament_join/');
+            }
+          }
+          else {
+            const aliasOverlayHtml = await alias.text();
+            document.getElementById('tournament').innerHTML += aliasOverlayHtml;
+            displayOverlay(aliasOverlayHtml, tournamentName);
+          }
         });
       }});
      };
@@ -194,9 +209,25 @@ function displayOverlay(content, tournamentName) {
   const aliasForm = document.getElementById('alias-form');
   aliasForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    overlay.style.display = 'none';
-
+    
     const formData = new FormData(aliasForm);
+    if (formData.get('alias').trim() === ''){
+      const aliasError = document.getElementById('alias-error');
+      if (aliasError) {
+        const aliasName = document.getElementById('alias');
+
+        aliasName.oninvalid = function(e) {
+          if (e.target.value.indexOf(' ') >= 0) {
+            e.target.setCustomValidity('Alias should not contain spaces.');
+          } else {
+            e.target.setCustomValidity('');
+          }
+
+        }
+      }
+      return;
+    }
+    overlay.style.display = 'none';
     const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
       method: 'POST',
       headers : {

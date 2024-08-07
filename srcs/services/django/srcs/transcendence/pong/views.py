@@ -327,8 +327,18 @@ def tournament_create(request):
 
 
 @login_required(login_url='/')
-def tournament_alias(request):
-	return render(request, 'pong/spa/tournament_alias.html')
+def tournament_alias(request, name):
+	tournament = Tournament.objects.get(name=name)
+
+	partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+	partecipant_user = [item.user for item in partecipant_list]
+
+	if request.user in partecipant_user:
+		return JsonResponse(data={
+			'error' : 'Alias already in the Tournament'
+		}, status=400)
+	else:
+		return render(request, 'pong/spa/tournament_alias.html')
 
 @login_required(login_url='/')
 def tournament_join(request, name):
@@ -375,7 +385,7 @@ def tournament_join(request, name):
 			context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
-				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
+				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
 				'match1' : tournament.match1,
 				'match2' : tournament.match2,
@@ -395,9 +405,15 @@ def tournament_join(request, name):
 
 		# Add new partecipant to database
 		alias = request.POST.get('alias')
-		partecipant = TournamentPartecipant(user=request.user, tournament=tournament)
-		partecipant.save()
+		print(alias)
 
+		alises = [a.alias for a in partecipant_list]
+		if alias in alises:
+			return JsonResponse(data={'error' : 'The alias is already taken'})
+
+		# Saving the new partecipant with the alias in the dataabase
+		partecipant = TournamentPartecipant.objects.create(tournament=tournament, user=request.user, alias=alias)
+		partecipant.save()
 
 		# Creation of matches if tournament is full
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
