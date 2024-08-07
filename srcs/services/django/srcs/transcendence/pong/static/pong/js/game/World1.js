@@ -346,10 +346,10 @@ export class World1 {
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
-			'static/pong/js/Pong_Fake/table/Table_ping_pong.glb',
+			'static/pong/js/Pong_Fake/table/table_wold1.glb',
 			(object)=>{
 				object.scene.rotation.x =Math.PI/2;
-				object.scene.scale.multiplyScalar(21.5);
+				object.scene.scale.multiplyScalar(8);
 				object.scene.position.set(0, 0 , 0);
 				const material_bordi = new THREE.MeshStandardMaterial({
 
@@ -370,9 +370,9 @@ export class World1 {
 				if(object.scene.children[0]){
 					object.scene.children[0].material = material_bordi;
 				}
-				if(object.scene.children[1]){
-					object.scene.children[1].material = material_rete;
-				}
+				// if(object.scene.children[1]){
+				// 	object.scene.children[1].material = material_rete;
+				// }
 				this.add(object.scene);
 				resolve();
 			},
@@ -386,7 +386,7 @@ export class World1 {
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
 			this.gltfLoader.load(
-				'static/pong/js/Pong_Fake/paddle/paddle_vik_a_frammenti_3.glb',
+				'static/pong/js/Pong_Fake/paddle/paddle_wold1.glb',
 				(object)=>{
 					//object.scene.rotation.z = Math.PI/2;
 					//object.scene.rotation.y = Math.PI/2;
@@ -462,7 +462,7 @@ export class World1 {
 					this.spotLightWall1.target = this.paddle; // world1
 					this.spotLight.target = this.paddle; // world1
 					this.paddle.rotation.x = Math.PI / 2; // world1
-					this.paddle.position.x = -51;
+					this.paddle.position.x = -54;
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
 				// 	const box = new THREE.Box3().setFromObject(this.paddle);
@@ -488,7 +488,7 @@ export class World1 {
 				// console.log(size1);
 				
 				this.paddle2 = this.paddle.clone();
-				this.paddle2.position.x = 55.5;
+				this.paddle2.position.x = 54;
 				this.paddle2.rotation.x = Math.PI / 2; // world1
 				this.spotLight2.target = this.paddle2; // world1
 				this.spotLightWall2.target = this.paddle2; // world1
@@ -765,6 +765,22 @@ export class World1 {
 		});
 	}
 
+	loadSoundCoundwon(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundCoundwon = sound;
+			this.audioLoader.load('static/pong/js/Pong_Fake/music/coundwon.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(0.3);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
@@ -780,10 +796,12 @@ export class World1 {
 			this.loadSoundPowerUpN(),
 			this.loadSounPoint(),
 			this.loadSoundEndMach(),
+			this.loadSoundCoundwon(),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
+
 		];
 		Promise.all(proms).then(() => {;
 		console.log("All objects loaded");
@@ -807,6 +825,8 @@ export class World1 {
 		this.soundPoint.disconnect();
 		this.soundEndMach.stop();
 		this.soundEndMach.disconnect();
+		this.soundCoundwon.stop();
+		this.soundCoundwon.disconnect();
 	}
 	destroySoundWorld(){
 		this.sound.stop();
@@ -825,5 +845,7 @@ export class World1 {
 		this.soundEndMach.disconnect();
 		this.soundEndMach.stop();
 		this.soundEndMach.disconnect();
+		this.soundCoundwon.stop();
+		this.soundCoundwon.disconnect();
 	}
 }

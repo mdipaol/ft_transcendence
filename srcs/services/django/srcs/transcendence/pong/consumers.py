@@ -25,7 +25,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         self.user = self.scope['user']
-        self.room = self.scope['room']
         self.powerup_mode = self.scope["url_route"]["kwargs"]["powerup_mode"] == 'powerup'
 
         if self.user and self.user.is_authenticated:

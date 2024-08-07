@@ -10,11 +10,12 @@ export const BALLTIMER = 3000;
 export const BOXSIZE = 250;
 export const TABLE_WIDTH = 108;
 export const TABLE_HEIGHT = 54;
+export const PADDLE_SIZE = 15;
 export const PADDLE_SIZE_X = 2.5;
 export const PADDLE_SIZE_Y = 15;
 export const PADDLE_SIZE_Z = 50;
-export const POSITION_Z_W1 = -7;
-export const POSITION_Z_W = -10;
+export const POSITION_Z_W1 = 5;
+export const POSITION_Z_W = 5;
 export const MAX_SIZEY = (TABLE_HEIGHT / 2);
 export const MIN_SIZEY = - (TABLE_HEIGHT / 2);
 export const SWITHCH_WORLD = false;//true = world || false = world1

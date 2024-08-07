@@ -132,7 +132,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 			match.world.soundPoint.disconnect();
 		}
 		match.world.soundEndMach.play();
-
 		await sleep(5000);
 		match.world.destroySoundWorld();
 		match.destroy(match.world.scene);

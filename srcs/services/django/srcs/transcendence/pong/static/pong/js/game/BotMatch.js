@@ -167,8 +167,7 @@ export class BotMatch extends Match {
     }
 
     updateMovements(deltaTime) {
-        if (this.player1.moves.up && this.player1.mesh.position.y < UTILS.MAX_SIZEY)
-		{
+        if (this.player1.moves.up && this.player1.mesh.position.y < UTILS.MAX_SIZEY){
             this.player1.mesh.position.y += this.player1.speed * deltaTime ;
             //requestAnimationFrame(this.updateMovements().bind(this));
 			//socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
@@ -290,10 +289,20 @@ export class BotMatch extends Match {
         }
         else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER)
         {
-            if (!this.ball.startTimer)
+            if (!this.ball.startTimer){
+                if(this.world.soundCoundwon.isPlaying){
+					this.world.soundCoundwon.stop();	
+				}
+				this.world.soundCoundwon.play();
+				this.world.sound.setVolume(0.05)
                 this.ball.startTimer = currentTime;
+            }
             else
             {
+                if(this.world.soundCoundwon.isPlaying){
+					this.world.soundCoundwon.stop();	
+				}
+				this.world.sound.setVolume(0.1)
                 this.ball.isReady = true;
                 this.ball.startTimer = null;
             }
@@ -319,6 +328,22 @@ export class BotMatch extends Match {
 			ball2.mesh.position.z = ball2.getZ();
 
 		}
+
+        if (this.ball.mesh.position.x > this.player2.mesh.position.x + 2  || this.ball.mesh.position.x < this.player1.mesh.position.x - 2)
+        {
+            if (this.deltaErrorCheck())
+            {
+                if (this.ball.mesh.position.x > 0)
+                    this.ball.mesh.position.x = this.player2.mesh.position.x;
+                else
+                    this.ball.mesh.position.x = this.player1.mesh.position.x;
+                    this.ball.direction.x *= -1;
+                    this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+                    const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+                    this.ball.direction.x = normalizedVector[0];
+                    this.ball.direction.y = normalizedVector[1];
+            }
+        }
 
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{

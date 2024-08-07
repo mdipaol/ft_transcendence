@@ -460,21 +460,22 @@ export class World {
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
-			'/static/pong/js/Pong_Fake/table/ping_pong_table.glb',
+			'/static/pong/js/Pong_Fake/table/table_wold.glb',
 			(object)=>{
 
 				const threeObj = object.scene.children[0];
 				this.table = threeObj;
-				const geometry = threeObj.children[0].geometry;
-				const desiredWidth = 104;
-				geometry.computeBoundingBox();
-				const boundingBox = geometry.boundingBox;
-				const currentWidth = boundingBox.max.x - boundingBox.min.x;
-				const scaleFactor = desiredWidth / currentWidth;
+				threeObj.scale.multiplyScalar(8);
+				// const geometry = threeObj.children[0].geometry;
+				// const desiredWidth = 104;
+				// geometry.computeBoundingBox();
+				// const boundingBox = geometry.boundingBox;
+				// const currentWidth = boundingBox.max.x - boundingBox.min.x;
+				// const scaleFactor = desiredWidth / currentWidth;
 
-				threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
+				//threeObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
 				threeObj.rotation.set(Math.PI / 2, 0, 0);
-				threeObj.position.set(0, 0, -23.5);
+				threeObj.position.set(0, 0, -5);
 				this.add(object.scene);
 				resolve();
 			},
@@ -507,64 +508,92 @@ export class World {
 
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
+			this.gltfLoader.load(
+				'static/pong/js/Pong_Fake/paddle/paddle_wold.glb',
+				(object)=>{
+					//object.scene.rotation.z = Math.PI/2;
+					//object.scene.rotation.y = Math.PI/2;
 
-			this.mtlLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.mtl',
-			(materials) =>{
-				materials.preload();
-
-				this.objLoader.setMaterials(materials);
-				this.objLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.obj', (object) => {
-					object;
-					object.traverse(function(child) {
+					//object.scene.scale.multiplyScalar(0.85);
+					this.paddle = object.scene;
+					this.paddle.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
 							child.geometry.computeVertexNormals();
 						}
 					});
-				this.paddle = object;
-				// const box2 = new THREE.Box3().setFromObject(this.paddle);
-				// const size2 = new THREE.Vector3();
-				// box2.getSize(size2);
-				// console.log(size2);
-				this.paddle.rotation.z = Math.PI / 2;
-				this.paddle.position.x = -54;
-				this.paddle.position.z = UTILS.POSITION_Z_W;
-				// const box = new THREE.Box3().setFromObject(this.paddle);
-				// const size = new THREE.Vector3();
-				// box.getSize(size);
-				// console.log(this.paddle);
-				// console.log(size);
-
-				// const targetWidth = UTILS.PADDLE_SIZE_X;
-				// const targetHeight = UTILS.PADDLE_SIZE_Y;
-				// const targetDepth = UTILS.PADDLE_SIZE_Z;
-
-				// // Calculate the scaling factors
-				// const scaleX = targetWidth / size.x;
-				// const scaleY = targetHeight / size.y;
-				// const scaleZ = targetDepth / size.z;
-				// object.scale.set(scaleX, scaleY, scaleZ);
-				// // object.scale.set(1, scaleY, 1);
-				// // object.scale.set(1, 1, scaleZ);
-
-				// console.log('after scale');
-
-				// const box1 = new THREE.Box3().setFromObject(this.paddle);
-				// const size1 = new THREE.Vector3();
-				// box1.getSize(size1);
-
-				// console.log(size1);
+					// region MeshPhysicalMaterial
+					this.paddle.rotation.x = Math.PI / 2; 
+					this.paddle.position.x = -54;
+					this.paddle.position.z = UTILS.POSITION_Z_W1;
+					this.paddle.scale.multiplyScalar(0.85);
 				
-				this.paddle2 = this.paddle.clone();
-				this.paddle2.position.x = 54;
-				this.paddle2.rotation.z = Math.PI / 2;
-				resolve();
-				});
-			},
-			(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% paddle loaded'),
-			(error) => reject(error)
-			);
+					this.paddle2 = this.paddle.clone();
+					this.paddle2.position.x = 54;
+					this.paddle2.rotation.x = Math.PI / 2;
+					resolve();
+				}
+			)
 		})
 	}
+	// loadPaddle() {
+	// 	return new Promise((resolve, reject) => {
+	// 		this.mtlLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.mtl',
+	// 		(materials) =>{
+	// 			materials.preload();
+
+	// 			this.objLoader.setMaterials(materials);
+	// 			this.objLoader.load('/static/pong/js/Pong_Fake/paddle/paddle.obj', (object) => {
+	// 				object;
+	// 				object.traverse(function(child) {
+	// 					if (child instanceof THREE.Mesh) {
+	// 						child.geometry.computeVertexNormals();
+	// 					}
+	// 				});
+	// 			this.paddle = object;
+	// 			// const box2 = new THREE.Box3().setFromObject(this.paddle);
+	// 			// const size2 = new THREE.Vector3();
+	// 			// box2.getSize(size2);
+	// 			// console.log(size2);
+	// 			this.paddle.rotation.z = Math.PI / 2;
+	// 			this.paddle.position.x = -54;
+	// 			this.paddle.position.z = UTILS.POSITION_Z_W;
+	// 			// const box = new THREE.Box3().setFromObject(this.paddle);
+	// 			// const size = new THREE.Vector3();
+	// 			// box.getSize(size);
+	// 			// console.log(this.paddle);
+	// 			// console.log(size);
+
+	// 			// const targetWidth = UTILS.PADDLE_SIZE_X;
+	// 			// const targetHeight = UTILS.PADDLE_SIZE_Y;
+	// 			// const targetDepth = UTILS.PADDLE_SIZE_Z;
+
+	// 			// // Calculate the scaling factors
+	// 			// const scaleX = targetWidth / size.x;
+	// 			// const scaleY = targetHeight / size.y;
+	// 			// const scaleZ = targetDepth / size.z;
+	// 			// object.scale.set(scaleX, scaleY, scaleZ);
+	// 			// // object.scale.set(1, scaleY, 1);
+	// 			// // object.scale.set(1, 1, scaleZ);
+
+	// 			// console.log('after scale');
+
+	// 			// const box1 = new THREE.Box3().setFromObject(this.paddle);
+	// 			// const size1 = new THREE.Vector3();
+	// 			// box1.getSize(size1);
+
+	// 			// console.log(size1);
+				
+	// 			this.paddle2 = this.paddle.clone();
+	// 			this.paddle2.position.x = 54;
+	// 			this.paddle2.rotation.z = Math.PI / 2;
+	// 			resolve();
+	// 			});
+	// 		},
+	// 		(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% paddle loaded'),
+	// 		(error) => reject(error)
+	// 		);
+	// 	})
+	// }
 
 	loadFonts() {
 		return new Promise((resolve, reject) => {
@@ -909,6 +938,22 @@ export class World {
 		});
 	}
 
+	loadSoundCoundwon(){
+		return new Promise((resolve, reject)=> {
+			const sound = new THREE.Audio(this.listener);
+			this.soundCoundwon = sound;
+			this.audioLoader.load('static/pong/js/Pong_Fake/music/coundwon.mp3', function(buffer) {
+				sound.setBuffer(buffer);
+				sound.setLoop(false);
+				sound.setVolume(1);
+				sound.setPlaybackRate(1);
+				resolve(sound);
+			}, undefined, function(error) {
+				reject(error);
+			});
+		})
+	}
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
@@ -928,6 +973,7 @@ export class World {
 			this.loadSoundWallCollision(),
 			this.loadSounPoint(),
 			this.loadSoundEndMach(),
+			this.loadSoundCoundwon(),
 			// // TEMPORANEO PER TEST
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
 			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
@@ -960,5 +1006,7 @@ export class World {
 		this.soundEndMach.disconnect();
 		this.soundEndMach.stop();
 		this.soundEndMach.disconnect();
+		this.soundCoundwon.stop();
+		this.soundCoundwon.disconnect();
 	}
 }

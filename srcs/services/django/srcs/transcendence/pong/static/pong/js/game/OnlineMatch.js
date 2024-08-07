@@ -96,7 +96,7 @@ export class OnlineMatch extends Match {
 
 			if (powerUp){
 				powerUp.mesh.position.set(0, data.powerup_position, 15);
-				this.world.powerUp = powerUp.mesh;
+				this.world.powerUp = powerUp;
 				this.world.add(powerUp.mesh)
 			}
 
@@ -111,7 +111,7 @@ export class OnlineMatch extends Match {
 
 	removePowerUp(){
 		if (this.world.powerUp){
-			this.world.remove(this.world.powerUp);
+			this.world.remove(this.world.powerUp.mesh);
 			this.world.powerUp = null;
 		}
 	}
@@ -139,10 +139,13 @@ export class OnlineMatch extends Match {
 			this.player1.mesh.scale.x = this.player1.originScale[0]
 			this.player1.mesh.scale.y = this.player1.originScale[1]
 			this.player1.mesh.scale.z = this.player1.originScale[2]
+			this.player1.mesh.position.z = UTILS.POSITION_Z_W1;
 
 			this.player2.mesh.scale.x = this.player2.originScale[0]
 			this.player2.mesh.scale.y = this.player2.originScale[1]
 			this.player2.mesh.scale.z = this.player2.originScale[2]
+			this.player2.mesh.position.z = UTILS.POSITION_Z_W1;
+
 			this.remove_triple();
 		}
 		else if (data.type == 'triple'){
@@ -163,10 +166,10 @@ export class OnlineMatch extends Match {
 			else
 				taker = this.player2.mesh;
 			taker.scale.set(0.7, 0.7, 0.7);
-			taker.position.z = -6;
+			taker.position.z = 3;
 		}
 		else if (data.type == 'slowness'){
-
+			
 		}
 
 	}
@@ -201,6 +204,11 @@ export class OnlineMatch extends Match {
 			if (this.world.soundPoint.isPlaying)
 				this.world.soundPoint.stop();
 			this.world.soundPoint.play();
+
+			if (this.world.soundCoundwon.isPlaying)
+				this.world.soundCoundwon.stop();
+			this.world.soundCoundwon.play();
+
 		}
 		// Powerup events
 		else if (msg.event == "handle_powerup"){
@@ -235,9 +243,16 @@ export class OnlineMatch extends Match {
 			}
 
 			this.started = true;
+
+			if (this.world.soundCoundwon.isPlaying)
+				this.world.soundCoundwon.stop()
+			this.world.soundCoundwon.play()
 		}
 		else if (msg.type == "game_end")
 		{
+			if (this.world.soundCoundwon.isPlaying)
+				this.world.soundCoundwon.stop();
+
 			if (msg.message.type == "disconnection")
 				alert("Oppenent disconnected! YOU WIN!")
 			else
@@ -344,9 +359,10 @@ export class OnlineMatch extends Match {
 
 		this.score1 = msg.message.player_one;
 		this.score2 = msg.message.player_two;
+
 		this.updateScoreText();
-		this.player1.mesh.position.z = -10;
-		this.player2.mesh.position.z = -10;
+		this.player1.mesh.position.z = UTILS.POSITION_Z_W1;
+		this.player2.mesh.position.z = UTILS.POSITION_Z_W1;
 		this.player1.powerUp = null;
 		this.player2.powerUp = null;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);

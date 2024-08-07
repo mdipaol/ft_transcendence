@@ -406,11 +406,11 @@ export class Match {
 			this.player1.speed = this.player2.speed / 3;
 		//Scale check
 		if (this.player1.powerUp && this.player1.powerUp.name ==  "scale"){
-			this.player2.mesh.position.z = -6;
+			this.player2.mesh.position.z = 3;
 			this.player2.mesh.scale.multiplyScalar(0.7);
 		}
 		if (this.player2.powerUp && this.player2.powerUp.name ==  "scale"){
-			this.player1.mesh.position.z = -6;
+			this.player1.mesh.position.z = 3;
 			this.player1.mesh.scale.multiplyScalar(0.7);
 		}
 		// Triple check
@@ -441,32 +441,17 @@ export class Match {
 			opp.speed = UTILS.MOVSPEED;
 			if (player.powerUp.name == "scale"){
 				opp.mesh.scale.multiplyScalar(1 / 0.7);
-            	this.world.resetMesh();
+				opp.mesh.position.z = UTILS.POSITION_Z_W1;
 			}
 			player.powerUp = null;
 		}
 	}
 
 	deltaErrorCheck() {
-		//add a little red cube at player position
-		let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-		let cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-		let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-		let cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-		cube2.position.x = this.player2.mesh.position.x;
-		cube2.position.y = this.player2.mesh.position.y;
-		cube2.position.z = this.player2.mesh.position.z;
-		cube.position.x = this.player1.mesh.position.x;
-		cube.position.y = this.player1.mesh.position.y;
-		cube.position.z = this.player1.mesh.position.z;
-		this.world.add(cube);
-		this.world.add(cube2);
-
-
 		if (this.ball.mesh.position.x > 0)
 		{
 			console.log(this.ball.mesh.position.y - this.player2.mesh.position.y);
-			if (Math.abs(this.ball.mesh.position.y - this.player2.mesh.position.y)< UTILS.PADDLE_SIZE_Y / 2)
+			if (Math.abs(this.ball.mesh.position.y - this.player2.mesh.position.y) < UTILS.PADDLE_SIZE_Y / 2)
 				return true;
 		}
 		else
@@ -480,7 +465,6 @@ export class Match {
 
 	// region update()
 	update() {
-
 		const currentTime = new Date()
         const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
         this.update_time_ball = currentTime;
@@ -489,22 +473,29 @@ export class Match {
 
 		this.world.rotatePowerUp();
 
-		if (this.ball.isReady)
-			{
-				this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
-				this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
-				this.ball.mesh.position.z = this.ball.getZ();
-			}
-			else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER)
-			{
-				if (!this.ball.startTimer)
-					this.ball.startTimer = currentTime;
-				else
-				{
-					this.ball.isReady = true;
-					this.ball.startTimer = null;
+		if (this.ball.isReady){
+			this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x * deltaTime;
+			this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y * deltaTime;
+			this.ball.mesh.position.z = this.ball.getZ();
+		}
+		else if(!this.ball.startTimer || (currentTime - this.ball.startTimer) > UTILS.BALLTIMER){
+			if (!this.ball.startTimer){
+				if(this.world.soundCoundwon.isPlaying){
+					this.world.soundCoundwon.stop();	
 				}
+				this.world.soundCoundwon.play();
+				this.world.sound.setVolume(0.05)
+				this.ball.startTimer = currentTime;
 			}
+			else{
+				if(this.world.soundCoundwon.isPlaying){
+					this.world.soundCoundwon.stop();	
+				}
+				this.world.sound.setVolume(0.1)
+				this.ball.isReady = true;
+				this.ball.startTimer = null;
+			}
+		}
 		//salvo pos futura
 /* 		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
 		let futureY = this.ball.mesh.position.y + this.ball.speed * this.ball.direction.y * deltaTime;
@@ -544,13 +535,17 @@ export class Match {
 		}
 		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 2  || this.ball.mesh.position.x < this.player1.mesh.position.x - 2)
 		{
-			console.log("palla: " + this.ball.mesh.position.x + " player1: " + this.player1.mesh.position.x + " player2: " + this.player2.mesh.position.x);
 			if (this.deltaErrorCheck())
 			{
 				if (this.ball.mesh.position.x > 0)
 					this.ball.mesh.position.x = this.player2.mesh.position.x;
 				else
 					this.ball.mesh.position.x = this.player1.mesh.position.x;
+				this.ball.direction.x *= -1;
+				this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
+				const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
+				this.ball.direction.x = normalizedVector[0];
+				this.ball.direction.y = normalizedVector[1];
 			}
 		}
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
