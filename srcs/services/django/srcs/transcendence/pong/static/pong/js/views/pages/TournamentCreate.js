@@ -37,9 +37,9 @@ const TournamentCreate = {
 
         const formData = new FormData(form);
         const csrfToken = formData.get('csrfmiddlewaretoken');
-      
+
         try {
-            const response = await fetch(form.action, {
+            const response = await fetch('/tournament_create/', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -50,25 +50,42 @@ const TournamentCreate = {
             if (response.ok) {
               console.log(response);
               const div = document.getElementById('tournament');
-              div.replaceChildren();
-    
+
+
               const JsonResponse = await response.json();
+              console.log(JsonResponse);
               const html = JsonResponse.html;
               const name = JsonResponse.name;
+              const error = JsonResponse.error;
+              const type = JsonResponse.type;
 
-              div.innerHTML = html;
-              updateEventListeners(name);
-            } else {
-                const errorData = await response.json();
-                errorMessageDiv.textContent = errorData.message || 'Si è verificato un errore. Riprova.';
-            }
+              if (error){
+                const aliasError = document.getElementById("alias-error");
+                const tournamentNameError = document.getElementById("tournament-name-error");
+                aliasError.classList.remove('visible');
+                tournamentNameError.classList.remove('visible');
+                if (type == "tournament" && tournamentNameError){
+                  tournamentNameError.innerHTML = error;
+                  tournamentNameError.classList.add('visible');
+                }
+                else if (type == "alias" && aliasError){
+                  aliasError.innerHTML = error;
+                  aliasError.classList.add('visible');
+                }
+              }
+              else{
+                div.replaceChildren();
+                div.innerHTML = html;
+                updateEventListeners(name);
+              }
+          }
         } catch (error) {
             console.log(error);
         }
     });
     function reattachEventListeners() {
       const tournamentDiv = document.getElementById("tournament");
-    
+
       tournamentDiv.addEventListener('dblclick', (event) => {
         if (event.target && event.target.id === 'join-tournament-button') {
           alert('Joined tournament successfully');

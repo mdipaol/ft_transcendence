@@ -1,5 +1,6 @@
-import { parseRequestUrl, getCookie } from '../../services/utils.js';
+import { parseRequestUrl, getCookie, sleep } from '../../services/utils.js';
 import triggerHashChange from '../../services/utils.js';
+
 
 const TournamentJoin = {
   /**
@@ -21,7 +22,13 @@ const TournamentJoin = {
     const joinTournament = document.querySelectorAll("#join-tournament-button");
     const leaveButtons = document.querySelectorAll("#tournament-leave");
     const joinedButtons = document.querySelectorAll("#tournament-join");
+    const updateButton = document.getElementById("tournament-update");
 
+    if (updateButton){
+      updateButton.addEventListener('click', async () =>{
+        triggerHashChange('/tournament_join/');
+      })
+    }
     if (createButton) {
       createButton.addEventListener('click', async () => {
         triggerHashChange('/tournament_create');
@@ -72,10 +79,10 @@ const TournamentJoin = {
                 console.log(response);
                 const div = document.getElementById('tournament');
                 div.replaceChildren();
-          
+
                 const JsonResponse = await response.json();
                 const html = JsonResponse.html;
-          
+
                 div.innerHTML = html;
                 updateEventListeners(tournamentName);
                 return;
@@ -112,26 +119,38 @@ const TournamentJoin = {
       joinedButtons.forEach(join => {
         join.addEventListener('click', async (event) => {
 
-          const response = await fetch('/tournament_join/' + join.getAttribute('data-id') + '/', {
-            method: 'POST',
-            headers : {
-              'X-CSRFToken' : getCookie('csrftoken')
-            },
-          });
-          if (response.ok) {
-            // If response is not ok?
-            console.log(response);
-            const div = document.getElementById('tournament');
-            div.replaceChildren();
+          const tournamentName = join.getAttribute('data-id');
 
-            const JsonResponse = await response.json();
-            const html = JsonResponse.html;
+          const alias = await fetch('/tournament_join/alias/' + tournamentName + '/');
+          if (!alias.ok){
+            if (alias.status == 400){
+              const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
+                method: 'GET',
+                headers : {
+                  'X-CSRFToken' : getCookie('csrftoken')
+                },
+                });
+              if (response.ok) {
+                // PARSARE ERRORI E VISUALIZZARE TORNEO
+                console.log(response);
+                const div = document.getElementById('tournament');
+                div.replaceChildren();
 
-            div.innerHTML = html;
-            updateEventListeners(join.getAttribute('data-id'));
+                const JsonResponse = await response.json();
+                const html = JsonResponse.html;
+
+                div.innerHTML = html;
+                updateEventListeners(tournamentName);
+                return;
+              }
+              else
+                triggerHashChange('/tournament_join/');
+            }
           }
-          else{
-            triggerHashChange('/tournament_join/');
+          else {
+            const aliasOverlayHtml = await alias.text();
+            document.getElementById('tournament').innerHTML += aliasOverlayHtml;
+            displayOverlay(aliasOverlayHtml, tournamentName);
           }
         })
       })
@@ -139,7 +158,14 @@ const TournamentJoin = {
   }
 };
 
-export function updateEventListeners(buttonName) {
+
+/**
+ * Event listner for buttons in the tournament info view
+ *
+ * @param {String} tournamentName The name of the tournament to be called with /tournament_join/tournamentName
+ *
+ */
+export function updateEventListeners(tournamentName) {
   const backButton = document.getElementById("backButton");
   const joinButton = document.getElementById("joinButton");
   const leaveButton = document.getElementById("leaveButton");
@@ -151,33 +177,44 @@ export function updateEventListeners(buttonName) {
   }
   if (joinButton) {
     joinButton.addEventListener('click', async () => {
-      const response = await fetch('/tournament_join/' + buttonName + '/', {
-        method: 'POST',
-        headers : {
-          'X-CSRFToken' : getCookie('csrftoken')
-        },
-      });
-      if (response.ok) {
-        // If response is not ok?
-        console.log(response);
-        const div = document.getElementById('tournament');
-        div.replaceChildren();
 
-        const JsonResponse = await response.json();
-        const html = JsonResponse.html;
+      const alias = await fetch('/tournament_join/alias/' + tournamentName + '/');
+      if (!alias.ok){
+        if (alias.status == 400){
+          const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
+            method: 'GET',
+            headers : {
+              'X-CSRFToken' : getCookie('csrftoken')
+            },
+            });
+          if (response.ok) {
+            // PARSARE ERRORI E VISUALIZZARE TORNEO
+            console.log(response);
+            const div = document.getElementById('tournament');
+            div.replaceChildren();
 
-        div.innerHTML = html;
-        updateEventListeners(buttonName);
+            const JsonResponse = await response.json();
+            const html = JsonResponse.html;
+
+            div.innerHTML = html;
+            updateEventListeners(tournamentName);
+            return;
+          }
+          else
+            triggerHashChange('/tournament_join/');
+        }
       }
-      else{
-        triggerHashChange('/tournament_join/');
+      else {
+        const aliasOverlayHtml = await alias.text();
+        document.getElementById('tournament').innerHTML += aliasOverlayHtml;
+        displayOverlay(aliasOverlayHtml, tournamentName);
       }
     });
   }
   if (leaveButton) {
     leaveButton.addEventListener('click', async () => {
 
-      const response = await fetch(`https://${window.location.host}/tournament_leave/` + buttonName + `/`, {
+      const response = await fetch(`https://${window.location.host}/tournament_leave/` + tournamentName + `/`, {
         method: 'POST',
         headers:  {
           'X-CSRFToken' : getCookie('csrftoken')
@@ -190,18 +227,15 @@ export function updateEventListeners(buttonName) {
 }
 
 
-function reattachEventListeners() {
-  const tournamentDiv = document.getElementById("tournament");
-
-  tournamentDiv.addEventListener('dblclick', (event) => {
-    if (event.target && event.target.id === 'join-tournament-button') {
-      alert('Joined tournament successfully');
-    }
-  });
-}
-export default TournamentJoin;
-
-function displayOverlay(content, tournamentName) {
+//
+/**
+ * This is to be called before a join in a tournament for checking the alias
+ * @param {String} content HTML alias form
+ * @param {String} tournamentName Name of the tournament used for fetch call to '/tournament_join/tournamentName'
+ * @return {null}
+ *
+ */
+export function displayOverlay(content, tournamentName) {
   const overlay = document.getElementById('alias-overlay');
 
   overlay.style.display = 'flex';
@@ -209,41 +243,34 @@ function displayOverlay(content, tournamentName) {
   const aliasForm = document.getElementById('alias-form');
   aliasForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    
+
     const formData = new FormData(aliasForm);
-    if (formData.get('alias').trim() === ''){
-      const aliasError = document.getElementById('alias-error');
-      if (aliasError) {
-        const aliasName = document.getElementById('alias');
 
-        aliasName.oninvalid = function(e) {
-          if (e.target.value.indexOf(' ') >= 0) {
-            e.target.setCustomValidity('Alias should not contain spaces.');
-          } else {
-            e.target.setCustomValidity('');
-          }
-
-        }
-      }
-      return;
-    }
-    overlay.style.display = 'none';
     const response = await fetch( '/tournament_join/' + tournamentName + '/' , {
       method: 'POST',
       headers : {
         'X-CSRFToken' : getCookie('csrftoken')
       },
       body: formData,
-      });
+    });
     if (response.ok) {
       // PARSARE ERRORI E VISUALIZZARE TORNEO
       console.log(response);
       const div = document.getElementById('tournament');
-      div.replaceChildren();
 
       const JsonResponse = await response.json();
+      const error = JsonResponse.error;
+      if (error){
+        const errorElement = document.getElementById("alias-error");
+        if (errorElement){
+          errorElement.innerHTML = error;
+          errorElement.classList.add('visible');
+        }
+        return ;
+      }
+      overlay.style.display = 'none';
+      div.replaceChildren();
       const html = JsonResponse.html;
-
       div.innerHTML = html;
       updateEventListeners(tournamentName);
     }
@@ -252,3 +279,5 @@ function displayOverlay(content, tournamentName) {
     }
   });
 }
+
+export default TournamentJoin;

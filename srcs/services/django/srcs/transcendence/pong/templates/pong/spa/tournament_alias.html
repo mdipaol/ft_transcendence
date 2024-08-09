@@ -32,11 +32,8 @@
 		<div>
 			<label for="inputText">Enter an alias name for the tournament:</label>
 		</div>
-		<span id="alias-error" class="error">Insert a correct alias name</span>
-		{% comment %} <input type="text" id="alias" name="alias" placeholder="Insert an alias Name" onvalid="this.setCustomValidity('')" required> {% endcomment %}
-		<input type="text" id="alias" name="alias" placeholder="Insert an alias Name" required maxlength="255" id="information_name" minlength="1" name="information[name]"
-			oninvalid="setCustomValidity('Should not be left empty or contain spaces.')"/>
-		<!-- <button id="submit-alias-button">Submit</button> -->
-		<input type="submit" value="Submit">
+		<span id="alias-error" class="error"></span>
+		<input type="text" id="alias" name="alias" placeholder="Insert an alias Name" required maxlength="255" minlength="1" />
+		<input type="submit" id="submit" value="Submit">
 	</form>
 </div>

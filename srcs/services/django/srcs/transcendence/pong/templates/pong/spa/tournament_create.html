@@ -1,22 +1,28 @@
 {% extends "pong/spa/tournament.html" %}
 
 {% block create %}
+<style>
+    .error{
+        color: red;
+        display: none;
+    }
+    .error.visible {
+        display: block;
+}
+</style>
 
-<div style="align-items:center;width:100%;height:100%">
-	<div>
-    	<h2>Create Tournament</h2>
-	</div>
-    <div>
-        <form action="{% url 'pong:tournament_create' %}" method="post" id="tournament-form">
+<div>
+    <h2>Create a tournament</h2>
+    <form id="tournament-form">
         {% csrf_token %}
-            {% for field in form %}
-            <div>
-                {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
-            </div>
-            {% endfor %}
-            <input type="submit" value="Submit">
-        </form>
-    </div>
+        <span id="tournament-name-error" class="error"></span>
+		<input type="text" id="tournament-name" name="tournament-name" placeholder="Insert a tournament name" required maxlength="255" minlength="1" />
+        <br>
+        <span id="alias-error" class="error"></span>
+        <input type="text" id="alias" name="alias" placeholder="Insert an alias name for the tournament" required maxlength="100" minlength="1"/>
+        <br>
+        <input type="submit" id="submit" value="Submit">
+    </form>
 </div>
+
 {% endblock %}

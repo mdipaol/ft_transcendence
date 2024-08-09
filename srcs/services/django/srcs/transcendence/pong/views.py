@@ -303,28 +303,50 @@ def account(request):
 @login_required(login_url='/')
 def tournament_create(request):
 	if request.method == 'GET':
-		form = CreateTournamentForm()
-		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
+		# html = render_to_string('pong/spa/tournament_create.html')
+		# return JsonResponse(data={
+		# 	'html' : html,
+		# 	'error' : None,
+		# })
+		return render(request, 'pong/spa/tournament_create.html')
 	if request.method == 'POST':
-		form = CreateTournamentForm(request.POST)
-		if form.is_valid():
-			tournament = form.save(request.user)
-			partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
-			user_partecipant = [item.user for item in partecipant_list]
-			context = {
-				'name' : tournament.name,
-				'creator' : tournament.creator.username,
-				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
-				'winner' : None,
-				'finished' : False,
-				'joined' : request.user in user_partecipant,
-			}
+		alias : str = request.POST.get('alias')
+		tournament_name : str = request.POST.get('tournament-name')
+		if tournament_name.strip() == '':
 			return JsonResponse(data={
-				'html' : render_to_string('pong/spa/tournament_info.html', context),
-				'name' : tournament.name,
+				'error' : 'Insert a valid tournament name',
+				'type' : 'tournament',
 			})
-		return render(request, 'pong/spa/tournament_create.html', {'form' : form})
+		if Tournament.objects.filter(name=tournament_name).exists():
+			return JsonResponse(data={
+				'error' : 'Tournament name already taken',
+				'type' : 'tournament',
+			})
+		if alias.strip() == '':
+			return JsonResponse(data={
+				'error' : 'Insert a valid alias name',
+				'type' : 'alias',
+			})
 
+		tournament = Tournament.objects.create(name=tournament_name, creator=request.user)
+		tournament.save()
+		partecipant = TournamentPartecipant.objects.create(tournament=tournament, user=request.user, alias=alias)
+		partecipant.save()
+		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+		user_partecipant = [item.user.username for item in partecipant_list]
+		context = {
+			'name' : tournament.name,
+			'creator' : tournament.creator.username,
+			'partecipants' : partecipant_list,
+			'winner' : None,
+			'started' : tournament.started,
+			'finished' : False,
+			'joined' : request.user.username in user_partecipant,
+		}
+		return JsonResponse(data={
+			'html' : render_to_string('pong/spa/tournament_info.html', context),
+			'name' : tournament.name,
+		})
 
 @login_required(login_url='/')
 def tournament_alias(request, name):
@@ -351,7 +373,7 @@ def tournament_join(request, name):
 				'error' : 'Tournament not found'
 			}, status=404)
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
-		partecipant_user = [item.user for item in partecipant_list]
+		partecipant_user = [item.user.username for item in partecipant_list]
 		context = {
 				'name' : tournament.name,
 				'creator' : tournament.creator.username,
@@ -362,7 +384,7 @@ def tournament_join(request, name):
 				'the_finals' : tournament.the_finals,
 				'winner' : None,
 				'finished' : False,
-				'joined' : request.user in partecipant_user,
+				'joined' : request.user.username in partecipant_user,
 			}
 		return JsonResponse(data={
 			'html' : render_to_string('pong/spa/tournament_info.html', context)
@@ -380,7 +402,7 @@ def tournament_join(request, name):
 
 		# User already in tournament
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
-		partecipant_user = [item.user for item in partecipant_list]
+		partecipant_user = [item.user.username for item in partecipant_list]
 		if request.user in partecipant_user:
 			context = {
 				'name' : tournament.name,
@@ -392,7 +414,7 @@ def tournament_join(request, name):
 				'the_finals' : tournament.the_finals,
 				'winner' : None,
 				'finished' : False,
-				'joined' : request.user in partecipant_user,
+				'joined' : request.user.username in partecipant_user,
 				}
 			return JsonResponse(data={
 				'html' : render_to_string('pong/spa/tournament_info.html', context)
@@ -404,11 +426,14 @@ def tournament_join(request, name):
 			return JsonResponse(data={'error' : 'Tournament is full'}, status=500)
 
 		# Add new partecipant to database
-		alias = request.POST.get('alias')
+		alias : str = request.POST.get('alias')
 		print(alias)
 
-		alises = [a.alias for a in partecipant_list]
-		if alias in alises:
+		if not alias or alias.strip() == '':
+			return JsonResponse(data={'error' : 'Enter a valid alias'})
+
+		aliases = [a.alias for a in partecipant_list if a]
+		if alias in aliases:
 			return JsonResponse(data={'error' : 'The alias is already taken'})
 
 		# Saving the new partecipant with the alias in the dataabase
