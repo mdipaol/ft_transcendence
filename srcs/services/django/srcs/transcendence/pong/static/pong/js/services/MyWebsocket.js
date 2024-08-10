@@ -23,6 +23,10 @@
           console.log('Connected as: ' + window.username);
         }
         console.log(data);
+
+        if (data.type == "notification"){
+
+        }
       };
       
       MyWebsocket.socket.onclose = function(event) {

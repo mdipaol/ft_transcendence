@@ -138,9 +138,15 @@ class OnlineConsumer(WebsocketConsumer):
             )
         self.del_connection(user)
 
+    def receive(self, text_data):
+        ...
+
     def send_notification(self, event):
         print(event)
-        (self.send)(text_data=json.dumps(event["message"]))
+        (self.send)(text_data=json.dumps({
+            'type' : event.get('type'),
+            'message' : event.get('message'),
+        }))
     # def receive(self, text_data):
     #     # print(text_data)
     #     json_data = json.loads(text_data)

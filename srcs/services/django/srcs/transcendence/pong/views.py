@@ -362,6 +362,42 @@ def tournament_alias(request, name):
 	else:
 		return render(request, 'pong/spa/tournament_alias.html')
 
+def get_match_info(match : Match) -> dict:
+	player1 = None
+	player2 = None
+
+	if match is None:
+		return {}
+
+	if (match.tournament):
+		tournament : Tournament = match.tournament
+		partecipants : TournamentPartecipant = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
+		partecipants_data = [[p.user, p.alias] for p in partecipants]
+		match_players: list[BaseUser] = [match.player1, match.player2]
+		for player in match_players:
+			for p in partecipants_data:
+				if p[0] == player:
+					if player == match.player1:
+						player1 = p
+					else:
+						player2 = p
+	return {
+		'match' : match,
+		'score1' : match.score1,
+		'score2' : match.score2,
+		'played' : match.is_played,
+		'date' : match.date,
+		'player1' : {
+			'user' : player1[0] if player1 else None,
+			'alias' : player1[1] if player1 else None
+		},
+		'player2' : {
+			'user' : player2[0] if player2 else None,
+			'alias' : player2[1] if player2 else None,
+		},
+	}
+
+
 @login_required(login_url='/')
 def tournament_join(request, name):
 	if request.method == 'GET':
@@ -379,9 +415,9 @@ def tournament_join(request, name):
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : tournament.match1,
-				'match2' : tournament.match2,
-				'the_finals' : tournament.the_finals,
+				'match1' : get_match_info(tournament.match1),
+				'match2' : get_match_info(tournament.match2),
+				'the_finals' : get_match_info(tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
@@ -409,9 +445,9 @@ def tournament_join(request, name):
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : tournament.match1,
-				'match2' : tournament.match2,
-				'the_finals' : tournament.the_finals,
+				'match1' : get_match_info(tournament.match1),
+				'match2' : get_match_info(tournament.match2),
+				'the_finals' : get_match_info(tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
@@ -419,7 +455,6 @@ def tournament_join(request, name):
 			return JsonResponse(data={
 				'html' : render_to_string('pong/spa/tournament_info.html', context)
 			})
-
 
 		# Tournament full
 		if len(partecipant_user) >= 4:
@@ -444,7 +479,7 @@ def tournament_join(request, name):
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		user_partecipant = [item.user for item in partecipant_list]
 		print(user_partecipant)
-		if len(user_partecipant) == 4:
+		if len(user_partecipant) == 4 and tournament.started == False:
 			sorted_user = sorted(user_partecipant, key=lambda user: user.level)
 			paired_user = [(sorted_user[i], sorted_user[i + 1]) for i in range(0, len(sorted_user) - 1, 2)]
 
@@ -459,9 +494,9 @@ def tournament_join(request, name):
 				'creator' : tournament.creator.username,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : tournament.match1,
-				'match2' : tournament.match2,
-				'the_finals' : tournament.the_finals,
+				'match1' : get_match_info(tournament.match1),
+				'match2' : get_match_info(tournament.match2),
+				'the_finals' : get_match_info(tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in user_partecipant,

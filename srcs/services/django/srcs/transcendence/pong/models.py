@@ -24,7 +24,6 @@ class Tournament(models.Model):
 	match2 = models.ForeignKey('Match', related_name='match2', on_delete=models.CASCADE, null=True, blank=True)
 	the_finals = models.ForeignKey('Match', related_name='the_finals', on_delete=models.CASCADE, null=True, blank=True)
 
-
 	def __str__(self):
 		return self.name
 

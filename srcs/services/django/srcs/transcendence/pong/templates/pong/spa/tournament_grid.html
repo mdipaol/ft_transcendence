@@ -1,0 +1,76 @@
+<style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 205px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .justify-space-around {
+      display: grid;
+      align-content: space-around;
+      min-height: 100%;
+    }
+
+    .round {
+      position: relative;
+      max-width: 185px;
+    }
+
+    .match {
+      display: grid;
+      justify-content: center;
+      align-content: center;
+      height: 80px;
+      width: 180px;
+      margin: 10px auto;
+      background-color: #333;
+      border: 1px solid black;
+      font-size: 25px;
+    }
+
+    .link {
+      position: absolute;
+      top: 25%;
+      bottom: 25%;
+      left: 100%;
+      right: -10px;
+      border-top: 1px solid white;
+      border-bottom: 1px solid white;
+      border-right: 1px solid white;
+    }
+
+    .link:after {
+      content: "";
+      position: absolute;
+      top: calc(50% - 5px);
+      left: 10px;
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 5px solid white;
+    }
+</style>
+
+<div class="grid">
+  <div class="round">
+    <div class="round">
+      <div class="match"> {{ match1.player1 }}</div>
+      <div class="link"></div>
+      <div class="match"> {{ match1.player2 }}</div>
+    </div>
+    <div class="round">
+      <div class="match"> {{ match2.player1 }} </div>
+      <div class="link"></div>
+      <div class="match"> {{ match2.player2 }}</div>
+    </div>
+  </div>
+  <div class="round justify-space-around">
+    <div class="match"> {{ the_finals.player2 }} </div>
+    <div class="link"></div>
+    <div class="match"> {{ the_finals.player2 }} </div>
+  </div>
+  <div class="round">
+    <div class="match"> Winner </div>
+  </div>
