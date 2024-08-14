@@ -58,7 +58,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		  match = new Match(world, powerUpMode);
 	  }
 
-
+	
 	const response = await fetch(`https://${window.location.host}/interface_underground/`);
 	// userInterface.innerHTML = await response.text();
 	// canvas dom element
@@ -67,14 +67,13 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
     // Parse the text
     const doc = parser.parseFromString(html, "text/html");
-	const interfaceUser = doc.getElementById('interface');
+	//const interfaceUser = doc.getElementById('interface');
 
 	// Set match html variable with interface html element
-	match.initHtmlInterface(interfaceUser);
+	//match.initHtmlInterface(interfaceUser);
 
-	content.appendChild(interfaceUser);
+	//content.appendChild(interfaceUser);
 	content.appendChild(world.renderer.domElement)
-
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
 	})

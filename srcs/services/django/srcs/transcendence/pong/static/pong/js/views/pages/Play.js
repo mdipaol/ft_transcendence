@@ -1,9 +1,9 @@
 
-import {startGame} from "../../game/game.js";
+import { startGame } from "../../game/game.js";
+import { World } from "../../game/World.js";
 
 const Play = {
-
-    world : null,
+    world: null,
 
     render: async () => {
         const response = await fetch(`https://${window.location.host}/play/`);
@@ -11,29 +11,72 @@ const Play = {
         return (menu);
     },
 
-    startLocalGame: async () => {
-        await startGame('local', 'underground', true);
-    },
-
-    startRemoteGame: async () => {
-        await startGame('remote', 'underground', true);
-    },
-
-    startBotGame: async () => {
-        await startGame('bot', 'underground', true);
-    },
-
     after_render: async () => {
-        const localGameButton = document.getElementById('btn-local-game');
-        const remoteGameButton = document.getElementById('btn-remote-game');
-        const botGameButton = document.getElementById('btn-local-game-bot');
-        if (localGameButton)
-            localGameButton.addEventListener('click' , Play.startLocalGame);
-        if (remoteGameButton)
-            remoteGameButton.addEventListener('click' , Play.startRemoteGame);
-        if (botGameButton)
-            botGameButton.addEventListener('click' , Play.startBotGame);
-    },
+        const form = document.getElementById('setting-Mach');
 
+        if (!form) {
+            console.error("Il form 'setting-Mach' non è stato trovato.");
+            return;
+        }
+
+        const Buttonlocal = document.getElementById('btn-local-game'); // 1 vs 1
+        const ButtonBot = document.getElementById('btn-local-game-bot'); // AI
+        const ButtonOnline = document.getElementById('btn-remote-game'); // Online Match
+        const ButtonON = document.getElementById('btn-power-up-active'); // ON
+        const ButtonOFF = document.getElementById('btn-power-up-off'); // OFF
+        const ButtonThefinals = document.getElementById('W1'); // TheFinals
+        const ButtonUnderground = document.getElementById('W2'); // Underground
+        const ButtonSTART = document.getElementById('Start');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Previeni l'invio del form di default
+
+            // Controlla quale radio button è selezionato
+            let matchType, powerType, selectedWorld;
+            
+            if(Buttonlocal.checked){
+                matchType = 'local';
+            } 
+            else if(ButtonBot.checked){
+                matchType = 'bot';
+            } 
+            else if(ButtonOnline.checked){
+                matchType = 'remote';
+            }
+            else
+                matchType = 'bot';   
+
+            if(ButtonON.checked){
+                powerType = true;
+            } 
+            else if(ButtonOFF.checked){
+                powerType = false;
+            }
+            else
+                powerType = false;
+
+            //selezione mondo
+            if (ButtonThefinals.checked){
+                selectedWorld = 'finals';
+            } 
+            else if (ButtonUnderground.checked){
+                selectedWorld = 'underground';
+            }
+            else{
+                let worldR = Math.random();
+                if(worldR < 0.5)
+                    selectedWorld = 'underground';
+                else
+                    selectedWorld = 'finals';
+            }
+            if (ButtonSTART) {
+                ButtonSTART.addEventListener('click', async () => {
+                    await startGame(matchType, selectedWorld, powerType);
+                }, { once: true }); // Assicura che l'evento venga gestito solo una volta
+            }
+        });
+        
+    }
 };
+
 export default Play;
