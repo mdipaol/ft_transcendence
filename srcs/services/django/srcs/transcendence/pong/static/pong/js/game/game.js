@@ -11,6 +11,7 @@ import { World } from './World.js';
 import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
 import { BotMatch } from './BotMatch.js';
+import Play from '../views/pages/Play.js';
 
 import triggerHashChange from '../services/utils.js';
 
@@ -58,26 +59,39 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		  match = new Match(world, powerUpMode);
 	  }
 
-	
-	const response = await fetch(`https://${window.location.host}/interface_underground/`);
-	// userInterface.innerHTML = await response.text();
+	let response = await fetch(`https://${window.location.host}/interface_thefinals/`);
+	let underground = await fetch(`https://${window.location.host}/interface_underground/`);
+
+	//userInterface.innerHTML = await response.text();
 	// canvas dom element
 	const html = await response.text();
+	const htmlU = await underground.text();
+	
 	const parser = new DOMParser();
+	// Parse the text
+	const doc = parser.parseFromString(html, "text/html");
+	const docU = parser.parseFromString(htmlU, "text/html");
+	const interfaceUser = doc.getElementById('interface');
+	const interfaceUserU = docU.getElementById('interface');
 
-    // Parse the text
-    const doc = parser.parseFromString(html, "text/html");
-	//const interfaceUser = doc.getElementById('interface');
+	if (worldMap != 'underground'){
+		// Set match html variable with interface html element
+		match.initHtmlInterface(interfaceUser);
+		if (interfaceUser)
+			content.appendChild(interfaceUser);
+	}
+	else if (worldMap === 'underground')
+	{
+		match.initHtmlInterface(interfaceUserU);
+		if (interfaceUserU)
+			content.appendChild(interfaceUserU);
+	}
 
-	// Set match html variable with interface html element
-	//match.initHtmlInterface(interfaceUser);
 
-	//content.appendChild(interfaceUser);
 	content.appendChild(world.renderer.domElement)
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
 	})
-
 	//---------KEYBOARD INPUT----------
 	const keyDownBind = match.onKeyDown.bind(match);
 	const keyUpBind = match.onKeyUp.bind(match);

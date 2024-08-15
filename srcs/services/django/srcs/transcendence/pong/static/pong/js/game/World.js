@@ -929,7 +929,7 @@ export class World {
 			this.audioLoader.load('/static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
-				sound.setVolume(1);
+				sound.setVolume(0.1);
 				sound.setPlaybackRate(1);
 				resolve(sound);
 			}, undefined, function(error) {

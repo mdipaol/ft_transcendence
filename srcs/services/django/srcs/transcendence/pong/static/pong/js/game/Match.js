@@ -3,6 +3,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { Ball } from "./Ball.js"
 import * as UTILS from './utils.js';
 import { Player } from './Player.js';
+import Play from '../views/pages/Play.js';
 
 
 export class Match {

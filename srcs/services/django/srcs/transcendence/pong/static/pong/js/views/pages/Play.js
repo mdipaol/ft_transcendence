@@ -4,11 +4,28 @@ import { World } from "../../game/World.js";
 
 const Play = {
     world: null,
+    match: null,
+    bool: null,
 
     render: async () => {
         const response = await fetch(`https://${window.location.host}/play/`);
         const menu = await response.text();
         return (menu);
+    },
+
+    getMatch : async (matchType) =>{
+        Play.match = matchType
+        return Play.matchType
+    },
+
+    getWorld : async (world) =>{
+        Play.world = world
+        return Play.world
+    },
+
+    getBool : async (bool) =>{
+        Play.bool = bool
+        return Play.bool
     },
 
     after_render: async () => {
@@ -69,13 +86,15 @@ const Play = {
                 else
                     selectedWorld = 'finals';
             }
-            if (ButtonSTART) {
-                ButtonSTART.addEventListener('click', async () => {
-                    await startGame(matchType, selectedWorld, powerType);
-                }, { once: true }); // Assicura che l'evento venga gestito solo una volta
-            }
+            Play.getMatch(matchType);
+            Play.getWorld(selectedWorld);
+            Play.getBool(powerType);
+            await startGame(Play.match, Play.world , Play.bool);
         });
-        
+        if (ButtonSTART) {
+            ButtonSTART.addEventListener('click', async (event) => {
+            }, { once: true }); // Assicura che l'evento venga gestito solo una volta
+        }
     }
 };
 
