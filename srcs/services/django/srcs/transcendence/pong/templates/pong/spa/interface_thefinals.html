@@ -1,65 +1,41 @@
 {% load static %}
 
-<style>
+<!-- vai sui fili css per modificare so style -->
 
-    #interface{
-        width: 100%;
-        height: 100%;
-        position: absolute;
-    }
-
-	#interface-top{
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        text-align: center;
-    }
-    #interface-player1{
-        position: absolute;
-        font-size: 5vw;
-        left: 10%;
-    }
-    #interface-info{
-    	position: absolute;
-    }
-    #interface-player2{
-    	position: absolute;
-        font-size: 5vw;
-        right: 10%;
-    }
-    #interface-timer{
-        width: 10%;
-        position: relative;
-        left: 45%;
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        font: monospace;
-        font-size: 3vw;
-    }
-    #interface-keys{
-        bottom: 0;
-        width: 100%;
-        position: absolute;
-        text-align: center;
-        font-size: 3vw;
-
-    }
-</style>
-
-<div id="interface">
-     Score, time, nickname info
-    <div id="interface-timer">15:15</div>
-    <div id="interface-top">
-        <div id="interface-player1">Player1</div>
-        <div id="interface-info">
-            <div id="interface-score">10 - 2</div>
-            <div id="interface-exchanges">12</div>
-        </div>
-        <div id="interface-player2">Player2</div>
+<div id="interface" class="colorNeonText">
+    <!-- Score, time, nickname info -->
+    <div id="interface-timer">
+        <p >15:15</p>
     </div>
-    THEFINALS INTERFACE
- <div id="interface-keys">
-    <p> [space <img src="{% static 'pong/images/camera.png' %}">1️⃣] [<img src="{% static 'pong/images/tasto1.png' %}"> <img src="{% static 'pong/images/camera.png' %}"> 2️⃣] [ <img src="{% static 'pong/images/tasto2.png' %}">  <img src="{% static 'pong/images/camera.png' %}"> 3️⃣] </p>
-</div>
+    <div id="interface-top" class="colorNeonText">
+        <div id="interface-player1" class="colorNeonTextP1">
+            <p >Player1</p>
+        </div>
+        <div id="interface-info">
+            <div id="interface-score">
+                <p>10 - 2</p>
+            </div>
+            <div id="interface-exchanges">
+                <p>12</p>
+            </div>
+        </div>
+        <div id="interface-player2" class="colorNeonTextP2">
+            <p>Player2</p>
+        </div>
+    </div>
+    <!-- THEFINALS INTERFACE -->
+    <div id="interface-keys">
+        <div id="space">
+            [<img class="imgSpace" src="{% static 'pong/images/tasti pc - space 2.png' %}" alt="stasto_space">
+            <img src="{% static 'pong/images/camera.png' %}" alt="camera">] 
+        </div>
+        <div id="Key1">
+            [<img src="{% static 'pong/images/tasti pc - 1.png' %}" alt="tasto1"> 
+            <img src="{% static 'pong/images/camera.png' %}" alt="camera"> ] 
+        </div>
+        <div id="Key2">
+                [ <img src="{% static 'pong/images/tasti pc - 2.png' %}" alt="tasto2">    
+                <img src="{% static 'pong/images/camera.png' %}" alt="camera">]
+        </div>
+    </div>
 </div>
