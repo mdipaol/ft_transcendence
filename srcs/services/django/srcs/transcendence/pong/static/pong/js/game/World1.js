@@ -529,7 +529,6 @@ export class World1 {
 						font: font,
 						size: 22,
 						depth: 1,
-
 					});
 					const emissive_color = 0xA020F0;
 					const material = new THREE.MeshPhongMaterial( { color: emissive_color, emissive: emissive_color, emissiveIntensity: 1} );
@@ -550,10 +549,10 @@ export class World1 {
 					neon2.position.set(110, 0, 50);
 
 
-					this.add(neonLight);
-					this.add(neon2);
-					this.add(text2);
-					this.add(text);
+					// this.add(neonLight);
+					// this.add(neon2);
+					// this.add(text2);
+					// this.add(text);
 
 
 

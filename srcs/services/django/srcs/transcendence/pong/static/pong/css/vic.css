@@ -89,8 +89,10 @@
 #interface-player2 {
     position: absolute;
     font-size: 4.5vw;
-    right: 10%;
-    top: 0%
+    right: 25%;
+    top: 0%;
+    width: 200px; 
+    white-space: nowrap;
 }
 
 #interface-info {
@@ -154,4 +156,9 @@
 #Key2 {
     width: 5vw;
     justify-content: flex-end; 
+}
+
+#windows{
+    height: 100%;
+    width: 100%;
 }

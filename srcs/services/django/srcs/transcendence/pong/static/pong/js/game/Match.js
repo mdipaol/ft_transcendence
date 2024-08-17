@@ -85,6 +85,8 @@ export class Match {
 	}
 
 	exchangesTextInit() {
+		if (Play.world === 'finals')
+			return;
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
 			this.exchangesText[0].geometry.dispose();
 			this.exchangesText[1].geometry.dispose();
@@ -117,6 +119,8 @@ export class Match {
 
 	updateExchanges() {
 		this.exchanges++;
+		if (Play.world === 'finals')
+			return;
 		this.exchangesText[0].geometry.dispose();
 		this.exchangesText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.exchanges.toString(), {
@@ -131,6 +135,8 @@ export class Match {
 	}
 
 	scoreTextInit() {
+		if (Play.world === 'finals')
+			return;
 		const geometry = new TextGeometry( "0 - 0", {
 			font: this.exchangesFont,
 			size: 20,
@@ -154,6 +160,8 @@ export class Match {
 	}
 
 	updateScoreText(){
+		if(Play.world === 'finals')
+			return ;
 		this.scoreText[0].geometry.dispose();
 		this.scoreText[1].geometry.dispose();
 		const geometry = new TextGeometry( this.score1.toString() + " - "  + this.score2.toString(), {

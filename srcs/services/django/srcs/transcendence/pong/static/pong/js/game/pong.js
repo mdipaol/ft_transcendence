@@ -305,7 +305,6 @@ var update = function()
 		directionX *= -1;
 		directionY = (ball.position.y - player1.position.y)/10;
 		collision = true;
-		console.log('vivo')
 	}
 	if (checkCollision(player2, ball) && !collision)
 	{

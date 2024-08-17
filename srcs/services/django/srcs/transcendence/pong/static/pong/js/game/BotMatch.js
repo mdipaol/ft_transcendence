@@ -361,7 +361,6 @@ export class BotMatch extends Match {
 
 			this.handlePowerUp(this.player1);
 			this.addPowerUp();
-            console.log('vivo');
 
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)

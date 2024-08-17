@@ -613,7 +613,7 @@ export class World {
 					geometry.computeBoundingBox();
 					geometry.translate(-(geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2, 0, 0);
 					text.rotation.set (Math.PI/2, Math.PI/2, 0);
-					text.scale.multiplyScalar(1/1.7);
+					text.scale.multiplyScalar(1/2);
 					text.position.set(-125, 0, 50)
 					const neonLight = new THREE.PointLight(emissive_color, 15, 100000000, 0.6);
 					neonLight.position.set(-110, 0, 50);
@@ -645,7 +645,7 @@ export class World {
 	loadNickName_1() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'/static/pong/js/Pong_Fake/Font/Dark Underground_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Sportrop_Regular.json',
 				(font)=>{
 					this.usernameFont = font;
 					const geometry = new TextGeometry( 'NickName 1', {
@@ -660,7 +660,7 @@ export class World {
 					//text.add(new THREE.PointLight(0x6AE258, 5, 100000000, 0.6));
 					text.rotation.set (Math.PI/2, Math.PI/2, 0);
 					text.position.set(-124, -70, 55);
-					text.scale.multiplyScalar(1 / 2);
+					text.scale.multiplyScalar(1/2);
 					const text2 = text.clone();
 					text2.position.set(124, 70, 55);
 					text2.scale.x = -text2.scale.x;
@@ -681,7 +681,7 @@ export class World {
 	loadNickName_2() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'/static/pong/js/Pong_Fake/Font/Dark Underground_Regular.json',
+				'/static/pong/js/Pong_Fake/Font/Sportrop_Regular.json',
 				(font)=>{
 					const geometry = new TextGeometry( 'NickName 2', {
 						font: font,
@@ -695,7 +695,7 @@ export class World {
 					//text.add(new THREE.PointLight(0xB92727, 5, 100000000, 0.6));
 					text.rotation.set (Math.PI/2, Math.PI/2, 0);
 					text.position.set(-124, 70, 55);
-					text.scale.multiplyScalar(1 / 2);
+					text.scale.multiplyScalar(1/2);
 					const text2 = text.clone();
 					text2.position.set(124, -70, 55);
 					text2.scale.x = -text2.scale.x;
