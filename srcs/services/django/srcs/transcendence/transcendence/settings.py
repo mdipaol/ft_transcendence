@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, sys
 import mimetypes
 
 mimetypes.add_type("text/css", ".css", True)
@@ -153,25 +153,31 @@ MEDIA_URL = '/media/'
 
 # Logs monitoring using ELK stack
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'logstash': {
-#             'level': 'DEBUG',
-#             'class': 'logging.handlers.SocketHandler',
-#             'host': 'logstash',  # or the host where Logstash is running
-#             'port': 5000,         # the port Logstash is listening on
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'handlers': ['logstash'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logstash': {
+            'level': 'DEBUG',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'logstash',  # Logstash server IP address
+            'port': 5044,         # Logstash port
+            'version': 1,
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['logstash', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

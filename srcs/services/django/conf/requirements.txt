@@ -9,3 +9,4 @@ requests==2.31.0
 oauthlib==3.2.2
 django-friendship
 Pillow
+python-logstash
