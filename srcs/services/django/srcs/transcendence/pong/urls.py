@@ -24,7 +24,6 @@ urlpatterns = [
     path('profile/', views.personal_profile),
 	path('username/', views.username, name='username'),
 	path('authenticated/', views.authenticated, name='authenticated'),
-    path('send_friend/<str:username>/', views.sendFriendRequest, name='send_friend'),
     path('image_upload/', views.ImageUpload.as_view(), name='image_upload'),
 	path('item_show/', views.item_show, name='item_show'),
 	path('home/', views.home, name='home'),
@@ -42,6 +41,11 @@ urlpatterns = [
     path('tournament_leave/<str:name>/', views.tournament_leave, name='tournament_leave'),
     path('notification/<str:username>/', views.notification, name='notification'),
     path('edit_account/', views.edit_account, name='edit_account'),
+    path('send_friend_request/<str:username>/', views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/<str:username>/', views.accept_friend_request, name='accept_friend_request'),
+    path('reject_friend_request/<str:username>/', views.reject_friend_request, name='reject_friend_request'),
+    path('remove_friend/<str:username>/', views.remove_friend, name='remove_friend'),
+    path('friend_template/', views.friend_template, name='friend_template'),
 ]
 
 # To serve media files in development, because they are not served by default in development

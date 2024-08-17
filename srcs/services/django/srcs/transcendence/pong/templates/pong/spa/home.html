@@ -1,79 +1,127 @@
 {% load static %}
 
 {% if not user.is_authenticated %}
-  <section class="flex-container">
-    <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
-    <h1 class="neonbar">OR</h1>
-    <h1><a class="neonpink" href="/#/register">REGISTER!</a></h1>
-    <h1 class="neonbar">OR</h1>
-    <h1><a class="neonpink" href="/login42">Login 42</a></h1>
-    <div class="neon-button-wrapper">
+    <section class="flex-container">
+        <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
+        <h1 class="neonbar">OR</h1>
+        <h1><a class="neonpink" href="/#/register">REGISTER!</a></h1>
+        <h1 class="neonbar">OR</h1>
+        <h1><a class="neonpink" href="/login42">Login 42</a></h1>
+        <div class="neon-button-wrapper"></div>
+    </section>
+{% else %}
+<div id="home-container">
+    <div id="social-container">
+        <div id="online-users-container" class="social-element-container">
+            ONLINE USERS
+            <br>
+            {% for item in online_users %}
+            <div class="online-single-user-container">
+                {{ item.username }}
+            </div>
+            {% endfor %}
+        </div>
+        <div id="friends-container" class="social-element-container">
+            FRIENDS
+            {% for item in friends %}
+                <div class="single-friend-container">
+                    {{ item.username }}
+                </div>
+                <button id="remove-friend-btn" data-username="{{ item.username }}">
+                    Remove
+                </button>
+            {% endfor %}
+        </div>
+        <div id="friend-request-container" class="social-element-container">
+            FRIEND REQUESTS
+            {% for item in friend_requests %}
+                <div class="single-friend-request-container">
+                    {{ item.username }}
+                </div>
+                <div>
+                    <button id="accept-request-btn" data-username="{{ item.username }}">
+                        Accept
+                    </button>
+                    <button id="reject-request-btn" data-username="{{ item.username }}">
+                        Reject
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="social-element-container">
+            <form id="friend-request-form">
+                <label for="username">Send request to user</label>
+                <br>
+                <span id="request-username-error" class="error"></span>
+                <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
+                <input type="submit" name="submit" id="friend-request-submit" value="Invia">
+            </form>
+        </div>
     </div>
-  </section>
-{% endif %}
 
-{% if user.is_authenticated %}
-<div class="account">
-  <section class="account-highlights account-section">
-      <div id="account-header-right">
-          <div>
-              <a class="glow-button cyan" href="">Create Tournament</a>
-          </div>
-          <div>
-              <button class="glow-button cyan">Invite a Friend</button>
-          </div>
-      </div>
-  </section>
-  <section class="account-events account-section">
-      <h2 class="neonbar neonbar-animated neonbar-large neonbar-white">Tournaments</h2>
-      <div class="account-tab-info">
-          <div class="special-list-container">
-              <ul class="special-list">
-                  {% for item in tournaments %}
-                  <div class="tournament-info-container glow-border cyan">
-                      <div class="container-tournament-button">
-                          <button class="tournament-button" id="join-tournament-button" data-id="{{ item.id }}">{{ item.name }}</button>
-                      </div>
-                      <div class="tournament-eye">
-                          <button class="null">
-                              <img src="/static/pong/images/eye.png" style="height:100%;width:15%;">
-                          </button>
-                      </div>
-                      <div class="tournament-partecipants">
-                          {{ item.number_of_partecipants }}
-                      </div>
-                  </div>
-              {% endfor %}
-              </ul>
-          </div>
-      </div>
-  </section>
-  <section class="account-highlights account-section">
-      <h2 class="neonbar neonbar-animated neonbar-large neonbar-white">Favorite Teammates</h2>
-      <div class="account-tab-info">
-          <div class="special-list-container">
-              <ul class="special-list">
-                  <!-- {% for teammate in teammates %} -->
-                      <li>
-                          <div class="special-container">
-                              <span></span>
-                              <span></span>
-                          </div>
-                      </li>
-                  <!-- {% endfor %} -->
-              </ul>
-          </div>
-      </div>
-  </section>
-  <div>
-    <button class="glow-button cyan" id="logout-button">Logout</button>
-  </div>
+    {% comment %}
+    <div class="account">
+    <section class="account-highlights account-section">
+        <div id="account-header-right">
+            <div>
+                <a class="glow-button cyan" href="">Create Tournament</a>
+            </div>
+            <div>
+                <button class="glow-button cyan">Invite a Friend</button>
+            </div>
+        </div>
+    </section>
+    <section class="account-events account-section">
+        <h2 class="neonbar neonbar-animated neonbar-large neonbar-white">Tournaments</h2>
+        <div class="account-tab-info">
+            <div class="special-list-container">
+                <ul class="special-list">
+                    {% for item in tournaments %}
+                    <div class="tournament-info-container glow-border cyan">
+                        <div class="container-tournament-button">
+                            <button class="tournament-button" id="join-tournament-button" data-id="{{ item.id }}">{{ item.name }}</button>
+                        </div>
+                        <div class="tournament-eye">
+                            <button class="null">
+                                <img src="/static/pong/images/eye.png" style="height:100%;width:15%;">
+                            </button>
+                        </div>
+                        <div class="tournament-partecipants">
+                            {{ item.number_of_partecipants }}
+                        </div>
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="account-highlights account-section">
+        <h2 class="neonbar neonbar-animated neonbar-large neonbar-white">Favorite Teammates</h2>
+        <div class="account-tab-info">
+            <div class="special-list-container">
+                <ul class="special-list">
+                    <!-- {% for teammate in teammates %} -->
+                        <li>
+                            <div class="special-container">
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </li>
+                    <!-- {% endfor %} -->
+                </ul>
+            </div>
+        </div>
+    </section>
+    <div>
+        <button id="notification-button">
+            Send Notification
+        </button>
+    </div>
+    {% endcomment  %}
+    <div>
+        <button class="glow-button cyan" id="logout-button">Logout</button>
+    </div>
+    </div>
 </div>
-<div>
-    <button id="notification-button">
-        Send Notification
-    </button>
-</div>
-
 {% endif %}
 

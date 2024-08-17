@@ -108,8 +108,8 @@ class Player:
 
 class Match:
 
-    def __init__(self, powerup_mode : str) -> None:
-        self.id = str(uuid.uuid4())
+    def __init__(self, powerup_mode: str, id: int = None) -> None:
+        self.id = str(uuid.uuid4()) if id is None else id
         self.player1 : Player = Player('player1' ,Vector2D(Costants.MIN_WIDTH, 0))
         self.player2 : Player = Player('player2', Vector2D(Costants.MAX_WIDTH, 0))
         self.ball : Ball = Ball()
@@ -130,7 +130,9 @@ class Match:
         self.active_powerup : PowerUp = None
         self.wait_powerup : int = 0
 
-        self.task = None
+        self.tournament : bool = False if id is None else True
+
+        self.task = None 
         self.state = {
             "player_one": {"x": self.player1.position.x, "y": self.player1.position.y, "score": self.score1,},
             "player_two": {"x": self.player2.position.x, "y": self.player2.position.y, "score": self.score2,},

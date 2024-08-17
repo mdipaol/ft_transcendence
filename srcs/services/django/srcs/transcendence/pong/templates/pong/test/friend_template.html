@@ -1,0 +1,23 @@
+{% load friendshiptags %}
+
+{% friends request.user %}
+{% followers request.user %}
+{% following request.user %}
+{% friend_requests request.user %}
+{% blockers request.user %}
+{% blocking request.user %}
+
+<br>
+
+Start of context variables
+{{friend}}
+<br>
+{{unread_request}}
+<br>
+{{unrejected_request}}
+<br>
+{{unrejected_request_count}}
+<br>
+{{rejected_request}}
+<br>
+{{sent_request}}

@@ -18,7 +18,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from friendship.models import Friend, Follow, Block
+from friendship.models import Friend, Follow, Block, FriendshipRequest
 
 from .models import BaseUser, Tournament, Match
 from .forms import *
@@ -33,19 +33,121 @@ def login42(request):
 	url = client.prepare_request_uri( auth_url, redirect_uri="https://localhost/callback", state=request.session['state'])
 	return HttpResponseRedirect(url)
 
-def sendFriendRequest(request, username):
-	to_send = BaseUser.objects.get(username=username)
-	if not to_send:
-		return(HttpResponse("to_send not found"))
-	if not request.user.is_authenticated:
-		return (HttpResponse("Bad"))
-	Friend.objects.add_friend(
-		request.user,
-		to_send,
-		message='Sono proprio io'
-	)
-	return HttpResponse("Request Sent")
+@login_required(login_url='/')
+def send_friend_request(request, username):
+	if request.method == 'POST':
+		try:
+			to_send = BaseUser.objects.get(username=username)
+			Friend.objects.add_friend(
+				request.user,
+				to_send,
+				message=f'User {request.user.username} has sent to you a friend request'
+			)
+			print('Request sent')
+			return JsonResponse(data={'status' : 'success', 'message' : 'Request sent successfully'})
+		except Exception as e:
+			print(e)
+			return JsonResponse(data={'status' : 'error', 'message' : 'Error sending the request'}, status=400)
 
+@login_required(login_url='/')
+def accept_friend_request(request, username):
+	if request.method == 'POST':
+		try:
+			to_accept = BaseUser.objects.get(username=username)
+			friend_request = FriendshipRequest.objects.get(from_user=to_accept, to_user=request.user)
+			friend_request.accept()
+			return JsonResponse(data={'status' : 'success', 'message' : f'You and {request.user.username} are now friends'}, status=201)	
+		except Exception as e:
+			print(e)
+			return JsonResponse(data={'status' : 'error', 'message' : 'Error accepting the request'}, status=400)
+		
+@login_required(login_url='/')
+def reject_friend_request(request, username):
+	if request.method == 'POST':
+		try:
+			to_reject = BaseUser.objects.get(username=username)
+			friend_request = FriendshipRequest.objects.get(from_user=to_reject, to_user=request.user)
+			friend_request.reject()
+			friend_request.delete()
+			return JsonResponse(data={'status' : 'success', 'message' : f'{request.user} rejects {to_reject}'}, status=200)	
+		except Exception as e:
+			print(e)
+			return JsonResponse(data={'status' : 'error', 'message' : 'Error rejecting the request'}, status=400)
+
+@login_required(login_url='/')
+def remove_friend(request, username):
+	if request.method == 'DELETE':
+		try:
+			to_delete = BaseUser.objects.get(username=username)
+			Friend.objects.remove_friend(request.user, to_delete)
+			return JsonResponse(data={'status' : 'success', 'message' : f'You and {request.user} are not friends anymore :\'('}, status=200)	
+		except Exception as e:
+			print(e)
+			return JsonResponse(data={'status' : 'error', 'message' : f'Error deleting {to_delete} from friends'}, status=400)
+
+@login_required(login_url='/')
+def friend_template(request):
+	friend = Friend.objects.friends(request.user)
+	unread_request = Friend.objects.unread_requests(user=request.user)
+	unrejected_request =Friend.objects.unrejected_requests(user=request.user)
+	unrejected_request_count = Friend.objects.unrejected_request_count(user=request.user)
+	rejected_request = Friend.objects.rejected_requests(user=request.user)
+	# not working
+	# rejected_request_count = Friend.objects.rejected_request_count(user=request.user)
+	sent_request = Friend.objects.sent_requests(user=request.user)
+	# test_user_friend = Friend.objects.are_friends(request.user, other_user) == True
+
+	# Create friend request #
+	
+	# other_user = User.objects.get(pk=1)
+	# Friend.objects.add_friend(
+    # request.user,                               # The sender
+    # other_user,                                 # The recipient
+    # message='Hi! I would like to add you')      # This message is optional
+	print(friend)
+	print(unread_request)
+	print(unrejected_request)
+	print(unrejected_request_count)
+	print(rejected_request)
+	print(sent_request)
+	context = {
+		'friend' : friend,
+		'unread_request' : unread_request,
+		'unrejected_request' : unrejected_request,
+		'unrejected_request_count' : unrejected_request_count,
+		'rejected_request' : rejected_request,
+		'sent_request' : sent_request,
+	}
+
+	for item in sent_request:
+		print('ciao')
+		print(item.__dict__)
+
+	users = BaseUser.objects.all()
+
+	try:
+		for u in users:
+			if u == request.user:
+				continue
+			Friend.objects.add_friend(
+			request.user,                               # The sender
+			u,                                 # The recipient
+			message='Hi! I would like to add you')      # This message is optional
+
+	except Exception as e:
+		print(e)
+
+	# Let the user who received the request respond #
+
+	# from friendship.models import FriendshipRequest
+	# friend_request = FriendshipRequest.objects.get(from_user=request.user, to_user=other_user)
+	# friend_request.accept()
+	# # or friend_request.reject()
+
+	# Remove friend #
+	# Friend.objects.remove_friend(request.user, other_user)
+
+	return render(request, 'pong/test/friend_template.html', context)
 
 class CallbackView(View):
 	def get(self, request, *args, **kwargs):
@@ -77,6 +179,8 @@ class CallbackView(View):
 		# 	"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		# }).text), indent=4)))
 		print(response)
+		# print(json.loads(response.text))
+		# return HttpResponse('ciao')
 		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text)
@@ -261,7 +365,20 @@ def personal_profile(request):
 
 def home(request):
 	if request.method == 'GET':
-		return render(request, 'pong/spa/home.html')
+		if not request.user.is_authenticated:
+			return render(request, 'pong/spa/home.html')
+		online_users = BaseUser.objects.filter(online__gt=0)
+		friends = Friend.objects.friends(request.user)
+		friend_requests = Friend.objects.unrejected_requests(user=request.user)
+		print(friend_requests)
+		friend_requests_ids = [u.from_user_id for u in friend_requests]
+		friend_requests_users = [BaseUser.objects.get(pk=u) for u in friend_requests_ids]
+		context = {
+			'online_users' : online_users,
+			'friends' : friends,
+			'friend_requests' : friend_requests_users, 
+		}
+		return render(request, 'pong/spa/home.html', context)
 
 def navbar(request):
 	if request.method == 'GET':

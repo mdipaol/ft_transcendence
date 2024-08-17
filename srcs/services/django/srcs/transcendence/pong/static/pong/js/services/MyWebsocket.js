@@ -14,7 +14,7 @@
       MyWebsocket.socket.onopen = function(event) {
         console.log('WebSocket is connected.');
       };
-      
+
       MyWebsocket.socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
 

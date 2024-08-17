@@ -8,7 +8,6 @@ from channels.db import database_sync_to_async
 
 class MatchManager:
 
-    pendingPlayers = []
     matches : list[Match] = []
     invite_matches : list[Match] = []
     active_monitoring = False
@@ -21,12 +20,21 @@ class MatchManager:
         return None
 
     @classmethod
-    def get_avaiable_match(cls, consumer) -> Match:
+    def get_available_match(cls, consumer) -> Match:
         for item in cls.matches:
             if not item.is_started() and item.powerup_mode == consumer.powerup_mode:
                 return item
         match = Match(consumer.powerup_mode)
         cls.matches.append(match)
+        return match
+    
+    @classmethod
+    def get_available_invite_match(cls, consumer) -> Match:
+        for item in cls.invite_matches:
+            if not item.is_started() and item.powerup_mode == consumer.powerup_mode:
+                return item
+        match = Match(consumer.powerup_mode)
+        cls.invite_matches.append(match)
         return match
 
     @classmethod
@@ -40,10 +48,29 @@ class MatchManager:
 
     @classmethod
     async def add_player(cls, consumer):
-        match: Match = cls.get_avaiable_match(consumer)
+        match: Match = cls.get_available_match(consumer)
         match.add_player(consumer)
         consumer.match = match
         await match.channel_layer.group_add(match.id, consumer.channel_name)
+        if match.is_full():
+            cls.start_match(match)
+        return match
+
+    @classmethod
+    async def add_player_id(cls, consumer, id):
+        match = None
+        for item in cls.invite_matches:
+            if id == item.id:
+                match = item
+                break
+        if match == None:
+            match = Match(consumer.powerup_mode, id)
+            cls.invite_matches.append(match)
+
+        if match.is_full():
+            return None
+
+        await match.channel_layer.group_add(str(match.id), consumer.channel_name)
         if match.is_full():
             cls.start_match(match)
         return match
@@ -55,6 +82,8 @@ class MatchManager:
             return
         if match in cls.matches:
             cls.matches.remove(match)
+
+        # Remember to delete channel layers
 
         await match.channel_layer.group_send(match.id, {
             'type' : 'game_end',
@@ -102,59 +131,47 @@ class MatchManager:
                 'winner' : match.player1.consumer.username if match.score1 > match.score2 else match.player2.consumer.username ,
             }
         })
-        # new_match = await database_sync_to_async(ModelMatch.objects.create)(
-        # player1=match.player1.consumer.user,
-        # player2=match.player2.consumer.user,
-        # score1=match.score1,
-        # score2=match.score2,
-        # match_date=match.start_time
-    # )
-        # await match.channel_layer.group_discard(match.id, match.player1.consumer.channel_name)
-        # await match.channel_layer.group_discard(match.id, match.player2.consumer.channel_name)
-        # match.end_match()
-        # cls.matches.remove(match)
-        # print('ciao')
 
-        # print('ciao')
-        # create = sync_to_async(ModelMatch.objects.create)
-        # print(create)
-        # new_match = await create(player1=match.player1.consumer.user, player2=match.player2.consumer.user, score1=match.score1, score2=match.score2, date=match.start_time)
-        # print(new_match)
-        # await sync_to_async(new_match.save)()
-        # # new_match = await sync_to_async(ModelMatch.objects.create)(player1=match.player1.consumer.user, player2=match.player2.consumer.user, score1=match.score1, score2=match.score2, date=match.start_time)
-        # await print(new_match)
-        # #print("match saved")
-        # # sync_to_async(new_match.save())
+        if not match.tournament:
+            try:
+                # Ensure start_time is in the correct datetime format
+                if isinstance(match.start_time, (int, float)):
+                    start_time = datetime.fromtimestamp(match.start_time)
+                elif isinstance(match.start_time, datetime):
+                    start_time = match.start_time
+                else:
+                    start_time = datetime.strptime(match.start_time, '%Y-%m-%d %H:%M:%S')  # Adjust format if necessary
 
-        #     # Saving the match to the database
-        # Saving the match to the database
-        try:
-            # Ensure start_time is in the correct datetime format
-            if isinstance(match.start_time, (int, float)):
-                start_time = datetime.fromtimestamp(match.start_time)
-            elif isinstance(match.start_time, datetime):
-                start_time = match.start_time
-            else:
-                start_time = datetime.strptime(match.start_time, '%Y-%m-%d %H:%M:%S')  # Adjust format if necessary
+                start_time_str = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
-            start_time_str = start_time.strftime('%Y-%m-%d %H:%M:%S')
-
-            create = sync_to_async(ModelMatch.objects.create)
-            new_match = await create(
-                player1=match.player1.consumer.user,
-                player2=match.player2.consumer.user,
-                score1=match.score1,
-                score2=match.score2,
-                date=start_time_str
-            )
-            await sync_to_async(new_match.save)()  # Although save might not be necessary here
-            print(f"Match saved: {new_match}")
-        except Exception as e:
-            print(f"Error saving match: {e}")
+                create = sync_to_async(ModelMatch.objects.create)
+                new_match = await create(
+                    player1=match.player1.consumer.user,
+                    player2=match.player2.consumer.user,
+                    score1=match.score1,
+                    score2=match.score2,
+                    date=start_time_str
+                )
+                await sync_to_async(new_match.save)()  # Although save might not be necessary here
+                print(f"Match saved: {new_match}")
+            except Exception as e:
+                print(f"Error saving match: {e}")
+            
+        else:
+            try:
+                db_match = await sync_to_async(ModelMatch.objects.get)(id=match.id)
+                db_match.score1 = match.score1
+                db_match.score2 = match.score2
+                db_match.is_played = True
+                await sync_to_async(db_match.save)()
+                print(f"Match saved: {db_match}")
+                
+            except Exception as e:
+                print(f"Error saving match: {e}")
 
         cls.matches.remove(match)
         await match.end_match()
-
+    
     @classmethod
     async def monitoring(cls):
         while True:

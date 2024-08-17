@@ -25,12 +25,23 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         self.user = self.scope['user']
-        self.powerup_mode = self.scope["url_route"]["kwargs"]["powerup_mode"] == 'powerup'
+        self.powerup_mode = self.scope["url_route"]["kwargs"].get("powerup_mode") == 'powerup'
+
+        db_match_id : int = self.scope["url_route"]["kwargs"].get("id")
+        print(db_match_id)
 
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
         
-        self.match =  await MatchManager.add_player(self)
+        if db_match_id:
+            self.match = await MatchManager.add_player_id(self, db_match_id)
+        else:
+            self.match =  await MatchManager.add_player(self)
+
+        if self.match == None:
+            print('match')
+            print(None)
+            await self.close()
 
         await self.accept()
 
@@ -147,30 +158,6 @@ class OnlineConsumer(WebsocketConsumer):
             'type' : event.get('type'),
             'message' : event.get('message'),
         }))
-    # def receive(self, text_data):
-    #     # print(text_data)
-    #     json_data = json.loads(text_data)
-    #     # status = json_data.get('status')
-    #     user = self.scope['user']
-
-    #     # print('scope')
-    #     # print(self.scope)
-    #     # print(status)
-    #     # print('self.authenticated: ' + str(self.authenticated))
-    #     # print('user.authenticated of ' + user.username +  ': ' + str(user.is_authenticated))
-
-
-    #     # Frontend socket sends status after operations of login and logout in backend
-    #     # if status == 'online' and self.authenticated == False and user.is_authenticated:
-    #     #     print('Connection added for user: ' + user.username)
-    #     #     self.authenticated = True
-    #     #     self.user_pk = user.pk
-    #     #     self.add_connection(user)
-    #     # if status == 'offline' and self.authenticated == True:
-    #     #     print('Connection removed')
-    #     #     self.authenticated = False
-    #     #     self.del_connection()
-    #     #     self.user_pk = None
 
     def add_connection(self, user):
         BaseUser.objects.filter(pk=user.pk).update(online=F('online') + 1)
