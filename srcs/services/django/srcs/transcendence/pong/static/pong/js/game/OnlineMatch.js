@@ -14,6 +14,7 @@ export class OnlineMatch extends Match {
 		
 
 		this.connected = false;
+		this.searching = false;
 		this.culo = null;
 	}
 
@@ -35,6 +36,11 @@ export class OnlineMatch extends Match {
 				console.log('WebSocket connection opened');
 				this.socket.send(JSON.stringify({ 'type': 'ready'}));
 				this.connected = true;
+				this.searching = true;
+				//test
+					this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching...";
+				
+				//test
 				resolve();
 			};
 
@@ -232,6 +238,7 @@ export class OnlineMatch extends Match {
 			this.gameMessage(msg);
 		else if (msg.type == "game_start")
 		{
+			this.searching = false;
 			console.log("game started")
 			console.log(msg.player)
 			this.start = new Date();
@@ -452,6 +459,18 @@ export class OnlineMatch extends Match {
 	}
 
     update() {
+		if (this.searching)
+		{
+			let frame = Number(this.htmlElement.querySelector('#interface-timer').innerHTML.substring(3, 5)) % 4;
+			if (frame == 0)
+				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching";
+			else if (frame == 1)
+				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching.";
+			else if (frame == 2)
+				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching..";
+			else if (frame == 3)
+				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching...";
+		}
 		const currentTime = new Date();
 		const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
 
