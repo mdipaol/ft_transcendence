@@ -404,6 +404,10 @@ def interface_underground(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/interface_underground.html')
 
+def interface_thefinals(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/interface_thefinals.html')
+
 def account(request):
 	if request.method == 'GET':
 		user = request.user

@@ -1,37 +1,17 @@
-<!-- <div>
-    <h1>Game Menu</h1>
-    <div class="menu">
-        <button id="btn-local-game">Local game 1 vs 1</button>
-        <button id="btn-local-game-bot" >Local game vs AI</button>
-        <button id="btn-remote-game">Remote play</button>
-        <button id="btn-settings">Settings</button>
-        <button id="btn-quit">Quit</button>
-    </div>
-</div> -->
+{% load static %}
 
 <style>
-    /* body {
-        margin: 0;
-        padding: 0;
+    .menu-container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        height: 80vh;
         background-color: #000;
         font-family: 'Arial', sans-serif;
-    } */
-
-    .menu-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
-    background-color: #000;
-    font-family: 'Arial', sans-serif;
-    color: #fff;
-    text-align: center;
-}
+        color: #fff;
+        text-align: center;
+    }
 
     .menu-neon-text {
         font-size: 4em;
@@ -48,10 +28,163 @@
     .menu-list li {
         margin: 20px 0;
     }
+
+    .Neon-Text-Settings{
+        height: 20vw;
+        width: 100%;
+    }
+
+    .Title{
+        height: 10vw;
+        font-size: 1.5vw;
+    }
+
+    #title_play{
+        height: 100%;
+        width: 100%;
+        font-size: 5em;
+    }
+    #setting-Mach {
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        background: black;
+        border: 2px solid #0ff;
+        box-shadow: 0 0 20px #0ff;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 10px 0;
+        height: 80vw;
+        overflow-x: auto;
+    }
+    .Set-GifFinals, .Set-GifGround {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative; /* Aggiungi questa riga */
+    }
+
+    .Set-GifFinals img, .Set-GifGround img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover; /* Assicura che l'immagine copra il contenitore */
+        position: absolute; /* Mantieni questa riga se necessario */
+    }
+    
+    .B2, .B1{
+        height: 20vw;
+        width: 40vw;
+        right: 0px;
+        box-sizing: border-box;
+    }
+    /* Nasconde i radio button */
+    .custom-radio input[type="radio"] {
+        display: none;
+    }
+
+    /* Stile per le etichette che contengono i pulsanti */
+    .custom-radio span {
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    /* Stile per lo stato selezionato */
+    .custom-radio input[type="radio"]:checked + span {
+        box-shadow: 0 0 10px rgb(255, 0, 0), 0 0 20px rgb(255, 187, 0);
+        background-color: rgba(253, 182, 2, 0.7);
+    }
+
 </style>
 
-<section class="account-highlights account-section">
-<div class="menu-container">
+
+
+<!-- <section class="account-highlights account-section">
+    <div class="Title">
+        <h1 class="neonbar neonbar-animated neonbar-large neonbar-purple" id="title_play">Choose a game</h1>
+    </div>
+</section> -->
+
+<section>
+    <form id="setting-Mach" class="Neon-Text-Settings">
+        <div style="position: absolute; top: 40px; text-align: center;">
+            <!-- Selezione del tipo di partita -->
+            <div style="text-align: center;">
+                <p class="neonbar" style="text-align: center; font-size: 3vw;">Selected Match</p>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="match-type" value="1v1" id="btn-local-game">
+                    <span class="glow-button blue" id="1vs1">1 vs 1</span>
+                </label>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="match-type" value="AI" id="btn-local-game-bot">
+                    <span class="glow-button red" id="AI">AI</span>
+                </label>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="match-type" value="online" id="btn-remote-game">
+                    <span class="glow-button green" id="OnlineMatch">Online Match</span>
+                </label>
+            </div>
+            <br>
+    
+            <!-- Selezione dello stato dei PowerUp -->
+            <div style="text-align: center;">
+                <p class="neonbar" style="text-align: center; font-size: 3vw;">PowerUp</p>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="power-type" value="ON" id="btn-power-up-active">
+                    <span class="glow-button green" id="ON">ON</span>
+                </label>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="power-type" value="OFF" id="btn-power-up-off">
+                    <span class="glow-button red" id="OFF">OFF</span>
+                </label>
+            </div>
+            <br>
+    
+            <!-- Selezione del mondo -->
+            <div style="text-align: center;">
+                <p class="neonbar" style="text-align: center; font-size: 3vw;">Selected World</p>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="World-Type" value="finals" id="W1">
+                    <span class="B1 glow-button green" id="TheFinals">
+                        <img src="{% static 'pong/images/gifTheFinals.gif' %}" alt="gifTheFinals" class="Set-GifFinals">
+                    </span>
+                </label>
+                
+                <label class="custom-radio">
+                    <input type="radio" name="World-Type" value="underground" id="W2">
+                    <span class="B2 glow-button green" id="Underground">
+                        <img src="{% static 'pong/images/gifUnderGround.gif' %}" alt="gifUnderGround" class="Set-GifGround">
+                    </span>
+                </label>
+            </div>
+            <br>
+    
+            <!-- Pulsante di avvio -->
+            <div style="text-align: center;">
+                <button type="submit" class="glow-button green" id="Start">
+                    <p class="neonbar" style="font-size: 4vw; color: blue;">Start Match</p>    
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    
+</section>
+
+
+
+<!-- <div class="menu-container">
     <h1 class="neonbar neonbar-animated neonbar-large neonbar-purple">Choose a game</h1>
     <div >
         <button id="btn-local-game" class="glow-button blue">1 vs 1</button>
@@ -62,6 +195,4 @@
     <div >
         <button id="btn-remote-game" class="glow-button green">Online Match</button>
     </div>
-</div>
-
-</section>
+</div> -->

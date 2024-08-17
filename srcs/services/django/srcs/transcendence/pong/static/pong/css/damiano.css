@@ -1,4 +1,4 @@
-     #interface{
+     /* #interface{
         width: 100%;
         height: 100%;
         position: absolute;
@@ -41,62 +41,4 @@
         text-align: center;
         font-size: 3vw;
         
-    }
-    
-    .error{
-        color: red;
-        display: none;
-    }
-    .error.visible {
-        display: block;
-    }
-
-/* home.html */
-
-    #home-container{
-        width: 100%;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    #home-container img {
-        max-width: 100%; /* Ensure the image doesn't exceed the width of the parent */
-        max-height: 100%; /* Ensure the image doesn't exceed the height of the parent */
-        object-fit: contain; /* Fit the image within the parent while maintaining aspect ratio */
-        display: block; /* Remove the gap below the image */
-    }
-
-    #social-container{
-        display: flex;
-        width: 100%;
-    }
-
-    .social-element-container{
-        border-style: solid;
-        border-color: cyan;
-        border-radius: 10px;
-        margin-right: 3%;
-    }
-
-    .online-single-user-container{
-        color: greenyellow;
-    }
-
-    .single-friend-container{
-        color: blueviolet;
-    }
-
-    #friend-request-btn {
-        width: 50px;  /* Set a fixed width for the button */
-        height: 50px; /* Set a fixed height for the button */
-        padding: 0;   /* Remove padding to ensure the image fits properly */
-        border: none; /* Optional: Remove border if you don't want it */
-    }
-
-    #friend-request-btn img{
-        width: 100%;  /* Make the image take up the full width of the button */
-        height: auto; /* Maintain the aspect ratio */
-        max-height: 100%; /* Ensure the image doesn't exceed the button's height */
-        object-fit: contain; /* Make sure the image fits within the button */
-    }
+    } */

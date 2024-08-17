@@ -1,0 +1,41 @@
+{% load static %}
+
+<!-- vai sui fili css per modificare so style -->
+
+<div id="interface" class="colorNeonText">
+    <!-- Score, time, nickname info -->
+    <div id="interface-timer">
+        <p >15:15</p>
+    </div>
+    <div id="interface-top" class="colorNeonText">
+        <div id="interface-player1" class="colorNeonTextP1">
+            <p >Player1</p>
+        </div>
+        <div id="interface-info">
+            <div id="interface-score">
+                <p>10 - 2</p>
+            </div>
+            <div id="interface-exchanges">
+                <p>12</p>
+            </div>
+        </div>
+        <div id="interface-player2" class="colorNeonTextP2">
+            <p>Player2</p>
+        </div>
+    </div>
+    <!-- THEFINALS INTERFACE -->
+    <div id="interface-keys">
+        <div id="space">
+            [<img class="imgSpace" src="{% static 'pong/images/tasti pc - space 2.png' %}" alt="stasto_space">
+            <img src="{% static 'pong/images/camera.png' %}" alt="camera">] 
+        </div>
+        <div id="Key1">
+            [<img src="{% static 'pong/images/tasti pc - 1.png' %}" alt="tasto1"> 
+            <img src="{% static 'pong/images/camera.png' %}" alt="camera"> ] 
+        </div>
+        <div id="Key2">
+                [ <img src="{% static 'pong/images/tasti pc - 2.png' %}" alt="tasto2">    
+                <img src="{% static 'pong/images/camera.png' %}" alt="camera">]
+        </div>
+    </div>
+</div>

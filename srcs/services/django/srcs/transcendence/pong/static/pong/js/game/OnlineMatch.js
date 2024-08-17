@@ -93,7 +93,7 @@ export class OnlineMatch extends Match {
 			const effect = data.powerup_effect == 'good' ? 'Positive' : 'Negative'
 			console.log(data.powerup_type + effect)
 			const powerUp = this.world.mapPowerUp.get(data.powerup_type + effect);
-
+			
 			if (powerUp){
 				powerUp.mesh.position.set(0, data.powerup_position, 15);
 				this.world.powerUp = powerUp;
@@ -128,6 +128,16 @@ export class OnlineMatch extends Match {
 	handlePowerUp( data ){
 		if (data.type == 'powerup_taken'){
 			this.removePowerUp();
+			if (this.world.soundPowerUpPositive.isPlaying)
+				this.world.soundPowerUpPositive.stop();
+			if (this.world.soundPowerUpNegative.isPlaying)
+				this.world.soundPowerUpNegative.stop();
+			
+			if (data.effect == 'good')
+				this.world.soundPowerUpPositive.play();
+			else
+				this.world.soundPowerUpNegative.play();
+			
 		}
 		else if (data.type == 'powerup_remove'){
 			this.removePowerUp();

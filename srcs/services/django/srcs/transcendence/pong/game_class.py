@@ -67,7 +67,7 @@ class Ball:
 class PowerUp:
     def __init__(self) -> None:
         self.player : Player = None
-        self.position = 0 #random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
+        self.position = random.uniform(Costants.MIN_PADDLE_Y, Costants.MAX_PADDLE_Y)
         self.type = random.choice(['scale', 'triple', 'slowness', 'power'])
         self.effect = random.choice(['good', 'bad'])
         self.duration = Costants.POWERUP_DURATION
@@ -350,7 +350,8 @@ class Match:
             'type' : 'game_message',
             'event' : 'handle_powerup',
             'message' : {
-                'type' : 'powerup_taken'
+                'type' : 'powerup_taken',
+                'effect' : self.active_powerup.effect,
             }
         })
 
