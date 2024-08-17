@@ -21,20 +21,22 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         self.player_id: str = str(uuid.uuid4())
         self.match: Match = None
         self.powerup_mode = False
+        self.db_match_id = None
 
     async def connect(self):
 
         self.user = self.scope['user']
         self.powerup_mode = self.scope["url_route"]["kwargs"].get("powerup_mode") == 'powerup'
 
-        db_match_id : int = self.scope["url_route"]["kwargs"].get("id")
-        print(db_match_id)
+        self.db_match_id : int = self.scope["url_route"]["kwargs"].get("id")
+
+        print(self.db_match_id)
 
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
         
-        if db_match_id:
-            self.match = await MatchManager.add_player_id(self, db_match_id)
+        if self.db_match_id:
+            self.match = await MatchManager.add_player_id(self, self.db_match_id)
         else:
             self.match =  await MatchManager.add_player(self)
 
@@ -48,8 +50,11 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
 
         # Game logic
-        await MatchManager.delete_player(self)
-        ...
+        if self.db_match_id:
+            await MatchManager.delete_player_id(self, self.db_match_id)
+        else:
+            await MatchManager.delete_player(self)
+
 
 
     async def receive(self, text_data):

@@ -27,7 +27,7 @@ class MatchManager:
         match = Match(consumer.powerup_mode)
         cls.matches.append(match)
         return match
-    
+
     @classmethod
     def get_available_invite_match(cls, consumer) -> Match:
         for item in cls.invite_matches:
@@ -58,6 +58,7 @@ class MatchManager:
 
     @classmethod
     async def add_player_id(cls, consumer, id):
+        # Pick or create a match
         match = None
         for item in cls.invite_matches:
             if id == item.id:
@@ -70,7 +71,12 @@ class MatchManager:
         if match.is_full():
             return None
 
+        # Add player to the match
+        match.add_player(consumer)
+
+        # Channel layer logic
         await match.channel_layer.group_add(str(match.id), consumer.channel_name)
+        # Start match
         if match.is_full():
             cls.start_match(match)
         return match
@@ -84,6 +90,24 @@ class MatchManager:
             cls.matches.remove(match)
 
         # Remember to delete channel layers
+
+        await match.channel_layer.group_send(match.id, {
+            'type' : 'game_end',
+            'message' : {
+                'type' : 'disconnection'
+            }
+        })
+
+        await match.end_match()
+
+    @classmethod
+    async def delete_player_id(cls, consumer, id):
+        match: Match = consumer.match
+        if not match:
+            return
+        
+        if match in cls.invite_matches:
+            cls.invite_matches.remove(match)
 
         await match.channel_layer.group_send(match.id, {
             'type' : 'game_end',
@@ -156,7 +180,6 @@ class MatchManager:
                 print(f"Match saved: {new_match}")
             except Exception as e:
                 print(f"Error saving match: {e}")
-            
         else:
             try:
                 db_match = await sync_to_async(ModelMatch.objects.get)(id=match.id)
@@ -165,7 +188,6 @@ class MatchManager:
                 db_match.is_played = True
                 await sync_to_async(db_match.save)()
                 print(f"Match saved: {db_match}")
-                
             except Exception as e:
                 print(f"Error saving match: {e}")
 
@@ -178,6 +200,8 @@ class MatchManager:
             print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             print ("matches")
             print(cls.matches, sep=', ')
+            print ("invite_matches")
+            print(cls.invite_matches, sep=', ')
             # tasks = asyncio.all_tasks()
             tasks = [task for task in asyncio.all_tasks() if not task.done() and task != asyncio.current_task()]
             print(f"Active tasks: {tasks}")

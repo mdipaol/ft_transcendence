@@ -10,6 +10,7 @@ import { Match } from './Match.js';
 import { World } from './World.js';
 import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
+import { TournamentMatch } from './TournamentMatch.js';
 import { BotMatch } from './BotMatch.js';
 import Play from '../views/pages/Play.js';
 
@@ -157,5 +158,92 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		//console.log("After destroy:");
 		//console.log(match.world.renderer.info.memory)
 		triggerHashChange('/play/');
+	})
+}
+
+export async function startTournamentGame(matchId, alias){
+
+	// page_root cleaning
+	const content = null || document.getElementById('page_root');
+	content.replaceChildren();
+	
+
+	// Loading page
+	// ...
+
+	//---------INIT----------
+	let world = new World1();
+
+	await world.worldReady();
+	console.log("Meshes loaded");
+
+	const match = new TournamentMatch(world, true);
+
+	let response = await fetch(`https://${window.location.host}/interface_thefinals/`);
+
+	//userInterface.innerHTML = await response.text();
+	// canvas dom element
+	const html = await response.text();
+	
+	const parser = new DOMParser();
+	// Parse the text
+	const doc = parser.parseFromString(html, "text/html");
+	const interfaceUser = doc.getElementById('interface');
+
+	match.initHtmlInterface(interfaceUser);
+	if (interfaceUser)
+		content.appendChild(interfaceUser);
+
+	content.appendChild(world.renderer.domElement)
+	window.addEventListener('resize', function() {
+		world.resize(window.innerWidth, window.innerHeight);
+	})
+	//---------KEYBOARD INPUT----------
+	const keyDownBind = match.onKeyDown.bind(match);
+	const keyUpBind = match.onKeyUp.bind(match);
+
+	document.addEventListener("keydown", keyDownBind, false);
+	document.addEventListener("keyup", keyUpBind, false);
+
+	//---------SCENE ADD----------
+	world.add(match.player1.mesh);
+	world.add(match.player2.mesh);
+	world.add(match.ball.mesh);
+
+	const gameLoop = function(resolve) {
+		if (!match.ended) {
+			requestAnimationFrame(() => gameLoop(resolve));
+			match.update();
+			match.render();
+		}
+		else {
+			resolve();
+		}
+	};
+
+	await match.ready(matchId);
+
+	let gameStatus = new Promise((resolve) =>{
+		gameLoop(resolve)
+	})
+
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	gameStatus.then(async () => {
+		console.log("Game stopped");
+		if(match.world.soundPoint.isPlaying){
+			match.world.soundPoint.stop();
+			match.world.soundPoint.disconnect();
+		}
+		match.world.soundEndMach.play();
+		await sleep(5000);
+		match.world.destroySoundWorld();
+		match.destroy(match.world.scene);
+
+		document.removeEventListener("keydown", keyDownBind, false);
+		document.removeEventListener("keyup", keyUpBind, false);
+		triggerHashChange('/tournament_join/');
 	})
 }

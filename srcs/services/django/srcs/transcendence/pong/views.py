@@ -518,6 +518,30 @@ def get_match_info(match : Match) -> dict:
 		},
 	}
 
+def get_matchId_user(user : BaseUser, match1 : Match, match2 : Match, the_finals : Match):
+	if match1:
+		if match1.player1.username == user.username or match1.player2.username == user.username:
+			if not match1.is_played:
+				print('match1')
+				print(match1.id)
+				print(match1.is_played)
+				return match1.id
+	if match2:
+		if match2.player1.username == user.username or match2.player2.username == user.username:
+			if not match2.is_played:
+				print('match2')
+				print(match2.id)
+				print(match1.is_played)
+				return match2.id
+	if the_finals:
+		if the_finals.player1.username == user.username or the_finals.player2.username == user.username:
+			if not the_finals.is_played:
+				print('thefinals')
+				print(the_finals.id)
+				print(match1.is_played)
+				return the_finals.id
+	return None
+	
 
 @login_required(login_url='/')
 def tournament_join(request, name):
@@ -533,12 +557,14 @@ def tournament_join(request, name):
 		partecipant_user = [item.user.username for item in partecipant_list]
 		context = {
 				'name' : tournament.name,
+				'user' : request.user,
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
 				'match1' : get_match_info(tournament.match1),
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
+				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
@@ -563,12 +589,14 @@ def tournament_join(request, name):
 		if request.user in partecipant_user:
 			context = {
 				'name' : tournament.name,
+				'user' : request.user,
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
 				'match1' : get_match_info(tournament.match1),
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
+				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
@@ -612,12 +640,14 @@ def tournament_join(request, name):
 		# Return the tournament visualization
 		context = {
 				'name' : tournament.name,
+				'user' : request.user,
 				'creator' : tournament.creator.username,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
 				'match1' : get_match_info(tournament.match1),
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
+				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
 				'winner' : None,
 				'finished' : False,
 				'joined' : request.user in user_partecipant,

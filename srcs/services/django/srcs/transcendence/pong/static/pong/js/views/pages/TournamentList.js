@@ -1,5 +1,6 @@
 import { parseRequestUrl, getCookie, sleep } from '../../services/utils.js';
 import triggerHashChange from '../../services/utils.js';
+import { startGame, startTournamentGame } from '../../game/game.js';
 
 
 const TournamentJoin = {
@@ -169,6 +170,7 @@ export function updateEventListeners(tournamentName) {
   const backButton = document.getElementById("backButton");
   const joinButton = document.getElementById("joinButton");
   const leaveButton = document.getElementById("leaveButton");
+  const playGame = document.getElementById("playGame");
 
   if (backButton) {
     backButton.addEventListener('click', async () => {
@@ -224,9 +226,12 @@ export function updateEventListeners(tournamentName) {
       triggerHashChange('/tournament_join/')
     });
   }
+  if (playGame) {
+    playGame.addEventListener('click', async () => {
+      await startTournamentGame(playGame.getAttribute('data-id'), playGame.getAttribute('data-alias'));
+    });
+  }
 }
-
-
 //
 /**
  * This is to be called before a join in a tournament for checking the alias

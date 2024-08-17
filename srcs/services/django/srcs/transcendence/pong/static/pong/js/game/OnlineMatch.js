@@ -18,7 +18,7 @@ export class OnlineMatch extends Match {
 	}
 
 
-	async ready(){
+	async ready(matchId){
 		return new Promise((resolve, reject) => {
 
 			let powerUpMode = '/ws/game/normal/';
@@ -51,7 +51,7 @@ export class OnlineMatch extends Match {
 				this.onMessage(event);
 			}
 		});
-		}
+	}
 
 	addPowerUp(data){
 		// console.log(data);

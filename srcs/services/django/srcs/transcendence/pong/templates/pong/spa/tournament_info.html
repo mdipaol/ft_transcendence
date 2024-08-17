@@ -73,28 +73,26 @@
 
 		<div class="grid">
 			<div class="round">
-				<div class="round">
-				<div id="match1" data-id="{{ match1.id }}">
+				<div class="round" id="match1" data-id="{{ match1.id }}">
 					<div class="match"> {{ match1.player1.alias }}</div>
 					<div class="link"></div>
 					<div class="match"> {{ match1.player2.alias }}</div>
-				</div>
 			  </div>
-			  <div class="round">
-				<div id="match2" data-id="{{ match2.id }}"></div>
+			  <div class="round" id="match2" data-id="{{ match2.id }}">
 					<div class="match"> {{ match2.player1.alias }} </div>
 					<div class="link"></div>
 					<div class="match"> {{ match2.player2.alias }}</div>
 			  </div>
-			  </div>
 			</div>
-			<div class="round justify-space-around">
+			<div class="round justify-space-around" id="match1" data-id="{{ the_finals.id }}">
 			  <div class="match"> {{ the_finals.player2.alias }} </div>
 			  <div class="link"></div>
 			  <div class="match"> {{ the_finals.player2.alias }} </div>
-			</div>**
+			</div>
 			<div class="round">
 			  <div class="match"> Winner </div>
 			</div>
+
+			<button id="playGame" data-id="{{ id_match_user }}" data-alias="{{ user }}"> Play </button>
 	{% endif %}
 </div>
