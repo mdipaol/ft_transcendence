@@ -271,9 +271,22 @@
     0 0 10px rgb(169, 146, 71),
     0 0 10px rgb(253, 1, 81),
     0 0 10px rgb(176, 13, 13),
-    0 0 10px rgba(255, 0, 0, 0.336),
-    0 0 10px rgba(255, 0, 0, 0.418);
+    0 0 10px rgba(255, 0, 0, 0.336);
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
+
 }
+
+#remove-friend-btn:hover {
+    color: #ff9500;
+    text-shadow:
+    0 0 10px #fb0505,
+    0 0 10px rgb(229, 13, 13),
+    0 0 10px rgb(253, 1, 81),
+    0 0 10px rgb(250, 191, 0),
+    0 0 10px rgb(223, 252, 0);
+    background-color: rgba(0, 0, 0, 0.149);
+}   
 
 /* testo ivia prima che tu ci vada sopra */
 #friend-request-submit {
@@ -307,6 +320,7 @@
 }
 
 #accept-request-btn{
+    font-size: 1.6em;
     color: #00ff22;
 	text-shadow:
     0 0 10px #05fb4287,
@@ -315,22 +329,27 @@
     0 0 10px rgb(13, 176, 97),
     0 0 10px rgba(64, 255, 0, 0.336),
     0 0 10px rgba(68, 255, 0, 0.418);
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
 }
 
 #reject-request-btn{
+    font-size: 1.2em;
     color: #ff0000;
 	text-shadow:
     0 0 10px #fb050587,
     0 0 10px rgb(169, 146, 71),
     0 0 10px rgb(253, 1, 81),
     0 0 10px rgb(176, 13, 13),
-    0 0 10px rgba(255, 0, 0, 0.336),
-    0 0 10px rgba(255, 0, 0, 0.418);
+    0 0 10px rgba(255, 0, 0, 0.336);
+    /* 0 0 10px rgba(255, 0, 0, 0.418); */
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
 }
 
 /* scritta sopra la barra di recerca "send request to user"*/
 #SendRequestToUser {
-    font-size: 1.8em;
+    font-size: 1.3em;
     color: #ffd500;
     text-shadow: 0 0 10px #fb74059b, 0 0 10px rgb(169, 151, 71), 0 0 10px rgb(253, 1, 81),
                 0 0 10px rgb(176, 13, 13), 0 0 10px rgba(255, 0, 0, 0.336),
@@ -359,9 +378,10 @@
 #friend-request-form {
     position: absolute;
     align-items: center;
-    top: 30%;
+    top: 50%;
     left: 50%;
-    width: 40vw;
+    width: 35vw;
+    height: 10vw;
     color: #ffffff;
     background-color: transparent;
     padding: 20px;
@@ -374,7 +394,7 @@
     flex-direction: column;
     gap: 10px;
     /* mi trasla in questo caso il centro del box */
-    transform: translate(-50%, -50%) ;
+    transform: translate(-50%, -50%);
 }
 
 #gest-barra{
@@ -429,7 +449,7 @@
 
 }
 
-#Logout-home{
+/* #Logout-home{
     position: absolute;
     text-align: center;
     top: 85%;
@@ -444,13 +464,21 @@
                 0 0 10px rgb(13, 176, 97), 0 0 10px rgba(64, 255, 0, 0.336),
                 0 0 10px rgba(68, 255, 0, 0.418);
     box-shadow: 0 0 10px #00ff228d;
-}
+} */
 
-#Logout-home:hover {
+.glow-button:hover {
     background-color: #ff0000a3;
     color: #e36c0b;
-    box-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000;
+    box-shadow: 0 0 40px #ff0000, 0 0 50px #ff0000;
 } 
+
+#logout-button{
+    position: absolute;
+    text-align: center;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.3);
+}
 
 
 /* end Home page */
