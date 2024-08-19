@@ -13,6 +13,7 @@ import { PowerUp } from './PowerUp.js';
 
 export class World {
 	constructor(){
+		this.name = "underground";
 		this.paddle = null;
 		this.paddle2 = null;
 		this.table = null;

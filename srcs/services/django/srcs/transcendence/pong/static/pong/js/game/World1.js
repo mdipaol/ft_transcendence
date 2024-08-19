@@ -13,6 +13,7 @@ import { PowerUp } from './PowerUp.js';
 
 export class World1 {
 	constructor(){
+		this.name = "thefinals";
 		this.paddle = null;
 		this.paddle2 = null;
 		this.table = null;

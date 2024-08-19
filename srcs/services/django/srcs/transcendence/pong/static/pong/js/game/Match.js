@@ -62,9 +62,9 @@ export class Match {
 	}
 
 	initHtmlInterface(htmlElement){
-		if (!htmlElement)
-			return;
 		this.htmlElement = htmlElement;
+		if (this.world.name == 'underground')
+			return;
 		if (!window.username){
 			window.username = 'pippo'
 		}
@@ -77,7 +77,7 @@ export class Match {
 	}
 
 	updateHtmlInterface(){
-		if (!this.htmlElement)
+		if (this.world.name == 'underground' )
 			return;
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
 		this.htmlElement.querySelector('#interface-score').innerHTML = `${this.score1}` + "-" + `${this.score2}`;

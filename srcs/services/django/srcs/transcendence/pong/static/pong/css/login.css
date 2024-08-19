@@ -1,0 +1,20 @@
+.row span {
+    top: 50 !important;
+    position: absolute;
+    left: 20;
+    width: 10px;
+    height: 5px;
+    border-radius: 5px;
+    transform-origin: 100px;
+    transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+    animation: animateBlink 3s linear infinite;
+    animation-delay: calc(var(--i) * (3s / 50));
+}
+@keyframes animateBlink {
+    0% {
+        background: #0ef;
+    }
+    25% {
+        background: #2c4766;
+    }
+}

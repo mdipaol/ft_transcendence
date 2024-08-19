@@ -53,20 +53,20 @@
 }
 
 #searching-message {
+
     position: absolute;
     top: 50%;
     left: 50%;
+    right: 50%;
     transform: translate(-50%, -50%);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 48px;
-    /* Grassetto */
-    font-weight: bold; 
-    color: #00ff00;
-    /* Evita che il testo vada a capo */
-    white-space: nowrap; 
+    font-size: 48px; /* Regola la dimensione del testo secondo le tue esigenze */
+    font-weight: bold; /* Grassetto */
+    color: #00ff00; /* Neon color */
+    white-space: nowrap; /* Evita che il testo vada a capo */
     animation: pulseGlow 1.5s ease-in-out infinite;
 }
 
@@ -237,8 +237,6 @@
 }
 
 .social-element-container {
-    width: 50vw;
-    height: 50vh;
     color: #fff;
     text-shadow:
       0 0 10px #ffffff4f,
@@ -290,17 +288,17 @@
 
 /* testo ivia prima che tu ci vada sopra */
 #friend-request-submit {
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #00ff22;
+    /* padding: 10px 20px; */
+    font-size: 1.3em;
+    color: #e2e7ee;
     background-color: transparent;
-    border: 2px solid #00ff22;
+    border: 2px solid #00eeff;
     border-radius: 5px;
     cursor: pointer;
-    text-shadow: 0 0 10px #05fb4287, 0 0 10px rgb(71, 169, 97), 0 0 10px rgb(102, 253, 1),
-                0 0 10px rgb(13, 176, 97), 0 0 10px rgba(64, 255, 0, 0.336),
-                0 0 10px rgba(68, 255, 0, 0.418);
-    box-shadow: 0 0 10px #00ff228d;
+    text-shadow: 0 0 10px #05fbfbc2, 0 0 10px rgb(71, 169, 97), 0 0 10px rgb(208, 223, 223),
+                0 0 10px rgb(13, 176, 97), 0 0 10px rgba(0, 255, 242, 0.336),
+                0 0 10px rgba(0, 255, 191, 0.418);
+    box-shadow: 0 0 10px #00ffdd8d;
 }
 
 
@@ -349,11 +347,11 @@
 
 /* scritta sopra la barra di recerca "send request to user"*/
 #SendRequestToUser {
-    font-size: 1.3em;
-    color: #ffd500;
-    text-shadow: 0 0 10px #fb74059b, 0 0 10px rgb(169, 151, 71), 0 0 10px rgb(253, 1, 81),
-                0 0 10px rgb(176, 13, 13), 0 0 10px rgba(255, 0, 0, 0.336),
-                0 0 10px rgba(255, 0, 0, 0.418);
+    font-size: 0.8em;
+    color: #ffffff;
+    text-shadow: 0 0 10px #ddfefffb, 0 0 10px rgb(173, 171, 162), 0 0 10px rgb(226, 240, 239),
+                0 0 10px rgb(133, 189, 252), 0 0 10px rgba(174, 189, 188, 0.336),
+                0 0 10px rgba(115, 133, 235, 0.418);
 }
 
 /* gestione dei form */
@@ -376,12 +374,12 @@
 
 /* gestione dell form cove si situa la barra di ricerca */
 #friend-request-form {
-    position: absolute;
+    position: relative;
     align-items: center;
     top: 50%;
     left: 50%;
-    width: 35vw;
-    height: 10vw;
+    width: 15vw;
+    height: 7vw;
     color: #ffffff;
     background-color: transparent;
     padding: 20px;
@@ -397,8 +395,8 @@
     transform: translate(-50%, -50%);
 }
 
-#gest-barra{
-}
+/* #gest-barra{
+} */
 
 #error-username {
     color: red;
@@ -410,9 +408,9 @@
 #username-friend-request {
     flex: 1;
     width: 80%;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     /* Spaziatura interna per migliorare l'estetica */
-    padding: 10px; 
+    /* padding: 10px;  */
     font-size: 1em;
     border: 2px solid #ffffff4f;
     /* Arrotonda i bordi */
@@ -424,29 +422,9 @@
     0 0 10px rgba(0, 255, 255, 0.233), 0 0 10px rgba(0, 255, 255, 0.336),
     0 0 10px rgba(0, 255, 255, 0.418);
      /* Spazio sotto la barra di input */
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     /* Ombre interne ed esterne */
     box-shadow: inset 0 0 10px #ffffff4f, 0 0 10px #0ff; 
-}
-
-#set-position1{
-    /* position: left;
-    left: 5%;
-    top: 0%; */
-}
-
-.online-single-user-container{
-}
-
-.single-friend-container{
-
-}
-
-.single-friend-request-container{
-}
-
-#social-container{
-
 }
 
 /* #Logout-home{
@@ -469,16 +447,17 @@
 .glow-button:hover {
     background-color: #ff0000a3;
     color: #e36c0b;
-    box-shadow: 0 0 40px #ff0000, 0 0 50px #ff0000;
+    /* box-shadow: 0 0 40px #ff0000, 0 0 50px #ff0000; */
+     /*sfumatura rosso  */
 } 
 
-#logout-button{
+/* #logout-button{
     position: absolute;
     text-align: center;
     top: 100%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1.3);
-}
+} */
 
 
 /* end Home page */

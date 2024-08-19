@@ -5,9 +5,11 @@
     <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
     <h1 class="neonbar">OR</h1>
     <h1><a class="neonpink" href="/#/register">REGISTER!</a></h1>
+    <h1 class="neonbar">OR</h1>
+    <h1><a class="neonpink" href="/login42">Login 42</a></h1>
     <div class="neon-button-wrapper">
     </div>
-</section>
+  </section>
 {% else %}
     <div class="account">
         <section class="account-header">
@@ -15,8 +17,8 @@
                 <img class="account-image" src="{{img}}" alt="avatar" id="characterImage">
                 <div class="account-info-text">
                     <h2 class="neonbar neonbar-blue">Known as {{nickname}}.</h2>
-                    <h2 class="neonbar neonbar-small neonbar-blue">Level {{level}}.</h2>
-                    <h2 class="neonbar neonbar-small neonbar-blue">Email {{email}}.</h2>
+                    <h2 class="neonbar neonbar-small neonbar-blue">Level: {{level}}.</h2>
+                    <h2 class="neonbar neonbar-small neonbar-blue">Email: {{email}}.</h2>
                 </div>
             </div>
             <div id="account-header-right">

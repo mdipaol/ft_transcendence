@@ -38,7 +38,6 @@ export class OnlineMatch extends Match {
 				this.connected = true;
 				this.searching = true;
 				//test
-					this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching...";
 				
 				//test
 				resolve();
@@ -239,6 +238,7 @@ export class OnlineMatch extends Match {
 		else if (msg.type == "game_start")
 		{
 			this.searching = false;
+			this.htmlElement.querySelector('#searching-message').style.display = 'none';
 			console.log("game started")
 			console.log(msg.player)
 			this.start = new Date();
@@ -254,7 +254,7 @@ export class OnlineMatch extends Match {
 			if (this.world.username2)
 				this.world.setUsernameFont('two', msg.username_two)
 
-			if (this.htmlElement){
+			if (this.world.name == 'thefinals'){
 				this.htmlElement.querySelector('#interface-player1').innerHTML = msg.username_one;
 				this.htmlElement.querySelector('#interface-player2').innerHTML = msg.username_two;
 			}
@@ -356,6 +356,25 @@ export class OnlineMatch extends Match {
 	// 		this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
 	// 	}
 	// }
+
+	animateSearching()
+	{
+		this.htmlElement.querySelector('#searching-message').style.display = 'flex';
+		if (this.world.name == "underground")
+			return;
+		let dots = "";
+		let frame = Number(this.htmlElement.querySelector('#interface-timer').innerHTML.substring(3, 5)) % 4;
+		if (frame == 0)
+			dots = ""
+		else if (frame == 1)
+			dots = ".";
+		else if (frame == 2)
+			dots = "..";
+		else if (frame == 3)
+			dots = "...";
+		this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching" + dots;
+		this.htmlElement.querySelector('#searching-message').innerHTML = "LOOKING FOR A PLAYER";
+	}
 
 	updateState(msg)
 	{
@@ -460,18 +479,7 @@ export class OnlineMatch extends Match {
 
     update() {
 		if (this.searching)
-		{
-			this.htmlElement.querySelector('#searching-message').innerHTML = "Looking for an opponent";
-			let frame = Number(this.htmlElement.querySelector('#interface-timer').innerHTML.substring(3, 5)) % 4;
-			if (frame == 0)
-				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching";
-			else if (frame == 1)
-				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching.";
-			else if (frame == 2)
-				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching..";
-			else if (frame == 3)
-				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching...";
-		}
+			this.animateSearching();
 		const currentTime = new Date();
 		const deltaTime = (currentTime - this.update_time_ball) / 1000; // Convert to seconds
 
