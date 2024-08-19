@@ -55,8 +55,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         else:
             await MatchManager.delete_player(self)
 
-
-
     async def receive(self, text_data):
         data = json.loads(text_data)
         if not data['type']:
@@ -85,11 +83,14 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
     async def game_end(self, event):
 
-        await self.send(text_data=json.dumps({
-            "type": "game_end",
-            'message' : event['message'],
-            }))
-
+        try:
+            await self.send(text_data=json.dumps({
+                "type": "game_end",
+                'message' : event['message'],
+                }))
+        except Exception as e:
+            print({e})
+    
         await self.close()
 
 # Chat sockets

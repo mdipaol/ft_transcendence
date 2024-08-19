@@ -1,9 +1,10 @@
 import time
+import traceback
 import asyncio
 from asgiref.sync import sync_to_async
 from datetime import datetime
 from .game_class import Match
-from .models import Match as ModelMatch
+from .models import Match as ModelMatch, BaseUser, Tournament
 from channels.db import database_sync_to_async
 
 class MatchManager:
@@ -41,7 +42,7 @@ class MatchManager:
     def start_match(cls, match: Match):
         if not cls.active_monitoring:
             cls.active_monitoring = True
-            asyncio.create_task(cls.monitoring())
+            # asyncio.create_task(cls.monitoring())
         match.start_match()
         task = asyncio.create_task(cls.game_loop(match))
         match.set_task(task)
@@ -86,6 +87,8 @@ class MatchManager:
         match: Match = consumer.match
         if not match:
             return
+        if match.is_ended():
+            return
         if match in cls.matches:
             cls.matches.remove(match)
 
@@ -101,11 +104,54 @@ class MatchManager:
         await match.end_match()
 
     @classmethod
+    def player_disconnected(cls, id, player : str):
+        try:
+            match_db : ModelMatch = ModelMatch.objects.get(id=id)
+            user : BaseUser = BaseUser.objects.get(username=player)
+            if match_db.player1 == user:
+                match_db.score1 = 0
+                match_db.score2 = 5
+                winner = match_db.player2
+            else: 
+                match_db.score1 = 5
+                match_db.score2 = 0
+                winner = match_db.player1
+
+            match_db.is_played = True
+
+            match_db.save()
+
+            tournament : Tournament = match_db.tournament
+            if tournament:
+                print('sto per salvare il torneo')
+                match1_db = tournament.match1
+                match2_db = tournament.match2
+                the_finals_db = tournament.the_finals
+
+                if match_db.id == match1_db.id:
+                    the_finals_db.player1 = winner
+                elif match_db.id == match2_db.id:
+                    the_finals_db.player2 = winner
+                elif match_db.id == the_finals_db.id:
+                    tournament.winner = winner
+                    tournament.finished = True
+                    tournament.save()
+                the_finals_db.save()
+
+        except Exception as e:
+            print(f"Error deleting player: {e}")
+            traceback.print_exc
+
+    @classmethod
     async def delete_player_id(cls, consumer, id):
         match: Match = consumer.match
         if not match:
             return
+        if match.is_ended():
+            return
         
+        await sync_to_async(cls.player_disconnected)(match.id, consumer.username)
+
         if match in cls.invite_matches:
             cls.invite_matches.remove(match)
 
@@ -115,8 +161,67 @@ class MatchManager:
                 'type' : 'disconnection'
             }
         })
-
+        print('im going to cancel task')
         await match.end_match()
+
+    @classmethod
+    def save_tournament_game(cls, match: Match):
+        if not match or not match.tournament:
+            return
+        print('entro nella gestione suca')
+
+        match_db : ModelMatch = ModelMatch.objects.get(id=match.id)
+        tournament: Tournament = match_db.tournament
+
+        player1 : BaseUser = match_db.player1
+        player2 : BaseUser = match_db.player2
+
+        
+        match_db.score1 = match.score1
+        match_db.score2 = match.score2
+
+        print(player1)
+        print(player2)
+        print(match.score1)
+        print(match.score2)
+
+        winner: BaseUser = player1 if (match.score1 > match.score2) else player2
+        if player1.username != match.player1.consumer.username:
+            winner = player1 if winner.username == player2.username else player2 # Ensure winner is the correct user
+            match_db.score1, match_db.score2 = match_db.score2, match_db.score1  # Swap scores if necessary
+
+
+        match_db.is_played = True
+
+        print('before')
+        print('winner')
+        print(winner)
+
+        # Save the match object asynchronously
+        match_db.save()
+
+        print('after')
+        print(f"Match saved: {match_db}")
+
+        match1_db : ModelMatch = tournament.match1
+        match2_db : ModelMatch = tournament.match2
+        the_finals_db : ModelMatch = tournament.the_finals
+        
+        # Update the tournament based on the match result
+        if match_db.id == match1_db.id:
+            the_finals_db.player1 = winner
+        elif match_db.id == match2_db.id:
+            the_finals_db.player2 = winner
+        elif match_db.id == the_finals_db.id:
+            tournament.winner = winner
+            tournament.finished = True
+
+        the_finals_db.save()
+
+        # Save the tournament object asynchronously
+        tournament.save()
+
+        print('all saved')
 
     @classmethod
     async def game_loop(cls, match: Match):
@@ -157,6 +262,11 @@ class MatchManager:
         })
 
         if not match.tournament:
+            cls.matches.remove(match)
+        else:
+            cls.invite_matches.remove(match)
+        
+        if not match.tournament:
             try:
                 # Ensure start_time is in the correct datetime format
                 if isinstance(match.start_time, (int, float)):
@@ -174,7 +284,8 @@ class MatchManager:
                     player2=match.player2.consumer.user,
                     score1=match.score1,
                     score2=match.score2,
-                    date=start_time_str
+                    date=start_time_str,
+                    is_played=True
                 )
                 await sync_to_async(new_match.save)()  # Although save might not be necessary here
                 print(f"Match saved: {new_match}")
@@ -182,16 +293,11 @@ class MatchManager:
                 print(f"Error saving match: {e}")
         else:
             try:
-                db_match = await sync_to_async(ModelMatch.objects.get)(id=match.id)
-                db_match.score1 = match.score1
-                db_match.score2 = match.score2
-                db_match.is_played = True
-                await sync_to_async(db_match.save)()
-                print(f"Match saved: {db_match}")
+                await sync_to_async(cls.save_tournament_game)(match)
             except Exception as e:
                 print(f"Error saving match: {e}")
+                traceback.print_exc()  # Print the full stack trace
 
-        cls.matches.remove(match)
         await match.end_match()
     
     @classmethod

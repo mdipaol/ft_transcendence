@@ -424,11 +424,6 @@ def account(request):
 @login_required(login_url='/')
 def tournament_create(request):
 	if request.method == 'GET':
-		# html = render_to_string('pong/spa/tournament_create.html')
-		# return JsonResponse(data={
-		# 	'html' : html,
-		# 	'error' : None,
-		# })
 		return render(request, 'pong/spa/tournament_create.html')
 	if request.method == 'POST':
 		alias : str = request.POST.get('alias')
@@ -534,12 +529,13 @@ def get_matchId_user(user : BaseUser, match1 : Match, match2 : Match, the_finals
 				print(match1.is_played)
 				return match2.id
 	if the_finals:
-		if the_finals.player1.username == user.username or the_finals.player2.username == user.username:
-			if not the_finals.is_played:
-				print('thefinals')
-				print(the_finals.id)
-				print(match1.is_played)
-				return the_finals.id
+		if the_finals.player1 and the_finals.player2:
+			if the_finals.player1.username == user.username or the_finals.player2.username == user.username:
+				if not the_finals.is_played:
+					print('thefinals')
+					print(the_finals.id)
+					print(match1.is_played)
+					return the_finals.id
 	return None
 	
 
@@ -565,7 +561,7 @@ def tournament_join(request, name):
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
 				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
-				'winner' : None,
+				'winner' : tournament.winner,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
 			}
@@ -597,7 +593,7 @@ def tournament_join(request, name):
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
 				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
-				'winner' : None,
+				'winner' : tournament.winner,
 				'finished' : False,
 				'joined' : request.user.username in partecipant_user,
 				}
@@ -634,6 +630,7 @@ def tournament_join(request, name):
 
 			tournament.match1 = Match.objects.create(tournament=tournament, player1=paired_user[0][0], player2=paired_user[0][1])
 			tournament.match2 = Match.objects.create(tournament=tournament, player1=paired_user[1][0], player2=paired_user[1][1])
+			tournament.the_finals = Match.objects.create(tournament=tournament, player1=None, player2=None)
 			tournament.started = True
 			tournament.save()
 
@@ -648,8 +645,7 @@ def tournament_join(request, name):
 				'match2' : get_match_info(tournament.match2),
 				'the_finals' : get_match_info(tournament.the_finals),
 				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
-				'winner' : None,
-				'finished' : False,
+				'winner' : tournament.winner,
 				'joined' : request.user in user_partecipant,
 				}
 		return JsonResponse(data={
