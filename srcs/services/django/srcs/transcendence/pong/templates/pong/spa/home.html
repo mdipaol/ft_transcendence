@@ -12,6 +12,10 @@
 {% else %}
 <div id="home-container">
     <div id="social-container">
+        <div id="name-project" class="name-project">
+            FT_TRANCEDERS
+        </div>
+        <br>
         <div id="online-users-container" class="social-element-container">
             ONLINE USERS
             <br>
@@ -40,23 +44,25 @@
                 </div>
                 <div>
                     <button id="accept-request-btn" data-username="{{ item.username }}">
-                        Accept
+                        🗸
                     </button>
                     <button id="reject-request-btn" data-username="{{ item.username }}">
-                        Reject
+                        ⅹ
                     </button>
                 </div>
             {% endfor %}
         </div>
         <div class="social-element-container">
-            <form id="friend-request-form">
-                <label for="username">Send request to user</label>
-                <br>
+            <form id="friend-request-form" class="form-group">
+                <label for="username" id="SendRequestToUser">Send request to user</label>
+                <div class="form-group-inner">
+                    <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
+                    <input type="submit" name="submit" id="friend-request-submit" value="Invia">
+                </div>
                 <span id="request-username-error" class="error"></span>
-                <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
-                <input type="submit" name="submit" id="friend-request-submit" value="Invia">
-            </form>
+            </form>            
         </div>
+        
     </div>
 
     {% comment %}
@@ -118,7 +124,7 @@
         </button>
     </div>
     {% endcomment  %}
-    <div>
+    <div id="Logout-home" class="social-container">
         <button class="glow-button cyan" id="logout-button">Logout</button>
     </div>
     </div>

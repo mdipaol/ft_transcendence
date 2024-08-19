@@ -1,3 +1,5 @@
+/* start Play page */
+
 @font-face {
     font-family: 'fontC';
     src: url('/static/pong/js/Pong_Fake/Font/fontinterface/Speedy.ttf');
@@ -48,6 +50,46 @@
     top: 50%;
     height: 100%;
     width: 100%;
+}
+
+#searching-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 48px;
+    /* Grassetto */
+    font-weight: bold; 
+    color: #00ff00;
+    /* Evita che il testo vada a capo */
+    white-space: nowrap; 
+    animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+#searching-message p {
+    /* Rimuove qualsiasi margine */
+    margin: 0;
+    /* Rimuove qualsiasi padding */
+    padding: 0; 
+}
+
+@keyframes pulseGlow {
+    0% {
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00;
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00, 0 0 80px #00ff00;
+        transform: scale(1.1); /* Piccola espansione */
+    }
+    100% {
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00;
+        transform: scale(1);
+    }
 }
 
 #interface {
@@ -137,7 +179,8 @@
 }
 
 #interface-keys img[alt="stasto_space"] {
-    width: 7vw; /* Modifica solo la larghezza dell'immagine con alt="stasto_space" */
+    /* Modifica solo la larghezza dell'immagine con alt="stasto_space" */
+    width: 7vw; 
 }
 
 #space {
@@ -162,3 +205,280 @@
     height: 100%;
     width: 100%;
 }
+
+/* end Play page */
+
+/* start Home page */
+
+.name-project{
+    width: 100%;
+    height: 10vw;
+    top: auto;
+    font-size: 2.3em;
+    color: #ffd500;
+	text-shadow:
+	  0 0 10px #fb74059b,
+	  0 0 10px rgb(169, 151, 71),
+	  0 0 10px rgb(253, 1, 81),
+	  0 0 10px rgb(176, 13, 13),
+	  0 0 10px rgba(255, 0, 0, 0.336),
+	  0 0 10px rgba(255, 0, 0, 0.418);
+}
+
+#name-project{
+    position: absolute;
+    text-align: center;
+}
+
+.home-container{
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+.social-element-container {
+    width: 50vw;
+    height: 50vh;
+    color: #fff;
+    text-shadow:
+      0 0 10px #ffffff4f,
+      0 0 10px #0ff,
+      0 0 10px rgb(13, 185, 176),
+      0 0 10px rgba(0, 255, 255, 0.233),
+      0 0 10px rgba(0, 255, 255, 0.336),
+      0 0 10px rgba(0, 255, 255, 0.418);
+}
+
+/* get scritta online user */
+#online-users-container{
+    position: absolute;
+    text-align: right;
+    top: 20%;
+    right: 5%;
+}
+
+#friends-container{
+    position: absolute;
+    text-align: right;
+    right: 5%;
+    top: 50%;
+}
+
+#remove-friend-btn{
+    color: #ff0000;
+	text-shadow:
+    0 0 10px #fb050587,
+    0 0 10px rgb(169, 146, 71),
+    0 0 10px rgb(253, 1, 81),
+    0 0 10px rgb(176, 13, 13),
+    0 0 10px rgba(255, 0, 0, 0.336);
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
+
+}
+
+#remove-friend-btn:hover {
+    color: #ff9500;
+    text-shadow:
+    0 0 10px #fb0505,
+    0 0 10px rgb(229, 13, 13),
+    0 0 10px rgb(253, 1, 81),
+    0 0 10px rgb(250, 191, 0),
+    0 0 10px rgb(223, 252, 0);
+    background-color: rgba(0, 0, 0, 0.149);
+}   
+
+/* testo ivia prima che tu ci vada sopra */
+#friend-request-submit {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #00ff22;
+    background-color: transparent;
+    border: 2px solid #00ff22;
+    border-radius: 5px;
+    cursor: pointer;
+    text-shadow: 0 0 10px #05fb4287, 0 0 10px rgb(71, 169, 97), 0 0 10px rgb(102, 253, 1),
+                0 0 10px rgb(13, 176, 97), 0 0 10px rgba(64, 255, 0, 0.336),
+                0 0 10px rgba(68, 255, 0, 0.418);
+    box-shadow: 0 0 10px #00ff228d;
+}
+
+
+#friend-request-submit:hover {
+    background-color: #001eff;
+    color: #0026fd;
+    box-shadow: 0 0 20px #0011ff, 0 0 30px #0008ff;
+}
+
+
+/* gest scritta "FRIEND REQUEST" */
+#friend-request-container{
+    position: absolute;
+    text-align: left;
+    top: 20%;
+    left: 5%;
+}
+
+#accept-request-btn{
+    font-size: 1.6em;
+    color: #00ff22;
+	text-shadow:
+    0 0 10px #05fb4287,
+    0 0 10px rgb(71, 169, 97),
+    0 0 10px rgb(102, 253, 1),
+    0 0 10px rgb(13, 176, 97),
+    0 0 10px rgba(64, 255, 0, 0.336),
+    0 0 10px rgba(68, 255, 0, 0.418);
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
+}
+
+#reject-request-btn{
+    font-size: 1.2em;
+    color: #ff0000;
+	text-shadow:
+    0 0 10px #fb050587,
+    0 0 10px rgb(169, 146, 71),
+    0 0 10px rgb(253, 1, 81),
+    0 0 10px rgb(176, 13, 13),
+    0 0 10px rgba(255, 0, 0, 0.336);
+    /* 0 0 10px rgba(255, 0, 0, 0.418); */
+    background-color: rgba(0, 0, 0, 0.265);
+    border: none;
+}
+
+/* scritta sopra la barra di recerca "send request to user"*/
+#SendRequestToUser {
+    font-size: 1.3em;
+    color: #ffd500;
+    text-shadow: 0 0 10px #fb74059b, 0 0 10px rgb(169, 151, 71), 0 0 10px rgb(253, 1, 81),
+                0 0 10px rgb(176, 13, 13), 0 0 10px rgba(255, 0, 0, 0.336),
+                0 0 10px rgba(255, 0, 0, 0.418);
+}
+
+/* gestione dei form */
+.form-group {
+
+    display: flex;
+    /* Allinea verticalmente */
+    align-items: center; 
+    /* Allinea orizzontalmente */
+    justify-content: center; 
+    /* Spazio tra la barra e il pulsante */
+    gap: 10px; 
+}
+
+.form-group-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* gestione dell form cove si situa la barra di ricerca */
+#friend-request-form {
+    position: absolute;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    width: 35vw;
+    height: 10vw;
+    color: #ffffff;
+    background-color: transparent;
+    padding: 20px;
+    border: 2px solid #ffffff4f;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ffffff4f, 0 0 10px #0ff, 0 0 10px rgb(13, 185, 176),
+                0 0 10px rgba(0, 255, 255, 0.233), 0 0 10px rgba(0, 255, 255, 0.336),
+                0 0 10px rgba(0, 255, 255, 0.418);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* mi trasla in questo caso il centro del box */
+    transform: translate(-50%, -50%);
+}
+
+#gest-barra{
+}
+
+#error-username {
+    color: red;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+/* pesonalizza la barra di ricerca nella home*/
+#username-friend-request {
+    flex: 1;
+    width: 80%;
+    margin-right: 10px;
+    /* Spaziatura interna per migliorare l'estetica */
+    padding: 10px; 
+    font-size: 1em;
+    border: 2px solid #ffffff4f;
+    /* Arrotonda i bordi */
+    border-radius: 5px;
+    /* Sfondo semi-trasparente */
+    background-color: rgba(0, 0, 0, 0.346);
+    color: #ffffff; /* Colore del testo */
+    text-shadow: 0 0 10px #ffffff4f, 0 0 10px #0ff, 0 0 10px rgb(13, 185, 176),
+    0 0 10px rgba(0, 255, 255, 0.233), 0 0 10px rgba(0, 255, 255, 0.336),
+    0 0 10px rgba(0, 255, 255, 0.418);
+     /* Spazio sotto la barra di input */
+    margin-bottom: 20px;
+    /* Ombre interne ed esterne */
+    box-shadow: inset 0 0 10px #ffffff4f, 0 0 10px #0ff; 
+}
+
+#set-position1{
+    /* position: left;
+    left: 5%;
+    top: 0%; */
+}
+
+.online-single-user-container{
+}
+
+.single-friend-container{
+
+}
+
+.single-friend-request-container{
+}
+
+#social-container{
+
+}
+
+/* #Logout-home{
+    position: absolute;
+    text-align: center;
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.3);
+    color: #00ff22;
+    background-color: transparent;
+    border: 2px solid #00ff22;
+    border-radius: 5px;
+    cursor: pointer;
+    text-shadow: 0 0 10px #05fb4287, 0 0 10px rgb(71, 169, 97), 0 0 10px rgb(102, 253, 1),
+                0 0 10px rgb(13, 176, 97), 0 0 10px rgba(64, 255, 0, 0.336),
+                0 0 10px rgba(68, 255, 0, 0.418);
+    box-shadow: 0 0 10px #00ff228d;
+} */
+
+.glow-button:hover {
+    background-color: #ff0000a3;
+    color: #e36c0b;
+    box-shadow: 0 0 40px #ff0000, 0 0 50px #ff0000;
+} 
+
+#logout-button{
+    position: absolute;
+    text-align: center;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.3);
+}
+
+
+/* end Home page */

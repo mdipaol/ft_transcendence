@@ -461,6 +461,7 @@ export class OnlineMatch extends Match {
     update() {
 		if (this.searching)
 		{
+			this.htmlElement.querySelector('#searching-message').innerHTML = "Looking for an opponent";
 			let frame = Number(this.htmlElement.querySelector('#interface-timer').innerHTML.substring(3, 5)) % 4;
 			if (frame == 0)
 				this.htmlElement.querySelector('#interface-player2').innerHTML = "Searching";
