@@ -253,32 +253,6 @@ class LogoutView(TemplateView):
 			return HttpResponseRedirect(reverse('pong:index'))
 		return HttpResponseRedirect(reverse('pong:index'))
 
-def handle_uploaded_file(file):
-	ext = Path(file.name).suffix
-	new_file_name = str(uuid.uuid4()) + ext
-	full_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
-	with open(full_path, "wb+") as destination:
-		for chunk in file.chunks():
-			destination.write(chunk)
-	return new_file_name
-
-class ImageUpload(View):
-	def get(self, request):
-		form = ImageUploadForm()
-		return render(request, 'pong/image_form.html', {'form' : form})
-	def post(self, request):
-		form = ImageUploadForm(request.POST, request.FILES)
-		# Non entro qui non so perchè
-		if form.is_valid():
-			print(request.FILES)
-			file_name = handle_uploaded_file(request.FILES['image'])
-			user: BaseUser = request.user
-			user.image = settings.MEDIA_URL + file_name
-			user.save()
-			return HttpResponse("Avatar Uploaded!")
-		return render(request, 'pong/image_form.html', {'form': form})
-
-
 class ProfileView(View):
 	def get(self, request, username):
 		is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -722,7 +696,7 @@ def edit_account(request):
 		user = request.user
 		form = EditProfileForm(instance=user)
 		print(form)
-		return render(request, 'pong/spa/edit_account.html', { 'user' : user, 'form' : form })
+		return render(request, 'pong/spa/edit_account.html', { 'user' : user})
 	if request.method == 'POST':
 		print(vars(request))
 		user = request.user
@@ -733,7 +707,96 @@ def edit_account(request):
 		else:
 			form = EditProfileForm(instance=user)
 
-		return render(request, 'pong/spa/edit_account.html', {'form': form, 'img': user.image})
+		return render(request, 'pong/spa/edit_account.html', {'user' : user})
+
+def handle_uploaded_file(file):
+	ext = Path(file.name).suffix
+	new_file_name = str(uuid.uuid4()) + ext
+	full_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
+	with open(full_path, "wb+") as destination:
+		for chunk in file.chunks():
+			destination.write(chunk)
+	return new_file_name
+
+class ImageUpload(View):
+	def get(self, request):
+		form = ImageUploadForm()
+		return render(request, 'pong/image_form.html', {'form' : form})
+	def post(self, request):
+		form = ImageUploadForm(request.POST, request.FILES)
+		# Non entro qui non so perchè
+		if form.is_valid():
+			print(request.FILES)
+			file_name = handle_uploaded_file(request.FILES['image'])
+			user: BaseUser = request.user
+			user.image = settings.MEDIA_URL + file_name
+			user.save()
+			return HttpResponse("Avatar Uploaded!")
+		return render(request, 'pong/image_form.html', {'form': form})
+
+
+@login_required(login_url='/')
+def image_upload(request):
+	if request.method == 'POST':
+		uploaded_file = request.FILES.get('image')
+		if not uploaded_file:
+			return JsonResponse(data={'status' : 'error', 'message' : 'Error uploading the file'}, status=400)
+		
+		if uploaded_file.size > 10485760:  # 10 MB limit
+			return JsonResponse(data={'status' : 'error', 'message' : 'File is too large, limit is 10 MB'}, status=400)
+		
+		if uploaded_file.content_type not in ['image/jpeg', 'image/png', 'application/pdf']:
+			return JsonResponse(data={'status' : 'error', 'message' : 'Invalid type file'}, status=400)
+
+		handle_uploaded_file(uploaded_file)
+
+		return JsonResponse(data={'status' : 'success', 'message' : 'Image uploaded'})
+
+@login_required(login_url='/')
+def change_username(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		if not username:
+			return JsonResponse(data={'status' : 'error', 'message' : 'Blank username'}, status=400)
+		# Clean username 
+		username = username.strip()
+		if not username or username == '':
+			return JsonResponse(data={'status' : 'error', 'message' : 'Blank username'}, status=400)
+		# Check if username already exists
+		print('username')
+		print(username)
+		print(BaseUser.objects.filter(username=username))
+		if len(BaseUser.objects.filter(username=username)) > 0:
+			return JsonResponse(data={'status' : 'error', 'message' : 'Username already taken'}, status=400)
+		request.user.username = username
+		request.user.save()
+		return JsonResponse(data={'status' : 'success', 'message' : 'Username changed successfully'})
+
+from password_strength import PasswordPolicy
+
+password_policy = PasswordPolicy.from_names(
+	length=8,
+	numbers=1,
+	special=1,
+)
+
+@login_required(login_url='/')
+def change_password(request):
+	if request.method == 'POST':
+		old_password = request.POST.get('old_password')
+		new_password = request.POST.get('new_password')
+		confirm_password = request.POST.get('confirm_password')
+
+		if not request.user.check_password(old_password):
+			return JsonResponse(data={'status' : 'error', 'message' : 'Old password is incorrect'}, status=400)
+		if new_password != confirm_password:
+			return JsonResponse(data={'status' : 'error', 'message' : 'Passwords do not match'}, status=400)
+		errors = password_policy.test(new_password)
+		if errors:
+			return JsonResponse(data={'status' : 'error', 'message' : errors[0]}, status=400)
+		request.user.set_password(new_password)
+		request.user.save()
+		return JsonResponse(data={'status' : 'success', 'message' : 'Password changed successfully'})
 
 @login_required(login_url='/')
 def notification(request, username):

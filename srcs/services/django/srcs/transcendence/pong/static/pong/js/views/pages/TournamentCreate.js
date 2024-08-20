@@ -48,12 +48,10 @@ const TournamentCreate = {
             });
 
             if (response.ok) {
-              console.log(response);
               const div = document.getElementById('tournament');
 
 
               const JsonResponse = await response.json();
-              console.log(JsonResponse);
               const html = JsonResponse.html;
               const name = JsonResponse.name;
               const error = JsonResponse.error;
