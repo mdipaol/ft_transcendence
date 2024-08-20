@@ -31,6 +31,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - INTRA_OAUTH_CLIENT_ID=${INTRA_OAUTH_CLIENT_ID}
       - INTRA_OAUTH_SECRET=${INTRA_OAUTH_SECRET}
+      - REDIRECT_URI=${REDIRECT_URI}
     build:
       context: ./services/django
     ports:

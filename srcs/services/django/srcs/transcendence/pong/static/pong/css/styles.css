@@ -1,6 +1,6 @@
 body {
 	display: flex;
-	font-size: 2vw;
+	/* font-size: 2vw; */
 	flex-direction: column;
 	min-height: 100vh;
 	margin: 0;
@@ -183,6 +183,11 @@ nav {
 	font-size: 1rem;
   }
   
+  .neonbar-smallest {
+	font-size: 1rem;
+    display: inline-block; 
+  }
+
   .neonbar-medium {
 	font-size: 2rem;
   }
@@ -449,6 +454,23 @@ body{
 	  animation: animate 5s linear infinite;
   }
 
+  .logo-text-home {
+	position: relative;
+	font-size: 50px;
+	letter-spacing: 8px;
+	color: rgb(223, 252, 248);
+	padding-left: 10px;
+	padding-top: 10px;
+	text-transform: uppercase;
+	width: 100%;
+	text-align: center;
+	-webkit-box-reflect: below 1px linear-gradient(transparent, rgba(81, 89, 109, 0.685));
+	line-height: 0.70em;
+	outline: none;
+	animation: animate 3s linear infinite;
+	margin-bottom: 4rem;
+}
+
   @keyframes animate{
 	  0%,18%,20%,50.1%,60%,65.1%,80%,90.1%,92%{
 		  color:rgb(0, 0, 0);
@@ -504,3 +526,4 @@ body{
 #account-highlights-glow:hover::before {
   outline: 2px solid rgba(0, 255, 255, 0.7);
 }
+

@@ -30,7 +30,8 @@ def login42(request):
 
 	auth_url = "https://api.intra.42.fr/oauth/authorize"
 
-	url = client.prepare_request_uri( auth_url, redirect_uri="https://localhost/callback", state=request.session['state'])
+	redirect_uri = os.environ.get('REDIRECT_URI')
+	url = client.prepare_request_uri( auth_url, redirect_uri=redirect_uri, state=request.session['state'])
 	return HttpResponseRedirect(url)
 
 @login_required(login_url='/')
@@ -169,7 +170,7 @@ class CallbackView(View):
 
 		data = client.prepare_request_body(
 			code = code,
-			redirect_uri = "https://localhost/callback", # Controllare
+			redirect_uri = os.environ.get('REDIRECT_URI'), # Controllare?
 			client_id = client_id,
 			client_secret = client_secret,
 		)
@@ -341,6 +342,7 @@ def home(request):
 	if request.method == 'GET':
 		if not request.user.is_authenticated:
 			return render(request, 'pong/spa/home.html')
+		user = request.user
 		online_users = BaseUser.objects.filter(online__gt=0)
 		friends = Friend.objects.friends(request.user)
 		friend_requests = Friend.objects.unrejected_requests(user=request.user)
@@ -350,7 +352,11 @@ def home(request):
 		context = {
 			'online_users' : online_users,
 			'friends' : friends,
-			'friend_requests' : friend_requests_users, 
+			'friend_requests' : friend_requests_users,
+			'nickname' : user.username,
+			'img' : user.image,
+			'email' : user.email,
+			'level' : user.level,
 		}
 		return render(request, 'pong/spa/home.html', context)
 

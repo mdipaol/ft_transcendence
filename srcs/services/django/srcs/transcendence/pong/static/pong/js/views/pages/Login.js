@@ -45,7 +45,7 @@ const Login = {
                 //     document.getElementById('page_root').innerHTML = errorForm;
                 //     await Login.after_render();
                 // }
-                triggerHashChange('/account/');
+                triggerHashChange('/home/');
             } catch (error) {
                 console.log(error);
             }

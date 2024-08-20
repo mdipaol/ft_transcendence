@@ -73,6 +73,14 @@ const router = async () => {
   else
     MyWebsocket.removeConnection();
 
+
+  const currentPage = window.location.hash;
+
+  // If the current page is not the game page, stop the game loop
+  // if (currentPage !== '#/play') {
+  //    // stopGameLoop();
+  //     cleanupOtherResources();
+  //}
   // Render the page from map of supported routes or render 404 page.
   const page = routes[parsedUrl] || Error404;
   content.innerHTML = await page.render();

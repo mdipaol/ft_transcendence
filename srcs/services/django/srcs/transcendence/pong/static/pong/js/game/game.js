@@ -74,6 +74,9 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const docU = parser.parseFromString(htmlU, "text/html");
 	const interfaceUser = doc.getElementById('interface');
 	const interfaceUserU = docU.getElementById('interface');
+	const as= document.getElementsByTagName('a');
+	//const buttom = document.querySelectorAll('button');
+	let QuitMatch = false;
 
 	if (worldMap != 'underground'){
 		// Set match html variable with interface html element
@@ -104,8 +107,10 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	world.add(match.player1.mesh);
 	world.add(match.player2.mesh);
 	world.add(match.ball.mesh);
-
+	
+	
 	const gameLoop = function(resolve) {
+		
 		if (!match.ended) {
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
@@ -117,37 +122,61 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 					match.culo = true;     
 					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
 					I PLAYER ABBIANO RENDERIZZATO TUTTO
-			}*/
-		}
-		else {
-			resolve();
-		}
-	};
-
-	await match.ready();
-
-	// window.addEventListener('hashchange', () =>{
-	// 	stopGame();
-	// });
-
+					}*/
+				}
+				else {
+					resolve();
+				}
+			};
+			
+			await match.ready();
+			
+			// window.addEventListener('hashchange', () =>{
+			// 	match.ended = true;
+			// 	console.log('so qui')
+			// });
+			
 	// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})
-
+	
+	// if(match.ended == false){
+	// 	console.log("Il gioco e' attivo");
+	// 	as.forEach(a => {
+	// 		a.addEventListener('click', () =>{
+	// 			match.ended = true;
+	// 			QuitMatch = true;
+	// 			console.log('ha pigiato du un bottone');
+	// 			match.world.destroySoundWorld();
+	// 		}, {once: true });
+	// 	})
+	// }
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
+	//const buttom = document.getElementByTagname('buttom')
+
+
 	gameStatus.then(async () => {
 		console.log("Game stopped");
-		if(match.world.soundPoint.isPlaying){
-			match.world.soundPoint.stop();
-			match.world.soundPoint.disconnect();
+		if(QuitMatch == true){
+			if(match.world.soundEndMach.isPlaying){
+				match.world.soundEndMach.stop();
+				match.world.soundEndMach.disconnect();
+			}
+			match.world.destroySoundWorld();
 		}
-		match.world.soundEndMach.play();
-		await sleep(5000);
-		match.world.destroySoundWorld();
+		else{
+			if(match.world.soundPoint.isPlaying){
+				match.world.soundPoint.stop();
+				match.world.soundPoint.disconnect();
+			}
+			match.world.soundEndMach.play();
+			await sleep(5000);
+			match.world.destroySoundWorld();
+		}
 		match.destroy(match.world.scene);
 
 		document.removeEventListener("keydown", keyDownBind, false);
@@ -157,7 +186,8 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		//await sleep(5000);
 		//console.log("After destroy:");
 		//console.log(match.world.renderer.info.memory)
-		triggerHashChange('/play/');
+		if(QuitMatch == false)
+			triggerHashChange('/play/');
 	})
 }
 
@@ -233,17 +263,29 @@ export async function startTournamentGame(matchId, alias){
 
 	gameStatus.then(async () => {
 		console.log("Game stopped");
-		if(match.world.soundPoint.isPlaying){
-			match.world.soundPoint.stop();
-			match.world.soundPoint.disconnect();
+		if(QuitMatch == true){
+			if(match.world.soundEndMach.isPlaying){
+				match.world.soundEndMach.stop();
+				match.world.soundEndMach.disconnect();
+			}
+			match.world.destroySoundWorld();
 		}
-		match.world.soundEndMach.play();
-		await sleep(5000);
-		match.world.destroySoundWorld();
+		else{
+			if(match.world.soundPoint.isPlaying){
+				match.world.soundPoint.stop();
+				match.world.soundPoint.disconnect();
+			}
+			match.world.soundEndMach.play();
+			await sleep(5000);
+			match.world.destroySoundWorld();
+		}
 		match.destroy(match.world.scene);
+		
+		//match.destroy(match.world.scene);
 
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
-		triggerHashChange('/tournament_join/');
+		if(QuitMatch == false)
+			triggerHashChange('/tournament_join/');
 	})
 }
