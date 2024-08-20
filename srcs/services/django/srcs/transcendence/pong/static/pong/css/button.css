@@ -138,6 +138,10 @@ background-image: none;
   box-shadow: 0 0 5px #fff, 0 0 10px #fff !important;
 }
 
+.glow-button.small{
+  font-size: 1rem !important;
+}
+
 /* Effetti hover */
 .glow-button:hover::before {
   opacity: 1 !important;
@@ -147,59 +151,85 @@ background-image: none;
 .glow-button.red:hover {
   color: #ff0000 !important;
   border-color: #ff0000 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.red:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.green:hover {
   color: #00ff00 !important;
   border-color: #00ff00 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.green:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.blue:hover {
   color: #0000ff !important;
   border-color: #0000ff !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.blue:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #0000ff, 0 0 10px #0000ff !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.fuchsia:hover {
   color: #ff00ff !important;
   border-color: #ff00ff !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.fuchsia:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.purple:hover {
   color: #800080 !important;
   border-color: #800080 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.purple:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #800080, 0 0 10px #800080 !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.cyan:hover {
   color: #00ffff !important;
   border-color: #00ffff !important;
+  font-size: 1.7rem !important;
 }
 
 .glow-button.cyan:hover::before {
   background: transparent !important;
   box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff !important;
+  font-size: 1.7rem !important;
+}
+
+.glow-button.send:hover {
+  color: #00ffff !important;
+  border-color: #00ffff !important;
+  padding: 10px 20px !important;
+  font-size: 1.3rem !important;
+}
+
+.glow-button.send:hover::before {
+  background: transparent !important;
+  box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff !important;
+  font-size: 1rem !important;
+
 }

@@ -242,13 +242,14 @@ export class OnlineMatch extends Match {
 			console.log("game started")
 			console.log(msg.player)
 			this.start = new Date();
+			this.player1.name = msg.username_one;
+			this.player2.name = msg.username_two;
 			if (msg.player == "player_one"){
 				this.superPlayer = this.player1;
 			}
 			else if (msg.player == "player_two"){
 				this.superPlayer = this.player2;
 			}
-
 			if (this.world.username1)
 				this.world.setUsernameFont('one', msg.username_one)
 			if (this.world.username2)
@@ -269,16 +270,12 @@ export class OnlineMatch extends Match {
 		{
 			if (this.world.soundCoundwon.isPlaying)
 				this.world.soundCoundwon.stop();
-
-			if (msg.message.type == "disconnection")
-				alert("Oppenent disconnected! YOU WIN!")
-			else
-			{
-				// alert("Game ended! " + msg.message.winner + " wins!");
-			}
-			console.log(msg)
+			
 			this.started = false;
-			this.gameEnd();
+			if (msg.message.type == "disconnection")
+				this.gameEnd('disconnection');
+			else
+				this.gameEnd('normal');
 		}
     }
 

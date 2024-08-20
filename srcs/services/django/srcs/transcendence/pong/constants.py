@@ -21,7 +21,7 @@ class Costants:
     PADDLE_HEIGHT = 50
 
     REFRESH_RATE = 0.01
-    MOVSPEED = 50
+    MOVSPEED = 85
 
     BALL_WIDTH = 10
     BALL_HEIGHT = 10

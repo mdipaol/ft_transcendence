@@ -14,9 +14,12 @@ export class Match {
 
 		this.start = new Date();
 		this.htmlElement = null;
+		this.endScreen = null;
 
         this.player1 = new Player(world.paddle);
+		this.player1.name = window.username;
         this.player2 = new Player(world.paddle2);
+		this.player2.name = "player 2";
 		this.player1.upKey = UTILS.W;
 		this.player1.downKey = UTILS.S;
 		this.player2.upKey = UTILS.ARROWUP;
@@ -70,8 +73,8 @@ export class Match {
 		}
 		// console.log(this.htmlElement);
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
-		this.htmlElement.querySelector('#interface-player1').innerHTML = window.username;
-		this.htmlElement.querySelector('#interface-player2').innerHTML = UTILS.truncateString(window.username.toString(), 4) + '[2.0]';
+		this.htmlElement.querySelector('#interface-player1').innerHTML = this.player1.name;
+		this.htmlElement.querySelector('#interface-player2').innerHTML = this.player2.name;
 		this.htmlElement.querySelector('#interface-score').innerHTML =  + `${this.score1}` + "-" + `${this.score2}`;
 		this.htmlElement.querySelector('#interface-exchanges').innerHTML = `${this.exchanges}`;
 	}
@@ -188,7 +191,7 @@ export class Match {
 			this.score1++;
 
 		this.updateScoreText();
-		if (this.score1 == this.maxScore || this.score2 == this.maxScore){
+		if (this.score1 >= this.maxScore || this.score2 >= this.maxScore){
 			if(this.world.sound.isPlaying)
                 this.world.sound.stop();   
 			this.gameEnd();
@@ -654,8 +657,6 @@ export class Match {
 	}
 
 
-
-	// non ti permettere heeeey
 	destroy(scene) {
 		while (scene.children.length > 0) {
 			let object = scene.children[0];
@@ -697,7 +698,17 @@ export class Match {
     	this.world.renderer.render(this.world.scene, this.world.activeCamera);
 	}
 
-	gameEnd() {
+	gameEnd(reason) {
+		let winner = (this.score1 > this.score2) ? this.player1 : this.player2;
+		this.endScreen.querySelector('#winner').innerHTML = winner.name + " wins!";
+		console.log("Game ended!");
+		if (reason == "disconnection")
+		{
+			this.endScreen.querySelector('#reason').style.display = "flex";
+			this.endScreen.querySelector('#reason').innerHTML = "The other player disconnected!";
+			this.endScreen.querySelector('#winner').innerHTML = "You win!";
+		}
+		document.getElementById('page_root').appendChild(this.endScreen);
 		// if (this.score1 > this.score2)
 		// 	alert("Player 1 wins!");
 		// else

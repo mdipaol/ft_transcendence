@@ -414,6 +414,10 @@ def interface_thefinals(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/interface_thefinals.html')
 
+def match_end(request):
+	if request.method == 'GET':
+		return render(request, 'pong/spa/match_end.html')
+
 def account(request):
 	if request.method == 'GET':
 		user = request.user

@@ -11,7 +11,7 @@ export class BotMatch extends Match {
         if (this.world.username1){
             this.world.setUsernameFont('two', 'Mario Bus')
         }
-
+        this.player2.name = 'Mario Bus';
         this.bot2 = this.player2;
         this.activeBot1 = false;
         this.activeBot2 = false;

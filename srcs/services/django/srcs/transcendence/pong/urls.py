@@ -34,6 +34,7 @@ urlpatterns = [
     path('play/', views.play, name='play'),
     path('interface_underground/', views.interface_underground, name='interface_underground'),
     path('interface_thefinals/', views.interface_thefinals, name='interface_thefinals'),
+    path('match_end/', views.match_end, name='match_end'),
     path('tournament_create/', views.tournament_create, name='tournament_create'),
     path('tournaments_list/', views.tournaments_list, name='tournaments_list'),
     path('tournament_join/alias/<str:name>/', views.tournament_alias, name='tournament_alias'),

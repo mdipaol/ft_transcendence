@@ -6,12 +6,21 @@
 
 /* Contenitore per gli elementi sociali */
 .social-element-container {
-    width: 100%; /* Assicura che gli elementi occupino tutta la larghezza disponibile */
+    width:100%; 
     display: flex;
-    flex-direction: column; /* Disposizione verticale degli elementi */
+    flex-direction: column; 
     align-items: center;
-    gap: 1rem; /* Spaziatura tra gli elementi */
-    overflow-y: auto; /* Scroll verticale se necessario */
+    gap: 1rem; 
+    overflow-y: auto; 
+    justify-content: space-between;
+
+  }
+
+  .social-element-container.friends {
+    width:80% !important;
+    font-size: 10px !important;
+    justify-content: space-between;
+    flex-grow: 1;
   }
   
   /* Contenitori per Friends e Online Users */
@@ -31,7 +40,6 @@
   .online-single-user-container {
     width: 100%; /* Assicura che occupino l'intera larghezza del contenitore */
     text-align: center;
-    margin-bottom: 0.5rem; /* Spaziatura sotto ciascun elemento */
   }
   
   /* Disposizione dei bottoni per le richieste di amicizia */
@@ -41,7 +49,6 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 10px;
     width: 100%;
   }
   
@@ -49,19 +56,85 @@
     max-width: 400px; /* Limita la larghezza massima del form */
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.2); /* Migliore visibilità */
-    border-radius: 10px;
-    box-shadow: 0 0 10px #00eeff;
+    box-shadow: 0 0 8px #ffffff;
     display: flex;
     flex-direction: column; /* Disposizione verticale degli elementi nel form */
     align-items: center;
+    border-radius: 10px;
+    /* box-shadow: 0 0 10px #ffffff4f, 0 0 10px #0ff, 0 0 10px rgb(13, 185, 176),
+                0 0 10px rgba(0, 255, 255, 0.233), 0 0 10px rgba(0, 255, 255, 0.336),
+                0 0 10px rgba(0, 255, 255, 0.418); */
+    margin-top: 0.5rem;
   }
-  
-  #friend-request-submit,
+
+  /* pesonalizza la barra di ricerca nella home*/
+  #username-friend-request {
+  flex: 1;
+  width: 90%;
+  /* margin-right: 10px; */
+  /* Spaziatura interna per migliorare l'estetica */
+  /* padding: 10px;  */
+  font-size: 1em;
+  border: 2px solid #ffffff4f;
+  /* Arrotonda i bordi */
+  border-radius: 5px;
+  /* Sfondo semi-trasparente */
+  background-color: rgba(65, 62, 62, 0.479);
+  color: #ffffff; /* Colore del testo */
+  /* text-shadow: 0 0 10px #ffffff4f, 0 0 10px #0ff, 0 0 10px rgb(13, 185, 176),
+  0 0 10px rgba(0, 255, 255, 0.233), 0 0 10px rgba(0, 255, 255, 0.336),
+  0 0 10px rgba(0, 255, 255, 0.418); */
+   /* Spazio sotto la barra di input */
+  /* margin-bottom: 20px; */
+  /* Ombre interne ed esterne */
+  /* box-shadow: inset 0 0 10px #ffffff4f, 0 0 10px #0ff; */
+}
+
+
+  .friends 
+  {
+  color: #fff;
+  font-size: 1.5rem !important;
+  font-family: "Tilt Neon", sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+}
+
+/* testo ivia prima che tu ci vada sopra */
+#friend-request-submit {
+  /* padding: 10px 20px; */
+  font-size: 1.3em;
+  color: #e2e7ee;
+  background-color: transparent;
+  border: 2px solid #00eeff;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ffdd8d;
+}
+
+
+#friend-request-submit:hover {
+  background-color: #001eff44;
+  color: #0026fd31;
+  box-shadow: 0 0 20px #bcbedb, 0 0 30px #33356b;
+}
+
+
+/* gest scritta "FRIEND REQUEST" */
+#friend-request-container{
+  position: absolute;
+  text-align: left;
+  top: 20%;
+}
+
+  /* #friend-request-submit,
   #remove-friend-btn,
   #accept-request-btn,
   #reject-request-btn {
     margin-top: 1rem;
-  }
+  } */
   
   #friend-request-container h3,
   #friends-container h3,
@@ -90,3 +163,67 @@
     border-radius: 10px;
   }
   
+
+  .account-columns {
+    display: flex;
+    width: 100%;
+    height: 100vh; 
+  }
+  
+  .account-column {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2rem 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 0.5px solid rgba(206, 227, 228, 0.945); 
+    border-right: 0.5px solid rgba(206, 227, 228, 0.945); 
+    transition: box-shadow 0.3s ease;
+    box-shadow: none;
+    margin: 2rem 0;
+  }
+  
+  .account-column > * {
+    margin-bottom: 1rem; /* Spazio tra gli elementi */
+  }
+  
+  .account-column:hover {
+    box-shadow: 0 0 5px rgba(115, 157, 204, 0.7), 0 0 40px rgba(178, 227, 255, 0.7);
+  }
+  
+  /* Definisci la larghezza delle colonne */
+  .account-column:first-child, .account-column:last-child {
+    flex: 0 0 25%; 
+  }
+  
+  .account-column:nth-child(2) {
+    flex: 1; /* Colonna centrale più grande */
+  }
+  
+  /* Rimuovere gli effetti glow dai contenitori interni */
+  .tournament-info-container {
+    border: 1px solid rgba(206, 227, 228, 0.945);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    width: 90%;
+    box-shadow: none; /* Rimuove l'effetto glow */
+  }
+  
+  /* Media query per gestire layout su schermi piccoli */
+  @media only screen and (max-width: 900px) {
+    .account-columns {
+        flex-direction: column;
+    }
+  
+    .account-column {
+        width: 100%;
+        border-left: none; /* Rimuovi bordi laterali sui dispositivi mobili */
+        border-right: none; /* Rimuovi bordi laterali sui dispositivi mobili */
+    }
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }

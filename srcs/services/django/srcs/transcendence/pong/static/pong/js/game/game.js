@@ -60,13 +60,15 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		  match = new Match(world, powerUpMode);
 	  }
 
-	let response = await fetch(`https://${window.location.host}/interface_thefinals/`);
+	let theFinals = await fetch(`https://${window.location.host}/interface_thefinals/`);
 	let underground = await fetch(`https://${window.location.host}/interface_underground/`);
+	let endScreen = await fetch(`https://${window.location.host}/match_end/`);
 
 	//userInterface.innerHTML = await response.text();
 	// canvas dom element
-	const html = await response.text();
+	const html = await theFinals.text();
 	const htmlU = await underground.text();
+	const htmlEnd = await endScreen.text();
 	
 	const parser = new DOMParser();
 	// Parse the text
@@ -77,7 +79,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const as= document.getElementsByTagName('a');
 	//const buttom = document.querySelectorAll('button');
 	let QuitMatch = false;
-
 	if (worldMap != 'underground'){
 		// Set match html variable with interface html element
 		match.initHtmlInterface(interfaceUser);
@@ -90,7 +91,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		if (interfaceUserU)
 			content.appendChild(interfaceUserU);
 	}
-
+	match.endScreen = parser.parseFromString(htmlEnd, "text/html").getElementById('interface');
 
 	content.appendChild(world.renderer.domElement)
 	window.addEventListener('resize', function() {

@@ -133,3 +133,61 @@
     text-align: center;
     font-size: 50vw;
 }
+
+#winner-message {
+    position: relative;
+    justify-content: center;
+    flex-direction: column;
+    font-family: "fontC", sans-serif !important;
+    align-items: center;
+    text-align: center;
+    top: 25%;
+    font-size: 70px;
+    font-weight: bold;
+    display: flex;
+
+    /* Effetto Neon Ciano */
+    color: #fff;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff,
+        0 0 40px #00ffff,
+        0 0 50px #00ffff,
+        0 0 75px #00ffff;
+    
+    /* Animazione Glow */
+    animation: glow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow:
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff,
+            0 0 50px #00ffff,
+            0 0 75px #00ffff;
+    }
+    50% {
+        text-shadow:
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff,
+            0 0 60px #00ffff,
+            0 0 80px #00ffff,
+            0 0 100px #00ffff;
+    }
+}
+
+#reason{
+    display: none;
+    font-size: 24px;
+    top: 20%;
+    color: #00ffff;
+}
+
+#winner{
+    color: #00ffff;
+}
