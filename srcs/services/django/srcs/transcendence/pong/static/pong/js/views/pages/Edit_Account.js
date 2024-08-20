@@ -1,44 +1,11 @@
 import triggerHashChange from '../../services/utils.js';
-import { parseRequestUrl } from '../../services/utils.js';
+import { parseRequestUrl, getCookie } from '../../services/utils.js';
 
 const Home = {
   /**
    * Render the page content.
    */
   render: async () => {
-    // return /*html*/ `
-    //   <div class="account">
-    //   <section class="account-highlights account-section">
-    //   <div class="profile-sidepanel account-highlights">
-    //         <h6>Current Image:</h6>
-    //         <img src="{{img}}" alt="Current Image" class="account-image">
-    //       </div>
-    //     <div class="form-container">
-    //       <div class="input-form">
-    //         <form method="POST" enctype="multipart/form-data">
-    //           <!-- CSRF token -->
-    //           <fieldset>
-    //             <legend class="neonbar neonbar-animated neonbar-medium neonbar-pink">Edit Profile</legend>
-    //             <div class="upload-btn-container">
-    //                <button class="glow-button cyan">Upload new image</button>
-    //             </div>
-    //             <div class="account-info-text">
-    //               <label for="nickname" class= "neonbar neonbar-small neonbar-pink" >Nickname</label>
-    //               <input type="text" id="nickname" name="nickname" value="{{nickname}}" required class="neonbar neonbar-blue">
-    //               <label for="email" class= "neonbar neonbar-small neonbar-pink" >Email</label>
-    //               <input type="email" id="email" name="email" value="{{email}}" required class="neonbar neonbar-small neonbar-blue">
-    //               <div>
-    //               <a class="glow-button purple" href="{% url 'account' %}">Return</a>
-    //               <button class="glow-button green">Update</button>
-    //               </div>
-    //             </div>
-    //           </fieldset>
-    //             </form>
-    //           </div>
-    //     </div>
-    //     </section>
-    //   </div>
-    // `;
     const response = await fetch(`https://${window.location.host}/edit_account/`);
     const html = response.text();
 
@@ -50,35 +17,59 @@ const Home = {
    * must be done after these elements have been fully rendered on the page.
    */
   after_render: async () => {
-    const form = document.getElementById('edit-form');
-        const errorMessageDiv = document.getElementById('error-message');
+        const buttonChangeImage = document.getElementById('change-image-btn');
+        const buttonChangeUsername = document.getElementById('change-username-btn');
+        const buttonChangePassword = document.getElementById('change-password-btn');
+        const usernameForm = document.getElementById('username-form');
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent the form's default submit behavior
-
-            const formData = new FormData(form);
-            const csrfToken = formData.get('csrfmiddlewaretoken');
-
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: formData
-                });
-                if (response.ok) {
-                    triggerHashChange('/edit_account/');
-                } else {
-                    const errorForm = await response.text();
-                    document.getElementById('page_root').innerHTML = errorForm;
-                    await Login.after_render();
+        if (buttonChangeImage) {
+        buttonChangeImage.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const response = await fetch(`https://${window.location.host}/change_image/`);
+            if (response.ok) {
+              triggerHashChange('/edit_account/');
+            }
+            
+        });
+        }
+        if (usernameForm) {
+          usernameForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(usernameForm);
+            const response = await fetch(`https://${window.location.host}/change_username/`, {
+              method: 'POST',
+              headers : {
+                'X-CSRFToken' : getCookie('csrftoken')
+              },
+              body: formData
+            });
+            if (response.ok){
+              const data = await response.json();
+              const success = data.status;
+              if (success && success == 'success'){
+                triggerHashChange('/edit_account/');
+              }
+            }
+            else{
+              const data = await response.json();
+              const error = data.status.error;
+              console.log(data)
+              if (error){
+                const errorElement = document.getElementById("username-error");
+                if (errorElement){
+                  errorElement.innerHTML = error;
+                  errorElement.classList.add('visible');
                 }
-            } catch (error) {
-                console.log(error);
+                return ;
+              }
             }
         });
-  }
-};
-
+        }
+        if (buttonChangePassword) {
+        buttonChangePassword.addEventListener('click', async (event) => {
+            event.preventDefault();
+        });
+        }
+    }
+}
 export default Home;
