@@ -7,6 +7,14 @@
         display: block;
   }
 </style>
+<div class="pong-background">
+  <div class="pong-field">
+      <div class="pong-paddle pong-paddle-left"></div>
+      <div class="pong-paddle pong-paddle-right"></div>
+      <div class="pong-ball"></div>
+      <div class="ball-trail"></div>
+  </div>
+</div>
 <div id="center-div">
   <div id="image-container">
     <img src="{{ user.image }}" alt="Avatar" class="account-image">
@@ -21,7 +29,7 @@
         <form id="username-form">
           {% csrf_token %}
           <input type="text" name="username" placeholder="Enter a new username" required>
-          <button type="submit" class="glow-button cyan" id="change-username-btn"> Change Username </button>
+          <button type="submit" class="glow-button cyan edit-button" id="change-username-btn"> Change Username </button>
           <span id="username-error" class="error"></span>
         </form>
       </div>
@@ -29,7 +37,7 @@
         <form id="email-form">
           {% csrf_token %}
           <input type="text" name="email" placeholder="Enter a new email" required>
-          <button class="glow-button cyan"> Change Email </button>
+          <button class="glow-button cyan edit-button"> Change Email </button>
         </form>
       </div>
     </div>
@@ -43,7 +51,7 @@
           <input type="password" name="new-password" placeholder="Enter a new password" required>
           <br>
           <input type="password" name="confirm-password" placeholder="Confirm password" required>
-          <button class="glow-button cyan" id="change-password-btn"> Change Password </button>
+          <button class="glow-button cyan edit-button" id="change-password-btn"> Change Password </button>
         </form>
       </div>
     </div>

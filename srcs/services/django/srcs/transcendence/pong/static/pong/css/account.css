@@ -545,7 +545,12 @@ form {
   align-items: center;
 }
 
-input, button {
+input{
+  width: 100%;
+  margin-top: 10px;
+}
+
+.edit-button {
   width: 100%;
   margin-top: 10px;
 }
@@ -554,4 +559,9 @@ input, button {
   width: 150px;
   height: 150px;
   border-radius: 50%; /* Fa diventare l'immagine circolare */
+}
+
+.pass
+{
+  height: 118px;
 }

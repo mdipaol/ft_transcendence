@@ -2,14 +2,7 @@
 {% load static %}
 
 {% if not user.is_authenticated %}
-<div class="pong-background">
-    <div class="pong-field">
-        <div class="pong-paddle pong-paddle-left"></div>
-        <div class="pong-paddle pong-paddle-right"></div>
-        <div class="pong-ball"></div>
-    </div>
-</div>  
-<section class="flex-container">
+<!-- <section class="flex-container">
     <h1><a class="neongreen" href="/#/login">SIGN IN!</a></h1>
     <h1 class="neonbar">OR</h1>
     <h1><a class="neonpink" href="/#/register">REGISTER!</a></h1>
@@ -17,7 +10,128 @@
     <h1><a class="neonpink" href="/login42">Login 42</a></h1>
     <div class="neon-button-wrapper">
     </div>
-  </section>
+  </section> -->
+  <div id="center-home">
+  <div class="login-light"></div>
+    <div class="login-box">
+        <form action="{% url 'pong:login' %}" method="post" id="login-form">
+            <input type="checkbox" class="input-check" id="input-check">
+            <label for="input-check" class="toggle">
+                <span class="text off">off</span>
+                <span class="text on">on</span>
+            </label>
+            <div class="light"></div>
+
+            <h2 class="login-text">Login</h2>
+            <div class="input-box">
+                <span class="icon">
+                    <ion-icon name="mail"></ion-icon>
+                </span>
+                <input type="username" required>
+                <label>Username</label>
+                <div class="input-line"></div>
+            </div>
+            <div class="input-box">
+                <span class="icon">
+                    <ion-icon name="lock-closed"></ion-icon>
+                </span>
+                <input type="password" required>
+                <label>Password</label>
+                <div class="input-line"></div>
+            </div>
+            <!-- <div class="remember-forgot">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="#">Forgot Password?</a>
+            </div> -->
+            <button class="button-login" type="submit">Login</button>
+            <div class="register-link">
+                <p>Don't have an account? <a href="/#/register">Register or</a></p>
+            </div>
+            <button class="button-login"><a href="/login42">42 Login</a></button>
+        </form>
+    </div>
+  </div>
+  <div>
+    <svg id="spinner_login" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style="shape-rendering: auto; display: block; background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink"><g><g transform="rotate(0 50 50)">
+        <rect fill="#dbfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-2.631578947368421s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(18.94736842105263 50 50)">
+        <rect fill="#7bfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-2.485380116959064s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(37.89473684210526 50 50)">
+        <rect fill="#c2fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-2.3391812865497075s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(56.8421052631579 50 50)">
+        <rect fill="#10fff4" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-2.1929824561403506s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(75.78947368421052 50 50)">
+        <rect fill="#d0fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-2.046783625730994s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(94.73684210526316 50 50)">
+        <rect fill="#85fffc" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.9005847953216373s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(113.6842105263158 50 50)">
+        <rect fill="#d0fffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.7543859649122806s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(132.6315789473684 50 50)">
+        <rect fill="#dbfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.6081871345029237s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(151.57894736842104 50 50)">
+        <rect fill="#7bfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.461988304093567s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(170.52631578947367 50 50)">
+        <rect fill="#c2fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.3157894736842104s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(189.47368421052633 50 50)">
+        <rect fill="#10fff4" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.1695906432748537s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(208.42105263157896 50 50)">
+        <rect fill="#d0fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-1.023391812865497s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(227.3684210526316 50 50)">
+        <rect fill="#85fffc" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.8771929824561403s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(246.31578947368422 50 50)">
+        <rect fill="#d0fffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.7309941520467835s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(265.2631578947368 50 50)">
+        <rect fill="#dbfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.5847953216374269s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(284.2105263157895 50 50)">
+        <rect fill="#7bfffe" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.43859649122807015s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(303.1578947368421 50 50)">
+        <rect fill="#c2fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.29239766081871343s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(322.10526315789474 50 50)">
+        <rect fill="#10fff4" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="-0.14619883040935672s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g transform="rotate(341.05263157894734 50 50)">
+        <rect fill="#d0fffd" height="1" width="1" ry="0.5" rx="0.5" y="4.5" x="49.5">
+          <animate repeatCount="indefinite" begin="0s" dur="2.7777777777777772s" keyTimes="0;1" values="1;0" attributeName="opacity"></animate>
+        </rect>
+      </g><g></g></g><!-- [ldio] generated by https://loading.io --></svg>
+  </div>
+    
+</div>
   {% else %}
 <div class="pong-background">
     <div class="pong-field">
@@ -53,13 +167,13 @@
       </div>
       <div id="center-home">
         <div>
-            <a class="glow-button fuchsia" href="">Tournament</a>
+            <a class="glow-button fuchsia" href="/#/tournament_join">Tournament</a>
           </div>
           <div>
-            <a class="glow-button green" href="">Play Now</a>
+            <a class="glow-button green" href="/#/play">Play Now</a>
           </div>
           <div>
-            <button class="glow-button red" id="logout-button">Logout</button>
+            <button  class="glow-button red" id="logout-button">Logout</button>
           </div>
       </div>
       <div>
@@ -138,12 +252,12 @@
     <div class="center-content grow"> <!-- Nuovo wrapper -->
         <div id="account-header-right">
             <div class="social-element-container">
-            <h2 class="friends">Friends</h3>
+            <h2 class="friends glow">Friends</h3>
             <div id="friends-container" class="social-element-container friends">
                 
                 {% for item in friends %}
                     <div class="single-friend-container">
-                        {{ item.username }} <button id="remove-friend-btn" data-username="{{ item.username }}">
+                        {{ item.username }} <button  id="remove-friend-btn" data-username="{{ item.username }}">
                             X
                         </button>
                     </div>
@@ -151,7 +265,7 @@
                 {% endfor %}
             </div>
         </div>
-        <h2 class="friends">Online Users</h3>
+        <h2 class="friends glow">Online Users</h3>
             <div id="online-users-container" class="social-element-container friends">
                 
                 {% for item in online_users %}
@@ -160,7 +274,7 @@
                     </div>
                 {% endfor %}
             </div>
-            <h2 class="friends">Friends Request</h3> 
+            <h2 class="friends glow">Friends Request</h3> 
             <div id="friend-request-container" class="social-element-container friends">
                 
                 {% for item in friend_requests %}
@@ -168,10 +282,10 @@
                         {{ item.username }}
                     </div>
                     <div>
-                        <button id="accept-request-btn" data-username="{{ item.username }}">
+                        <button  id="accept-request-btn" data-username="{{ item.username }}">
                             🗸
                         </button>
-                        <button id="reject-request-btn" data-username="{{ item.username }}">
+                        <button  id="reject-request-btn" data-username="{{ item.username }}">
                             ⅹ
                         </button>
                     </div>
@@ -183,7 +297,7 @@
                     
                     <div class="form-group-inner">
                         <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
-                        <button class="glow-button small send" id="friend-request-submit">INVITE</button>
+                        <button  class="glow-button small send" id="friend-request-submit">INVITE</button>
                     </div>
                     <span id="request-username-error" class="error"></span>
                 </form>            

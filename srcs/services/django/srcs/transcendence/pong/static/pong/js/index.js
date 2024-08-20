@@ -4,7 +4,6 @@ import About from './views/pages/About.js';
 import TournamentList from './views/pages/TournamentList.js';
 import TournamentCreate from './views/pages/TournamentCreate.js'
 import ItemShow from './views/pages/ItemShow.js'
-import Account from './views/pages/Account.js';
 import Edit_Account from './views/pages/Edit_Account.js';
 import Error404 from './views/pages/Error404.js';
 import Pong from './views/pages/Pong.js';
@@ -26,7 +25,6 @@ const routes = {
   '/tournament_create': TournamentCreate,
   '/tournament_join': TournamentList,
   '/items/:id': ItemShow,
-  '/account': Account,
   '/edit_account': Edit_Account,
   '/login': Login,
   '/register': Register,

@@ -102,6 +102,11 @@
   position: relative !important;
 }
 
+.friends-glow
+{
+  text-shadow: 0 0 4px #ffffff4f, 0 0 8px #deffff;
+}
+
 /* testo ivia prima che tu ci vada sopra */
 #friend-request-submit {
   /* padding: 10px 20px; */
