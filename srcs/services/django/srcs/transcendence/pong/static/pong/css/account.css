@@ -134,8 +134,15 @@
 }
 
 .account-section {
-    width: 100%;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-content {
+  width: 100%;
+  text-align: center;
 }
 
 .account-events {
@@ -348,14 +355,59 @@
     width: 100%;
     }
 
-.account-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.05);
-    padding-top: 5rem;
-}
+    .account-column {
+      display: flex;
+      flex-direction: column; /* Elementi disposti in colonna */
+      justify-content: flex-start;
+      align-items: center;
+      padding: 2rem 0;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-left: 0.5px solid rgba(206, 227, 228, 0.945); 
+      border-right: 0.5px solid rgba(206, 227, 228, 0.945); 
+      transition: box-shadow 0.3s ease;
+      box-shadow: none;
+      margin: 2rem 0;
+      overflow-y: hidden; /* Rimuove scrollbar verticale sulla colonna */
+      overflow-x: hidden; /* Rimuove scrollbar orizzontale */
+    }
+    
+    #friends-container,
+    #online-users-container,
+    #friend-request-container,
+    #friend-request-form {
+      position: static; /* Rimuove il comportamento assoluto */
+      text-align: center; /* Centra il testo */
+      width: 90%; /* Assicura che gli elementi siano confinati nella colonna */
+      margin-bottom: 2rem; /* Spazio tra i contenitori */
+    }
+    
+ 
+    /* Assicura che le colonne siano allineate correttamente */
+    .account-columns {
+      display: flex;
+      width: 100%;
+      height: 100vh; 
+    }
+    
+    .account-column:first-child, .account-column:last-child {
+      flex: 0 0 25%; 
+    }
+    
+    .account-column:nth-child(2) {
+      flex: 1;
+    }
+    
+    @media only screen and (max-width: 900px) {
+      .account-columns {
+          flex-direction: column;
+      }
+    
+      .account-column {
+          width: 100%;
+          border-left: none;
+          border-right: none;
+      }
+    }
 
 .tournament-info-container {
     border: 1px solid rgba(206, 227, 228, 0.945); /* Elimina l'effetto glow */

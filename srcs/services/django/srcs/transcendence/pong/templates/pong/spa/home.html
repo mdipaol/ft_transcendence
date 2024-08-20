@@ -63,66 +63,66 @@
   </section>
 
   <section class="account-column account-section">
-    <div>
+    <div class="center-content"> <!-- Nuovo wrapper -->
         <h2 class="logo-text-home">Friends</h2>
     </div>
-      <div id="account-header-right">
-          
-        <div id="online-users-container" class="social-element-container">
-            {% for item in online_users %}
-            <div class="online-single-user-container">
-                {{ item.username }}
+    <div class="center-content"> <!-- Nuovo wrapper -->
+        <div id="account-header-right">
+            <div id="friends-container" class="social-element-container">
+                <h3>FRIENDS</h3>
+                {% for item in friends %}
+                    <div class="single-friend-container">
+                        {{ item.username }}
+                    </div>
+                    <button id="remove-friend-btn" data-username="{{ item.username }}">
+                        Remove
+                    </button>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <div id="online-users-container" class="social-element-container">
+                <h3>ONLINE USERS</h3>
+                {% for item in online_users %}
+                    <div class="online-single-user-container">
+                        {{ item.username }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="friend-request-container" class="social-element-container">
+                
+                {% for item in friend_requests %}
+                    <div class="single-friend-request-container">
+                        {{ item.username }}
+                    </div>
+                    <div>
+                        <button id="accept-request-btn" data-username="{{ item.username }}">
+                            🗸
+                        </button>
+                        <button id="reject-request-btn" data-username="{{ item.username }}">
+                            ⅹ
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="social-element-container">
+                <form id="friend-request-form" class="form-group">
+                    <label for="username" class="neonbar neonbar-small neonbar-blue">Send request to user</label>
+                    <div class="form-group-inner">
+                        <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
+                        <input type="submit" name="submit" id="friend-request-submit" value="Invia">
+                    </div>
+                    <span id="request-username-error" class="error"></span>
+                </form>            
+            </div>
         </div>
-        <div id="friends-container" class="social-element-container">
-            FRIENDS
-            {% for item in friends %}
-                <div class="single-friend-container">
-                    {{ item.username }}
-                </div>
-                <button id="remove-friend-btn" data-username="{{ item.username }}">
-                    Remove
-                </button>
-            {% endfor %}
+        <div>
+            <button class="glow-button cyan">Invite a Friend</button>
         </div>
-        <div id="friend-request-container" class="social-element-container">
-            FRIEND REQUESTS
-            {% for item in friend_requests %}
-                <div class="single-friend-request-container">
-                    {{ item.username }}
-                </div>
-                <div>
-                    <button id="accept-request-btn" data-username="{{ item.username }}">
-                        🗸
-                    </button>
-                    <button id="reject-request-btn" data-username="{{ item.username }}">
-                        ⅹ
-                    </button>
-                </div>
-            {% endfor %}
+        <div>
+            <button class="glow-button blue" id="notification-button">
+                Send Notification
+            </button>
         </div>
-        <div class="social-element-container">
-            <form id="friend-request-form" class="form-group">
-                <label for="username" class="neonbar neonbar-small neonbar-blue">Send request to user</label>
-                <div class="form-group-inner">
-                    <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
-                    <input type="submit" name="submit" id="friend-request-submit" value="Invia">
-                </div>
-                <span id="request-username-error" class="error"></span>
-            </form>            
-        </div>
-
     </div>
-          <div>
-              <button class="glow-button cyan">Invite a Friend</button>
-          </div>
-      </div>
-      <div>
-          <button class="glow-button blue" id="notification-button">
-              Send Notification
-          </button>
-      </div>
-  </section>
-</div>
+</section>
+
 {% endif %}
