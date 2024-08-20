@@ -57,6 +57,7 @@
     gap: 1rem;
     justify-content: space-between;
     flex-grow: 1;
+    height: 100%;
 }
 
 .account-header .account-image {
@@ -492,4 +493,65 @@
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
+}
+
+#password-form, #email-form, #username-form{
+  display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 108px;
+}
+
+#center-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#image-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#form-container {
+  display: flex;
+  justify-content: space-between; /* Spazio tra le colonne */
+  align-items: stretch; /* Colonne con altezza uniforme */
+  width: 100%;
+  max-width: 800px; /* Regola questa dimensione per adattarla alle tue necessità */
+  gap: 20px; /* Distanza tra le colonne */
+}
+
+.column-edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Spazio tra gli elementi */
+  flex-grow: 1;
+  width: calc(50% - 10px); /* Calcola la larghezza delle colonne, tenendo conto del gap */
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.row-div {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input, button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.account-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* Fa diventare l'immagine circolare */
 }

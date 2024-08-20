@@ -171,6 +171,7 @@
   }
   
   .account-column {
+    flex-direction: column;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -181,6 +182,7 @@
     transition: box-shadow 0.3s ease;
     box-shadow: none;
     margin: 2rem 0;
+    position: relative;
   }
   
   .account-column > * {
@@ -227,3 +229,28 @@
     justify-content: space-around;
     margin-bottom: 20px;
   }
+
+  #center-home {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+  }
+
+#spinner_home {
+  min-height: 650px;
+  position: absolute;
+  z-index: -1;
+  height: 650px;
+  aspect-ratio: 1 / 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.35;
+}

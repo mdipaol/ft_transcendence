@@ -526,3 +526,23 @@ body{
   outline: 2px solid rgba(0, 255, 255, 0.7);
 }
 
+.grow
+{
+	flex-grow: 1;
+}
+
+#center-div{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	flex-direction: column;
+}
+
+#row-div {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	width: 100%;
+	max-width: 400px; /* Imposta una larghezza massima per uniformare le dimensioni */
+	margin-bottom: 20px; /* Spazio tra i div */
+}
