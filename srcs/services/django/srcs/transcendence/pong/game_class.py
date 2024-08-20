@@ -1,4 +1,4 @@
-import time, asyncio, uuid, random, pprint
+import time, asyncio, uuid, random, pprint, traceback
 from .constants import Costants
 from channels.layers import get_channel_layer
 
@@ -238,8 +238,8 @@ class Match:
         
         self.task = None
         self.ended = True
-        self.player1 = None
-        self.player2 = None
+        self.player1.consumer = None
+        self.player2.consumer = None
 
     def check_players(self):
         if not self.player1.consumer or not self.player2.consumer:
@@ -511,6 +511,9 @@ class Match:
             self.player2.position.y -= self.player2.speed * delta_time
 
     def move(self, consumer, data):
+
+        if not consumer:
+            return
 
         player: Player = None
         if self.player1.consumer == consumer:
