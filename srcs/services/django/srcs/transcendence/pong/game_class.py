@@ -338,7 +338,7 @@ class Match:
             })
         elif self.active_powerup.type == 'slowness':
             self.active_powerup.player = oppenent if good else taker
-            self.active_powerup.player.speed /= 3
+            self.active_powerup.player.speed /= 2
         elif self.active_powerup.type == 'triple':
             self.active_powerup.player = taker if good else oppenent
             if self.active_powerup.player == taker:

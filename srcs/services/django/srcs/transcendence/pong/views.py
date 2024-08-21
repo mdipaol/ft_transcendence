@@ -23,17 +23,6 @@ from friendship.models import Friend, Follow, Block, FriendshipRequest
 from .models import BaseUser, Tournament, Match
 from .forms import *
 
-def login42(request):
-	client_id = settings.INTRA_OAUTH_CLIENT_ID
-	client = WebApplicationClient(client_id)
-	request.session['state'] = secrets.token_urlsafe(16)
-
-	auth_url = "https://api.intra.42.fr/oauth/authorize"
-
-	redirect_uri = os.environ.get('REDIRECT_URI')
-	url = client.prepare_request_uri( auth_url, redirect_uri=redirect_uri, state=request.session['state'])
-	return HttpResponseRedirect(url)
-
 @login_required(login_url='/')
 def send_friend_request(request, username):
 	if request.method == 'POST':
@@ -149,6 +138,17 @@ def friend_template(request):
 	# Friend.objects.remove_friend(request.user, other_user)
 
 	return render(request, 'pong/test/friend_template.html', context)
+
+def login42(request):
+	client_id = settings.INTRA_OAUTH_CLIENT_ID
+	client = WebApplicationClient(client_id)
+	request.session['state'] = secrets.token_urlsafe(16)
+
+	auth_url = "https://api.intra.42.fr/oauth/authorize"
+
+	redirect_uri = os.environ.get('REDIRECT_URI')
+	url = client.prepare_request_uri( auth_url, redirect_uri=redirect_uri, state=request.session['state'])
+	return HttpResponseRedirect(url)
 
 class CallbackView(View):
 	def get(self, request, *args, **kwargs):
@@ -365,7 +365,7 @@ def navbar(request):
 		if not request.user.is_authenticated:
 			links = ['Home', 'AboutUs']
 		else:
-			links = ['Home', 'Play', 'Tournament_Join', 'Account', 'AboutUs']
+			links = ['Home', 'Play', 'Tournament_Join', 'AboutUs']
 		return render(request, 'pong/spa/navbar.html', {'links' : links})
 
 def item_show(request):
@@ -746,7 +746,7 @@ class ImageUpload(View):
 
 
 @login_required(login_url='/')
-def image_upload(request):
+def change_image(request):
 	if request.method == 'POST':
 		uploaded_file = request.FILES.get('image')
 		if not uploaded_file:

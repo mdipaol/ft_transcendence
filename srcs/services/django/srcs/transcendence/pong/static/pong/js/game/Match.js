@@ -243,6 +243,9 @@ export class Match {
 		if (event.which == this.player2.downKey){
 			event.preventDefault();
 			this.player2.moves.down = true;
+			console.log("azimuthal:",this.world.orbitControls.getAzimuthalAngle());
+			console.log("polar:",this.world.orbitControls.getPolarAngle());
+			console.log("distance:",this.world.orbitControls.getDistance());
 		}
 
 		if (event.which == UTILS.TWO)//first person with '2' key

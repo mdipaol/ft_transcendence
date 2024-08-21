@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: #000;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    text-align: center;
+}
+
+.menu-neon-text {
+    font-size: 4em;
+    color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0095ff, 0 0 30px #0095ff, 0 0 40px #0095ff, 0 0 50px #0095ff, 0 0 60px #0095ff;
+    margin-bottom: 20px;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-list li {
+    margin: 20px 0;
+}
+
+.Neon-Text-Settings{
+    height: 20vw;
+    width: 100%;
+}
+
+.Title{
+    height: 10vw;
+    font-size: 1.5vw;
+}
+
+#title_play{
+    height: 100%;
+    width: 100%;
+    font-size: 5em;
+}
+#setting-Mach {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: black;
+    border: 2px solid #0ff;
+    box-shadow: 0 0 20px #0ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+    height: 80vw;
+    overflow-x: auto;
+}
+.Set-GifFinals, .Set-GifGround {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Aggiungi questa riga */
+}
+
+.Set-GifFinals img, .Set-GifGround img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; /* Assicura che l'immagine copra il contenitore */
+    position: absolute; /* Mantieni questa riga se necessario */
+}
+
+.B1, .B2 {
+    height: 15vw;
+    width: 35vw;
+    right: 0px;
+    box-sizing: border-box;
+}
+
+.B1:hover, .B2:hover {
+    font-size: 1.3rem !important;
+}
+
+/* Nasconde i radio button */
+.custom-radio input[type="radio"] {
+    display: none;
+}
+
+/* Stile per le etichette che contengono i pulsanti */
+.custom-radio span {
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Stile per lo stato selezionato */
+.custom-radio input[type="radio"]:checked + span {
+    box-shadow: 0 0 10px rgba(9, 235, 129, 0.658), 0 0 20px rgb(0, 255, 0);
+    background-color: rgba(2, 253, 136, 0.7);
+}
+
+
+/* ingrandisci il selezionato */
+
+.selection-group {
+    position: relative;
+    border-radius: 2cap;
+    box-shadow: 0 4px 8px rgba(0, 255, 255, 0.5); /* Cyan shadow */
+    transition: all 0.3s ease;
+    opacity: 1;
+    transform: scale(1);
+    background: #000; /* Background color */
+    
+}
+
+
+#start-match
+{
+    box-shadow: none;
+}
+
+.selection-group.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.selection-group:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.selection-group:not(:hover) {
+    opacity: 0.5;
+    transform: scale(0.9);
+}
+
+ /* Importa il font */
+
+.play-text {
+    position: relative;
+    font-family: 'Tilt Neon', sans-serif; 
+    font-size: 3vw; 
+    font-weight: 600;
+    color: #fff; /* Colore del testo */
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-shadow: 0 0 0.5em #00bcd4, 0 0 1em #00bcd4, 0 0 1.5em #00bcd4, 0 0 2em #00bcd4; /* Bianco ciano */
+    animation: pulse 1.5s infinite alternate, flicker 1s infinite; /* Tempo del flicker modificato */
+}
+
+@keyframes pulse {
+    0% {
+        text-shadow: 0 0 0.5em #00bcd4, 0 0 1em #00bcd4, 0 0 1.5em #00bcd4, 0 0 2em #00bcd4;
+        transform: scale(1);
+    }
+    100% {
+        text-shadow: 0 0 1em #00bcd4, 0 0 2em #00bcd4, 0 0 3em #00bcd4, 0 0 4em #00bcd4;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes flicker {
+    0%, 100% {
+        opacity: 1;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    20% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 0.8;
+    }
+    40% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    60% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.8;
+    }
+    80% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0.9;
+    }
+}

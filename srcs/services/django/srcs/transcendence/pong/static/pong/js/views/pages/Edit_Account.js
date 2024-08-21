@@ -21,9 +21,10 @@ const Home = {
         const buttonChangeUsername = document.getElementById('change-username-btn');
         const buttonChangePassword = document.getElementById('change-password-btn');
         const usernameForm = document.getElementById('username-form');
+        const imageForm = document.getElementById('image-form');
 
-        if (buttonChangeImage) {
-        buttonChangeImage.addEventListener('click', async (event) => {
+        if (imageForm) {
+        imageForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const response = await fetch(`https://${window.location.host}/change_image/`);
             if (response.ok) {

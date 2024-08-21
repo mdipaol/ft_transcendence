@@ -30,10 +30,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://10.12.249.244','django', 'localhost',]
+ALLOWED_HOSTS = [os.environ.get('HOST'),'django', 'localhost',]
 
 # Generate a list of all possible ports for localhost
-CSRF_TRUSTED_ORIGINS = ['https://localhost'] + [f'https://localhost:{port}' for port in range(65536)]
+CSRF_TRUSTED_ORIGINS = ['https://localhost'] + [f'https://localhost:{port}' for port in range(65536)] + [os.environ.get('HOST')]
 
 # Application definition
 

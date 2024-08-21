@@ -33,7 +33,7 @@ class Costants:
     MAX_WIDTH = (TABLE_WIDTH / 2)
     MIN_WIDTH = -(TABLE_WIDTH / 2)
 
-    MAX_SCORE = 1
+    MAX_SCORE = 5
 
     POWERUP_DURATION = 2
     WAIT_POWERUP = 2

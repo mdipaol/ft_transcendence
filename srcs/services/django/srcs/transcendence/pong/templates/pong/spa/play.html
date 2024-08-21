@@ -1,109 +1,5 @@
 {% load static %}
 
-<style>
-    .menu-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
-        background-color: #000;
-        font-family: 'Arial', sans-serif;
-        color: #fff;
-        text-align: center;
-    }
-
-    .menu-neon-text {
-        font-size: 4em;
-        color: #fff;
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0095ff, 0 0 30px #0095ff, 0 0 40px #0095ff, 0 0 50px #0095ff, 0 0 60px #0095ff;
-        margin-bottom: 20px;
-    }
-
-    .menu-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .menu-list li {
-        margin: 20px 0;
-    }
-
-    .Neon-Text-Settings{
-        height: 20vw;
-        width: 100%;
-    }
-
-    .Title{
-        height: 10vw;
-        font-size: 1.5vw;
-    }
-
-    #title_play{
-        height: 100%;
-        width: 100%;
-        font-size: 5em;
-    }
-    #setting-Mach {
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        background: black;
-        border: 2px solid #0ff;
-        box-shadow: 0 0 20px #0ff;
-        padding: 20px;
-        border-radius: 10px;
-        margin: 10px 0;
-        height: 80vw;
-        overflow-x: auto;
-    }
-    .Set-GifFinals, .Set-GifGround {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative; /* Aggiungi questa riga */
-    }
-
-    .Set-GifFinals img, .Set-GifGround img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover; /* Assicura che l'immagine copra il contenitore */
-        position: absolute; /* Mantieni questa riga se necessario */
-    }
-    
-    .B2, .B1{
-        height: 20vw;
-        width: 40vw;
-        right: 0px;
-        box-sizing: border-box;
-    }
-    /* Nasconde i radio button */
-    .custom-radio input[type="radio"] {
-        display: none;
-    }
-
-    /* Stile per le etichette che contengono i pulsanti */
-    .custom-radio span {
-        display: inline-block;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
-
-    /* Stile per lo stato selezionato */
-    .custom-radio input[type="radio"]:checked + span {
-        box-shadow: 0 0 10px rgb(255, 0, 0), 0 0 20px rgb(255, 187, 0);
-        background-color: rgba(253, 182, 2, 0.7);
-    }
-
-</style>
-
-
-
 <!-- <section class="account-highlights account-section">
     <div class="Title">
         <h1 class="neonbar neonbar-animated neonbar-large neonbar-purple" id="title_play">Choose a game</h1>
@@ -114,8 +10,8 @@
     <form id="setting-Mach" class="Neon-Text-Settings">
         <div style="position: absolute; top: 40px; text-align: center;">
             <!-- Selezione del tipo di partita -->
-            <div style="text-align: center;">
-                <p class="neonbar" style="text-align: center; font-size: 3vw;">Selected Match</p>
+            <div id="group-match" style="text-align: center;" class="selection-group" >
+                <p class="neonbar" style="font-family:'Tilt Neon'; text-align: center; font-size: 3vw;">CHOOSE MODE</p>
                 
                 <label class="custom-radio">
                     <input type="radio" name="match-type" value="1v1" id="btn-local-game">
@@ -135,8 +31,8 @@
             <br>
     
             <!-- Selezione dello stato dei PowerUp -->
-            <div style="text-align: center;">
-                <p class="neonbar" style="text-align: center; font-size: 3vw;">PowerUp</p>
+            <div style="text-align: center;" class="selection-group" id="group-powerup">
+                <p class="neonbar" style=" font-family:'Tilt Neon'; text-align: center; font-size: 3vw;">POWERUP?</p>
                 
                 <label class="custom-radio">
                     <input type="radio" name="power-type" value="ON" id="btn-power-up-active">
@@ -151,8 +47,8 @@
             <br>
     
             <!-- Selezione del mondo -->
-            <div style="text-align: center;">
-                <p class="neonbar" style="text-align: center; font-size: 3vw;">Selected World</p>
+            <div style="text-align: center;" class="selection-group" id="group-world">
+                <p class="neonbar" style="font-family:'Tilt Neon', sans-serif; text-align: center; font-size: 3vw;">SELECT WORLD</p>
                 
                 <label class="custom-radio">
                     <input type="radio" name="World-Type" value="finals" id="W1">
@@ -171,16 +67,51 @@
             <br>
     
             <!-- Pulsante di avvio -->
-            <div style="text-align: center;">
+            <div class="selection-group" style="text-align: center; margin-top: 50px;" id="start-match">
+                <button type="submit" class="start-match-button" id="Start">
+                    <span>Start Match</span>
+                </button>
+            </div>
+
+             
+            <!-- <div class="selection-group" style="text-align: center;">
                 <button type="submit" class="glow-button green" id="Start">
                     <p class="neonbar" style="font-size: 4vw; color: blue;">Start Match</p>    
                 </button>
-            </div>
+            </div> -->
         </div>
     </form>
-    
-    
 </section>
+
+<!-- interazioni -->
+<script>
+    window.onload = function() {
+        // Preseleziona il primo gruppo (Match) come attivo
+        document.getElementById("group-match").classList.add('active');
+        document.getElementById("btn-local-game").checked = true;
+        document.getElementById("btn-power-up-active").checked = true;
+        document.getElementById("W1").checked = true;
+    };
+
+    document.querySelectorAll('.selection-group').forEach(group => {
+        group.addEventListener('mouseenter', function() {
+            // Rimuovi la classe 'active' da tutti i gruppi
+            document.querySelectorAll('.selection-group').forEach(g => {
+                g.classList.remove('active');
+            });
+            // 'active' solo al gruppo mouse
+            group.classList.add('active');
+        });
+
+        group.addEventListener('click', function() {
+            // Mantieni attivo il gruppo cliccato
+            document.querySelectorAll('.selection-group').forEach(g => {
+                g.classList.remove('active');
+            });
+            group.classList.add('active');
+        });
+    });
+</script>
 
 
 

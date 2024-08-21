@@ -249,14 +249,14 @@
     <div class="center-content"> <!-- Nuovo wrapper -->
         <h2 class="logo-text-home">social</h2>
     </div>
-    <div class="center-content grow"> <!-- Nuovo wrapper -->
+    <div class="center-content grow">
         <div id="account-header-right">
             <div class="social-element-container">
-            <h2 class="friends glow">Friends</h3>
-            <div id="friends-container" class="social-element-container friends">
+            <h2 class="friends friends-glow">Friends</h3>
+            <div id="online-users-container" class="social-element-container friends">
                 
                 {% for item in friends %}
-                    <div class="single-friend-container">
+                    <div class="single-friend-container single-user">
                         {{ item.username }} <button  id="remove-friend-btn" data-username="{{ item.username }}">
                             X
                         </button>
@@ -265,25 +265,25 @@
                 {% endfor %}
             </div>
         </div>
-        <h2 class="friends glow">Online Users</h3>
+        <h2 class="friends friends-glow">Online Users</h3>
             <div id="online-users-container" class="social-element-container friends">
                 
                 {% for item in online_users %}
-                    <div class="online-single-user-container">
+                    <div class="online-single-user-container single-user">
                         {{ item.username }}
                     </div>
                 {% endfor %}
             </div>
-            <h2 class="friends glow">Friends Request</h3> 
-            <div id="friend-request-container" class="social-element-container friends">
+            <h2 class="friends friends-glow">Friends Request</h3> 
+            <div id="online-users-container" class="social-element-container friends">
                 
                 {% for item in friend_requests %}
-                    <div class="single-friend-request-container">
+                    <div class="single-friend-request-container single-user">
                         {{ item.username }}
                     </div>
                     <div>
                         <button  id="accept-request-btn" data-username="{{ item.username }}">
-                            🗸
+                            v
                         </button>
                         <button  id="reject-request-btn" data-username="{{ item.username }}">
                             ⅹ

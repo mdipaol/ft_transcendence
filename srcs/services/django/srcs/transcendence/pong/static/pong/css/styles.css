@@ -30,6 +30,7 @@ body {
 	background-repeat: repeat;
 	background-attachment: fixed;
 	background-position: center;
+	z-index: 50;
 }
 
 .flex-container {

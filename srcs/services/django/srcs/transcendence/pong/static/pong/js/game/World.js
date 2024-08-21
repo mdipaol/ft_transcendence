@@ -28,6 +28,8 @@ export class World {
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.orbitControls = new OrbitControls( this.mainCamera, this.renderer.domElement);
+		this.orbitControls.enablePan = false;
+		this.orbitControls.maxPolarAngle = 2 * Math.PI;
 		this.fbxLoader = new FBXLoader();
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();
