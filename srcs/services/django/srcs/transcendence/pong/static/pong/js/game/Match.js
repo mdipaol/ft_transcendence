@@ -24,9 +24,9 @@ export class Match {
 		this.player1.downKey = UTILS.S;
 		this.player2.upKey = UTILS.ARROWUP;
 		this.player2.downKey = UTILS.ARROWDOWN;
-
+		this.socket = null;
 		this.ended = false;
-
+		this.QuitMatch = false;
         this.ball = new Ball(0xf06400);
         this.maxScore = UTILS.MAXSCORE;
         this.score1 = 0;
@@ -705,18 +705,21 @@ export class Match {
 		let winner = (this.score1 > this.score2) ? this.player1 : this.player2;
 		this.endScreen.querySelector('#winner').innerHTML = winner.name + " wins!";
 		console.log("Game ended!");
+		
 		if (reason == "disconnection")
-		{
+			{
 			this.endScreen.querySelector('#reason').style.display = "flex";
 			this.endScreen.querySelector('#reason').innerHTML = "The other player disconnected!";
 			this.endScreen.querySelector('#winner').innerHTML = "You win!";
 		}
 		document.getElementById('page_root').appendChild(this.endScreen);
+		if (this.socket)
+			this.socket.close();
 		// if (this.score1 > this.score2)
 		// 	alert("Player 1 wins!");
 		// else
 			// alert("Player 2 wins!");
-		
+			
 		this.ended = true;
 	}
 }

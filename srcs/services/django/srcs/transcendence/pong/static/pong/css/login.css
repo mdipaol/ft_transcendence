@@ -75,6 +75,7 @@
     color: #fff;
     padding: 0 35px 0 5px;
     transition: .5s ease;
+    box-shadow: none;
 }
 
 .input-check:checked~.input-box input {
@@ -149,6 +150,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.input-check:checked~button {
+    background: #00f7ff;
+    box-shadow: 0 0 15px #00f7ff, 0 0 15px #00f7ff;
 }
 
 .input-check:checked~button {

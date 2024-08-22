@@ -39,15 +39,13 @@
                 <label>Password</label>
                 <div class="input-line"></div>
             </div>
-            <!-- <div class="remember-forgot">
-                <label><input type="checkbox"> Remember me</label>
-                <a href="#">Forgot Password?</a>
-            </div> -->
             <button class="button-login" type="submit">Login</button>
             <div class="register-link">
-                <p>Don't have an account? <a href="/#/register">Register or</a></p>
+                <p>Don't have an account? <a href="/#/register">Register</a></p>
             </div>
+            <div class="register-link">
             <button class="button-login"><a href="/login42">42 Login</a></button>
+          </div>
         </form>
     </div>
   </div>
@@ -151,11 +149,14 @@
             <div class="account-info-text">
                 <h3 class="neonbar neonbar-smallest neonbar-blue">Known as {{nickname}}</h2>
                 <h3 class="neonbar neonbar-smallest neonbar-blue">Level {{level}}</h2>
+                  <h4 class="neonbar neonbar-small neonbar-green">Wins: {{wins}}</h4>
+                    <h4 class="neonbar neonbar-small neonbar-red">Lost: {{lost}}</h4>
+                    <h4 class="neonbar neonbar-small neonbar-white">Played: {{play}}</h4>
             </div>
         </div>
         <div id="account-header-right">
             <div>
-                <a class="glow-button purple" href="/#/edit_account">Edit account</a>
+                <a class="glow-button purple" href="/#/account">Account</a>
             </div>
         </div>
     </section>
@@ -296,7 +297,7 @@
                 <form id="friend-request-form" class="form-group">
                     
                     <div class="form-group-inner">
-                        <input type="text" id="username-friend-request" name="username" class="username-friend-request" required>
+                        <input type="text" id="username-friend-request" name="username" placeholder="Type Username" class="username-friend-request" required>
                         <button  class="glow-button small send" id="friend-request-submit">INVITE</button>
                     </div>
                     <span id="request-username-error" class="error"></span>

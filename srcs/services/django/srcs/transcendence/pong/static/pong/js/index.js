@@ -12,6 +12,7 @@ import Login from './views/pages/Login.js';
 import Navbar from './views/components/Navbar.js';
 import Footer from './views/components/Footer.js';
 import Play from './views/pages/Play.js';
+import Account from './views/pages/Account.js';
 
 import { parseRequestUrl } from './services/utils.js';
 import MyWebsocket from './services/MyWebsocket.js';
@@ -22,6 +23,7 @@ const routes = {
   '/home': Home,
   '/pong': Pong,
   '/aboutus': About,
+  '/account': Account,
   '/tournament_create': TournamentCreate,
   '/tournament_join': TournamentList,
   '/items/:id': ItemShow,
@@ -73,12 +75,20 @@ const router = async () => {
 
 
   const currentPage = window.location.hash;
-
+  
   // If the current page is not the game page, stop the game loop
-  // if (currentPage !== '#/play') {
-  //    // stopGameLoop();
-  //     cleanupOtherResources();
-  //}
+  // if(currentPage !== '#play'){
+  //   function addEventListenerClick(){
+  //     const lincks = document.querySelectorAll('li');
+  //     lincks.forEach(li =>{
+  //       li.addEventListener('click', (event)=>{
+  //         console.log('hai pigiato uno dei li della pagina');
+
+  //           //cleanupOtherResources();
+  //       }, {once: true});
+  //     })
+  //   }
+  // }
   // Render the page from map of supported routes or render 404 page.
   const page = routes[parsedUrl] || Error404;
   content.innerHTML = await page.render();
