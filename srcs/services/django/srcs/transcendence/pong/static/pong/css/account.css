@@ -21,7 +21,7 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 20% 1fr;
     width: 100%;
-    height: 100rem; 
+    height: 100%; 
 }
 
 @media only screen and (max-width: 900px) {
@@ -201,7 +201,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 200vh;
     background-color: #000; /* Sfondo nero */
     color: #fff; /* Testo bianco */
   }
@@ -576,4 +575,56 @@ input::placeholder {
 .pass
 {
   height: 118px;
+}
+
+/* Contenitore principale per la cronologia delle partite */
+.social-element-container.history {
+  width: 80% !important;
+  height: 250px; /* Altezza fissa */
+  background-color: rgba(255, 255, 255, 0.1); /* Sfondo opaco */
+  border-radius: 10px;
+  border: 2px solid rgba(0, 238, 255, 0.7); /* Bordi luminosi */
+  box-shadow: 0 0 10px #00ffdd8d; /* Effetto di luce ai bordi */
+  overflow-y: auto; /* Scrollbar */
+  padding: 10px;
+  margin-top: 20px;
+}
+
+/* Stile per ciascuna partita nella cronologia */
+.single-match-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  font-family: Monospace;
+  text-transform: none;
+  font-size: 1rem !important;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 4px #00ffffd8, 0 0 8px #deffff;
+  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.05); /* Sfondo leggermente opaco */
+  padding: 5px;
+  border-radius: 5px;
+}
+
+/* Stile per data, avversario e punteggio */
+.match-date, .match-opponent, .match-score {
+  flex: 1;
+  text-align: center;
+}
+
+/* Scrollbar personalizzata */
+#match-history-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#match-history-container::-webkit-scrollbar-thumb {
+  background: #00eeff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00ffdd8d;
+}
+
+#match-history-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }

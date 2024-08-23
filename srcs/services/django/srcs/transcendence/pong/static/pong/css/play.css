@@ -81,8 +81,9 @@
 }
 
 .B1:hover, .B2:hover {
-    font-size: 1.3rem !important;
+    transform: scale(1.1);
 }
+
 
 /* Nasconde i radio button */
 .custom-radio input[type="radio"] {
@@ -124,19 +125,19 @@
     box-shadow: none;
 }
 
-.selection-group.active {
+/* .selection-group.active {
     opacity: 1;
     transform: scale(1.1);
-}
+} */
 
 .selection-group:hover {
-    transform: scale(1.1);
-    opacity: 1;
+    transform: scale(1.3);
+    opacity: 1.5;
 }
 
 .selection-group:not(:hover) {
-    opacity: 0.5;
-    transform: scale(0.9);
+    opacity: 0.8;
+    transform: scale(1);
 }
 
  /* Importa il font */

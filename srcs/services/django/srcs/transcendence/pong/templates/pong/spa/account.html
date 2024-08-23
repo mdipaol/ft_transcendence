@@ -23,10 +23,24 @@
                     <h2 class="neonbar neonbar-smallest neonbar-green">Wins: {{wins}}</h2>
                     <h2 class="neonbar neonbar-smallest neonbar-red">Lost: {{lost}}</h2>
             </div>
+            <a class="glow-button cyan" href="/#/edit_account">Edit account</a>
             </div>
             <div id="account-header-right">
                 <div>
-                    <a class="glow-button cyan" href="/#/edit_account">Edit account</a>
+                    <div id="match-history-container" class="social-element-container history">
+                        {% for match in match_history %}
+                            <div class="single-match-container single-user">
+                                <span class="match-date">{{ match.date }}</span>
+                                {% if match_history|length > 1 %}
+                                    <span class="match-opponent">vs {{ match.opponent }}</span>
+                                {% else %}
+                                    <span class="match-opponent">{{ match.opponent }}</span>
+                                {% endif %}
+                                <span class="match-score">{{ match.score }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
                 </div>
             </div>
         </section>
