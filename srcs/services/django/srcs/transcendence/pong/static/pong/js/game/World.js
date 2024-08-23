@@ -30,6 +30,7 @@ export class World {
 		this.orbitControls = new OrbitControls( this.mainCamera, this.renderer.domElement);
 		this.orbitControls.enablePan = false;
 		this.orbitControls.maxPolarAngle = 2 * Math.PI;
+		this.orbitControls.maxDistance = 115;
 		this.fbxLoader = new FBXLoader();
 		this.objLoader = new OBJLoader();
 		this.mtlLoader = new MTLLoader();

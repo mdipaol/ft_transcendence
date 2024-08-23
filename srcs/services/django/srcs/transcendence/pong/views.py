@@ -379,7 +379,7 @@ def navbar(request):
 		if not request.user.is_authenticated:
 			links = ['Home', 'AboutUs']
 		else:
-			links = ['Home', 'Play', 'Tournament_Join', 'AboutUs']
+			links = ['Home', 'Play', 'Tournament_Join', 'Account', 'AboutUs']
 		return render(request, 'pong/spa/navbar.html', {'links' : links})
 
 def item_show(request):

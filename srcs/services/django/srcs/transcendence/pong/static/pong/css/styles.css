@@ -238,31 +238,38 @@ nav {
   
   /* Varianti di colore */
   .neonbar-red {
-	--neon-color: #ff0000;
+	color: #ff0000;
+	text-shadow:
+		0 0 5px #ff4800,
+		0 0 10px #ec8a09;
+	
+	
   }
   
   .neonbar-green {
-	--neon-color: #5eff00;
+	color: #5eff00;
+	text-shadow:
+	0 0 5px #bbff00,
+	0 0 10px #09ec6f;
   }
   
-  .neonbar-blue {
-	--neon-color: #0000ff;
-  }
-
   .neonbar-pink {
-	--neon-color: #ff00f2;
+	color: #ff00f2;
+	text-shadow:
+	0 0 5px #c847f0,
+	0 0 10px #ff9eff;
   }
 
   .neonbar-orange{
-	--neon-color: #ff7300;
+	color: #ff7300;
   }
 
   .neonbar-white {
-	--neon-color: #9ffcff;
+	color: #9ffcff;
   }  
   
   .neonbar-purple {
-	--neon-color: #8400ff;
+	color: #8400ff;
   }
   
   /* <!-- Neonbar animate con diverse dimensioni e colori -->

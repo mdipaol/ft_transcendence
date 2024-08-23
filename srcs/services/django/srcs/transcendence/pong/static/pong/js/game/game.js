@@ -12,6 +12,7 @@ import { World1 } from './World1.js'
 import { OnlineMatch } from './OnlineMatch.js';
 import { TournamentMatch } from './TournamentMatch.js';
 import { BotMatch } from './BotMatch.js';
+import * as UTILS from './utils.js';
 import Play from '../views/pages/Play.js';
 
 import triggerHashChange from '../services/utils.js';
@@ -76,9 +77,7 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const docU = parser.parseFromString(htmlU, "text/html");
 	const interfaceUser = doc.getElementById('interface');
 	const interfaceUserU = docU.getElementById('interface');
-	const as= document.getElementsByTagName('a');
 	//const buttom = document.querySelectorAll('button');
-	let QuitMatch = false;
 	if (worldMap != 'underground'){
 		// Set match html variable with interface html element
 		match.initHtmlInterface(interfaceUser);
@@ -109,50 +108,50 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	world.add(match.player2.mesh);
 	world.add(match.ball.mesh);
 	
+
 	
 	const gameLoop = function(resolve) {
-		
 		if (!match.ended) {
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
 			match.render();
 			/*if (match.connected && !match.culo)
-				{
-					//this.socket.send(JSON.stringify({ 'type': 'ready'}));
-					console.log("..");
-					match.culo = true;     
+			{
+			//this.socket.send(JSON.stringify({ 'type': 'ready'}));
+			console.log("..");
+			match.culo = true;     
 					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
 					I PLAYER ABBIANO RENDERIZZATO TUTTO
 					}*/
-				}
-				else {
-					resolve();
-				}
-			};
+		}
+		else {
+			resolve();
+		}
+	};
 			
-			await match.ready();
+	await match.ready();
 			
 			// window.addEventListener('hashchange', () =>{
-			// 	match.ended = true;
-			// 	console.log('so qui')
-			// });
-			
-	// console.log("sicurissimo non arriva");
+				// 	match.ended = true;
+				// 	console.log('so qui')
+				// });
+				
+				// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})
 	
-	// if(match.ended == false){
-	// 	console.log("Il gioco e' attivo");
-	// 	as.forEach(a => {
-	// 		a.addEventListener('click', () =>{
-	// 			match.ended = true;
-	// 			QuitMatch = true;
-	// 			console.log('ha pigiato du un bottone');
-	// 			match.world.destroySoundWorld();
-	// 		}, {once: true });
-	// 	})
-	// }
+	const lincks = document.querySelectorAll('li');
+	lincks.forEach(li =>{
+		li.addEventListener('click', (event)=>{
+			console.log('hai pigiato uno dei LI della pagina');
+			match.gameEnd("disconnection");
+			match.QuitMatch = true;
+		}, {once: true});
+	})
+				
+				
+
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
@@ -161,8 +160,8 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
 
 	gameStatus.then(async () => {
-		console.log("Game stopped");
-		if(QuitMatch == true){
+
+		if(match.QuitMatch == true){
 			if(match.world.soundEndMach.isPlaying){
 				match.world.soundEndMach.stop();
 				match.world.soundEndMach.disconnect();
@@ -182,14 +181,9 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
-		//console.log("Before destroy:");
-		//console.log(match.world.renderer.info.memory);
-		//await sleep(5000);
-		//console.log("After destroy:");
-		//console.log(match.world.renderer.info.memory)
-		if(QuitMatch == false)
+		if(match.QuitMatch == false)
 			triggerHashChange('/play/');
-	})
+	})	
 }
 
 export async function startTournamentGame(matchId, alias){
@@ -221,6 +215,8 @@ export async function startTournamentGame(matchId, alias){
 	const doc = parser.parseFromString(html, "text/html");
 	const interfaceUser = doc.getElementById('interface');
 
+	const lincks = document.querySelectorAll('li');
+	
 	match.initHtmlInterface(interfaceUser);
 	if (interfaceUser)
 		content.appendChild(interfaceUser);
@@ -232,15 +228,23 @@ export async function startTournamentGame(matchId, alias){
 	//---------KEYBOARD INPUT----------
 	const keyDownBind = match.onKeyDown.bind(match);
 	const keyUpBind = match.onKeyUp.bind(match);
-
+	
 	document.addEventListener("keydown", keyDownBind, false);
 	document.addEventListener("keyup", keyUpBind, false);
-
+	
 	//---------SCENE ADD----------
 	world.add(match.player1.mesh);
 	world.add(match.player2.mesh);
 	world.add(match.ball.mesh);
-
+	
+	lincks.forEach(li =>{
+		li.addEventListener('click', (event)=>{
+			console.log('hai pigiato uno dei LI della pagina');
+			match.gameEnd("disconnection");
+			match.QuitMatch = true;
+		}, {once: true});
+	})
+	
 	const gameLoop = function(resolve) {
 		if (!match.ended) {
 			requestAnimationFrame(() => gameLoop(resolve));
@@ -264,7 +268,7 @@ export async function startTournamentGame(matchId, alias){
 
 	gameStatus.then(async () => {
 		console.log("Game stopped");
-		if(QuitMatch == true){
+		if(match.QuitMatch == true){
 			if(match.world.soundEndMach.isPlaying){
 				match.world.soundEndMach.stop();
 				match.world.soundEndMach.disconnect();
@@ -281,12 +285,9 @@ export async function startTournamentGame(matchId, alias){
 			match.world.destroySoundWorld();
 		}
 		match.destroy(match.world.scene);
-		
-		//match.destroy(match.world.scene);
-
 		document.removeEventListener("keydown", keyDownBind, false);
 		document.removeEventListener("keyup", keyUpBind, false);
-		if(QuitMatch == false)
+		if(match.QuitMatch == false)
 			triggerHashChange('/tournament_join/');
 	})
 }
