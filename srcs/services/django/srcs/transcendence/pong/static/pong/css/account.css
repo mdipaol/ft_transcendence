@@ -579,7 +579,7 @@ input::placeholder {
 
 /* Contenitore principale per la cronologia delle partite */
 .social-element-container.history {
-  width: 80% !important;
+  width: 30em !important;
   height: 250px; /* Altezza fissa */
   background-color: rgba(255, 255, 255, 0.1); /* Sfondo opaco */
   border-radius: 10px;

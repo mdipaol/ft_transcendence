@@ -19,14 +19,11 @@
                     <h2 class="neonbar neonbar-blue">Known as {{nickname}}</h2>
                     <h2 class="neonbar neonbar-small neonbar-blue">Level: {{level}}</h2>
                     <h2 class="neonbar neonbar-small neonbar-blue">Email: {{email}}</h2>
-                    <h2 class="neonbar neonbar-smallest neonbar-pink">Matches: {{play}}</h2>
-                    <h2 class="neonbar neonbar-smallest neonbar-green">Wins: {{wins}}</h2>
-                    <h2 class="neonbar neonbar-smallest neonbar-red">Lost: {{lost}}</h2>
             </div>
             <a class="glow-button cyan" href="/#/edit_account">Edit account</a>
             </div>
             <div id="account-header-right">
-                <div>
+                <h2 class="friends friends-glow">Match History</h3>
                     <div id="match-history-container" class="social-element-container history">
                         {% for match in match_history %}
                             <div class="single-match-container single-user">
@@ -37,12 +34,17 @@
                                     <span class="match-opponent">{{ match.opponent }}</span>
                                 {% endif %}
                                 <span class="match-score">{{ match.score }}</span>
-                            </div>
                         {% endfor %}
                     </div>
-                    
+                    <div class="social-element-container">
+                    <h2 class="friends friends-glow" style="top: 1em;">Match History</h3>
+                        <div class="account-info-text">
+                        <h3 class="neonbar neonbar-smallest neonbar-pink">Matches: {{play}}</h2>
+                        <h3 class="neonbar neonbar-smallest neonbar-green">Wins: {{wins}}</h2>
+                        <h3 class="neonbar neonbar-smallest neonbar-red">Lost: {{lost}}</h2>
+                    </div>
                 </div>
-            </div>
+                </div>
         </section>
         
     </div>
