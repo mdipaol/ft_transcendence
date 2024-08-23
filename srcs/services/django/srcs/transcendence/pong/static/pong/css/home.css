@@ -12,7 +12,7 @@
     align-items: center;
     /* gap: 1rem;  */
     overflow-y: auto; 
-    justify-content: space-between;
+    justify-content: flex-start;
 
   }
 
@@ -59,6 +59,7 @@
     background-color: rgba(0, 0, 0, 0.2); /* Migliore visibilità */
     box-shadow: 0 0 8px #ffffff;
     display: flex;
+    color: red;
     flex-direction: column; /* Disposizione verticale degli elementi nel form */
     align-items: center;
     border-radius: 10px;
@@ -222,7 +223,7 @@
   
   /* Rimuovere gli effetti glow dai contenitori interni */
   .tournament-info-container {
-    border: 1px solid rgba(206, 227, 228, 0.945);
+    border: 1px solid rgb(0 243 255 / 14%);
     padding: 1rem;
     margin-bottom: 1rem;
     width: 90%;
@@ -300,3 +301,4 @@ text-shadow:
   background-color: rgba(0, 0, 0, 0.265);
   border: none;
 }
+

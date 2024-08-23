@@ -246,6 +246,7 @@ class LoginCustomView(View):
 
 def login_view(request):
 	if request.method == 'POST':
+		print(request.POST)
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 		print(username)
@@ -406,18 +407,89 @@ def match_end(request):
 	if request.method == 'GET':
 		return render(request, 'pong/spa/match_end.html')
 
+@login_required(login_url='/')
 def account(request):
 	if request.method == 'GET':
 		user = request.user
 		context = {}
 		if user.is_authenticated:
+			matches = Match.objects.filter(player1=user) | Match.objects.filter(player2=user)
+			match_list = []
+			wins = 0
+			lost = 0
+			for match in matches:
+				if match.is_played:
+					match_list.append({
+						'match' : match,
+						'player1' : match.player1,
+						'player2' : match.player2,
+						'score1' : match.score1,
+						'score2' : match.score2,
+						'played' : match.is_played,
+						'date' : match.date,
+					})
+					if match.player1 == user:
+						if match.score1 > match.score2:
+							wins += 1
+						else:
+							lost += 1	
+					elif match.player2 == user:
+						if match.score2 > match.score1:
+							wins += 1
+						else:
+							lost += 1
 			context = {
 				'nickname' : user.username,
 				'img' : user.image,
 				'email' : user.email,
 				'level' : user.level,
+				'match_history' : match_list,
+				'matches' : match_list.__len__(),
+				'wins' : wins,
+				'lost' : lost,
 			}
 		return render(request, 'pong/spa/account.html', context)
+	elif request.method == 'POST':
+		user = request.POST.get('username')
+		userObject = BaseUser.objects.get(username=user)
+		context = {}
+		if userObject.is_authenticated:
+			matches = Match.objects.filter(player1=userObject) | Match.objects.filter(player2=userObject)
+			match_list = []
+			wins = 0
+			lost = 0
+			for match in matches:
+				if match.is_played:
+					match_list.append({
+						'match' : match,
+						'player1' : match.player1,
+						'player2' : match.player2,
+						'score1' : match.score1,
+						'score2' : match.score2,
+						'played' : match.is_played,
+						'date' : match.date,
+					})
+					if match.player1 == userObject:
+						if match.score1 > match.score2:
+							wins += 1
+						else:
+							lost += 1	
+					elif match.player2 == userObject:
+						if match.score2 > match.score1:
+							wins += 1
+						else:
+							lost += 1
+			context = {
+				'nickname' : userObject.username,
+				'img' : userObject.image,
+				'email' : userObject.email,
+				'level' : userObject.level,
+				'match_history' : match_list,
+				'matches' : match_list.__len__(),
+				'wins' : wins,
+				'lost' : lost,
+			}
+			return render(request, 'pong/spa/account-extern.html', context)
 
 @login_required(login_url='/')
 def tournament_create(request):
@@ -512,30 +584,38 @@ def get_match_info(match : Match) -> dict:
 	}
 
 def get_matchId_user(user : BaseUser, match1 : Match, match2 : Match, the_finals : Match):
+	
+	match_info = None
+	
 	if match1:
 		if match1.player1.username == user.username or match1.player2.username == user.username:
 			if not match1.is_played:
-				print('match1')
-				print(match1.id)
-				print(match1.is_played)
 				return match1.id
 	if match2:
 		if match2.player1.username == user.username or match2.player2.username == user.username:
 			if not match2.is_played:
-				print('match2')
-				print(match2.id)
-				print(match1.is_played)
 				return match2.id
 	if the_finals:
 		if the_finals.player1 and the_finals.player2:
 			if the_finals.player1.username == user.username or the_finals.player2.username == user.username:
 				if not the_finals.is_played:
-					print('thefinals')
-					print(the_finals.id)
-					print(match1.is_played)
 					return the_finals.id
-	return None
+	return match_info
 	
+def get_match_user_info(user : BaseUser, match1 : dict, match2 : dict, the_finals : dict):
+	match_info = None
+	if match1:
+		if match1.get('player1').get('user') == user or match1.get('player1').get('user') == user:
+			match_info = match1
+	if match2:
+		if match2.get('player1').get('user') == user or match2.get('player1').get('user') == user:
+			match_info = match2
+	if the_finals:
+		if the_finals.get('player1').get('user') == user or the_finals.get('player1').get('user') == user:
+			match_info = the_finals
+	return match_info
+
+# region tournament_join
 
 @login_required(login_url='/')
 def tournament_join(request, name):
@@ -547,20 +627,27 @@ def tournament_join(request, name):
 			return JsonResponse(data={
 				'error' : 'Tournament not found'
 			}, status=404)
+		user = request.user
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		partecipant_user = [item.user.username for item in partecipant_list]
+		match1 = get_match_info(tournament.match1)
+		match2 = get_match_info(tournament.match2)
+		the_finals = get_match_info(tournament.the_finals)
+		id_match_user = get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals)
+		match_user_info = get_match_user_info(user, match1, match2, the_finals)
 		context = {
 				'name' : tournament.name,
 				'user' : request.user,
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : get_match_info(tournament.match1),
-				'match2' : get_match_info(tournament.match2),
-				'the_finals' : get_match_info(tournament.the_finals),
-				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
+				'match1' : match1,
+				'match2' : match2,
+				'the_finals' : the_finals,
+				'id_match_user' : id_match_user,
+				'match_user_info' : match_user_info,
 				'winner' : tournament.winner,
-				'finished' : False,
+				'finished' : tournament.finished,
 				'joined' : request.user.username in partecipant_user,
 			}
 		return JsonResponse(data={
@@ -578,8 +665,14 @@ def tournament_join(request, name):
 			}, status=404)
 
 		# User already in tournament
+		user = request.user
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		partecipant_user = [item.user.username for item in partecipant_list]
+		match1 = get_match_info(tournament.match1)
+		match2 = get_match_info(tournament.match2)
+		the_finals = get_match_info(tournament.the_finals)
+		id_match_user = get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals)
+		match_user_info = get_match_user_info(user, match1, match2, the_finals)
 		if request.user in partecipant_user:
 			context = {
 				'name' : tournament.name,
@@ -587,12 +680,13 @@ def tournament_join(request, name):
 				'creator' : tournament.creator.username,
 				'partecipants' : partecipant_list, # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : get_match_info(tournament.match1),
-				'match2' : get_match_info(tournament.match2),
-				'the_finals' : get_match_info(tournament.the_finals),
-				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
+				'match1' : match1,
+				'match2' : match2,
+				'the_finals' : the_finals,
+				'id_match_user' : id_match_user,
+				'match_user_info' : match_user_info,
 				'winner' : tournament.winner,
-				'finished' : False,
+				'finished' : tournament.finished,
 				'joined' : request.user.username in partecipant_user,
 				}
 			return JsonResponse(data={
@@ -601,7 +695,7 @@ def tournament_join(request, name):
 
 		# Tournament full
 		if len(partecipant_user) >= 4:
-			return JsonResponse(data={'error' : 'Tournament is full'}, status=500)
+			return JsonResponse(data={'error' : 'Tournament is full'}, status=400)
 
 		# Add new partecipant to database
 		alias : str = request.POST.get('alias')
@@ -631,7 +725,11 @@ def tournament_join(request, name):
 			tournament.the_finals = Match.objects.create(tournament=tournament, player1=None, player2=None)
 			tournament.started = True
 			tournament.save()
-
+		match1 = get_match_info(tournament.match1)
+		match2 = get_match_info(tournament.match2)
+		the_finals = get_match_info(tournament.the_finals)
+		id_match_user = get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals)
+		match_user_info = get_match_user_info(user, match1, match2, the_finals)
 		# Return the tournament visualization
 		context = {
 				'name' : tournament.name,
@@ -639,10 +737,11 @@ def tournament_join(request, name):
 				'creator' : tournament.creator.username,
 				'partecipants' : TournamentPartecipant.objects.filter(tournament__name=tournament.name), # Fare la query per la lista dei partecipanti
 				'started' : tournament.started,
-				'match1' : get_match_info(tournament.match1),
-				'match2' : get_match_info(tournament.match2),
-				'the_finals' : get_match_info(tournament.the_finals),
-				'id_match_user' : get_matchId_user(request.user, tournament.match1, tournament.match2, tournament.the_finals),
+				'match1' : match1,
+				'match2' : match2,
+				'the_finals' : the_finals,
+				'id_match_user' : id_match_user,
+				'match_user_info' : match_user_info,
 				'winner' : tournament.winner,
 				'joined' : request.user in user_partecipant,
 				}
@@ -735,7 +834,6 @@ class ImageUpload(View):
 		return render(request, 'pong/image_form.html', {'form' : form})
 	def post(self, request):
 		form = ImageUploadForm(request.POST, request.FILES)
-		# Non entro qui non so perchè
 		if form.is_valid():
 			print(request.FILES)
 			file_name = handle_uploaded_file(request.FILES['image'])
@@ -759,7 +857,9 @@ def change_image(request):
 		if uploaded_file.content_type not in ['image/jpeg', 'image/png', 'application/pdf']:
 			return JsonResponse(data={'status' : 'error', 'message' : 'Invalid type file'}, status=400)
 
-		handle_uploaded_file(uploaded_file)
+		file_name = handle_uploaded_file(uploaded_file)
+		request.user.image = settings.MEDIA_URL + file_name
+		request.user.save()
 
 		return JsonResponse(data={'status' : 'success', 'message' : 'Image uploaded'})
 
@@ -825,3 +925,21 @@ def notification(request, username):
         }
     )
 	return HttpResponse('Notification sent')
+
+@login_required(login_url='/')
+def get_matches(request):
+	if request.method == 'GET':
+		user = request.user
+		matches = Match.objects.filter(player1=user) | Match.objects.filter(player2=user)
+		match_list = []
+		for match in matches:
+			match_list.append({
+				'match' : match,
+				'player1' : match.player1,
+				'player2' : match.player2,
+				'score1' : match.score1,
+				'score2' : match.score2,
+				'played' : match.is_played,
+				'date' : match.date,
+			})
+		return JsonResponse(data={'matches' : match_list})

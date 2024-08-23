@@ -34,7 +34,7 @@ class TournamentPartecipant(models.Model):
 	user = models.ForeignKey(BaseUser, related_name='tournament', on_delete=models.CASCADE)
 	tournament = models.ForeignKey(Tournament, related_name='partecipant', on_delete=models.CASCADE)
 	alias = models.CharField(max_length=100, blank=True, null=True)
-
+	
 	class Meta:
 		unique_together = ('user', 'tournament')
 		ordering = ['tournament', 'alias']

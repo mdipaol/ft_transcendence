@@ -22,6 +22,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
         self.match: Match = None
         self.powerup_mode = False
         self.db_match_id = None
+        self.alias = None
 
     async def connect(self):
 
@@ -41,7 +42,7 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             self.match =  await MatchManager.add_player(self)
 
         if self.match == None:
-            print('match')
+            print('None match!!!!')
             print(None)
             await self.close()
 

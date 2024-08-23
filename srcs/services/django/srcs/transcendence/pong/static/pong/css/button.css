@@ -123,6 +123,7 @@ background-image: none;
   cursor: pointer !important;
   outline: none !important;
   text-decoration: none !important;
+  border-radius: 10px;
 }
 
 /* Effetto glow di base */
@@ -730,4 +731,28 @@ background-image: none;
     z-index: 1;
     color: #f5e8f5; /* Colore fucsia del testo */
     text-shadow: 0 0 5px #ff00ff, 0 0 10px #520152, 0 0 15px #740074, 0 0 20px #ffa5ff, 0 0 25px #ff00ff, 0 0 30px #ff00ff, 0 0 35px #ff00ff; /* Effetto glow fucsia */
+}
+
+#account-profile
+{
+  text-shadow:
+  0 0 5px #ffffff87;
+}
+
+.single-user-btn{
+  font-family: Monospace;
+  text-transform: none;
+  font-size: 1rem !important;
+  margin-top: 0;
+  text-shadow: 0 0 4px #00ffffd8, 0 0 8px #e8f5f5, 0 0 10px #89ffff;
+  opacity: 0.8;
+  background-color: transparent !important;
+  color: #fcffff;
+  border: none;
+}
+
+.join-tournament-btn{
+  background: #222;
+  color: #00ffff;
+  border-radius: 10px;
 }

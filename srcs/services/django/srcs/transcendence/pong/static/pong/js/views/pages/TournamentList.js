@@ -228,7 +228,9 @@ export function updateEventListeners(tournamentName) {
   }
   if (playGame) {
     playGame.addEventListener('click', async () => {
-      await startTournamentGame(playGame.getAttribute('data-id'), playGame.getAttribute('data-alias'));
+      await startTournamentGame(playGame.getAttribute('data-id'), 
+      playGame.getAttribute('data-alias1'),
+      playGame.getAttribute('data-alias2'));
     });
   }
 }

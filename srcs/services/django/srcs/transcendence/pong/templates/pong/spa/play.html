@@ -8,25 +8,26 @@
 
 <section>
     <form id="setting-Mach" class="Neon-Text-Settings">
-        <div style="position: absolute; top: 40px; text-align: center;">
+        <div style="position: absolute; top: 40px; text-align: center;" id="setting-World">
             <!-- Selezione del tipo di partita -->
             <div id="group-match" style="text-align: center;" class="selection-group" >
                 <p class="neonbar" style="font-family:'Tilt Neon'; text-align: center; font-size: 3vw;">CHOOSE MODE</p>
-                
+                <div style="margin: 15px;">
                 <label class="custom-radio">
                     <input type="radio" name="match-type" value="1v1" id="btn-local-game">
-                    <span class="glow-button blue" id="1vs1">1 vs 1</span>
+                    <span class="glow-button cyan" id="1vs1">1 vs 1</span>
                 </label>
                 
                 <label class="custom-radio">
                     <input type="radio" name="match-type" value="AI" id="btn-local-game-bot">
-                    <span class="glow-button red" id="AI">AI</span>
+                    <span class="glow-button cyan" id="AI">AI</span>
                 </label>
                 
                 <label class="custom-radio">
                     <input type="radio" name="match-type" value="online" id="btn-remote-game">
-                    <span class="glow-button green" id="OnlineMatch">Online Match</span>
+                    <span class="glow-button cyan" id="OnlineMatch">Online Match</span>
                 </label>
+            </div>
             </div>
             <br>
     
@@ -36,12 +37,12 @@
                 
                 <label class="custom-radio">
                     <input type="radio" name="power-type" value="ON" id="btn-power-up-active">
-                    <span class="glow-button green" id="ON">ON</span>
+                    <span class="glow-button cyan" id="ON">ON</span>
                 </label>
                 
                 <label class="custom-radio">
                     <input type="radio" name="power-type" value="OFF" id="btn-power-up-off">
-                    <span class="glow-button red" id="OFF">OFF</span>
+                    <span class="glow-button cyan" id="OFF">OFF</span>
                 </label>
             </div>
             <br>

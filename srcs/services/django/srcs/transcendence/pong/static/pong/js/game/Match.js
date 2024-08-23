@@ -88,7 +88,7 @@ export class Match {
 	}
 
 	exchangesTextInit() {
-		if (Play.world === 'finals')
+		if (this.world.name === 'thefinals')
 			return;
 		if (this.exchangesText && this.exchangesText[0] && this.exchangesText[1]) {
 			this.exchangesText[0].geometry.dispose();
@@ -122,7 +122,7 @@ export class Match {
 
 	updateExchanges() {
 		this.exchanges++;
-		if (Play.world === 'finals')
+		if (this.world.name === 'thefinals')
 			return;
 		this.exchangesText[0].geometry.dispose();
 		this.exchangesText[1].geometry.dispose();
@@ -138,7 +138,7 @@ export class Match {
 	}
 
 	scoreTextInit() {
-		if (Play.world === 'finals')
+		if (this.world.name === 'thefinals')
 			return;
 		const geometry = new TextGeometry( "0 - 0", {
 			font: this.exchangesFont,
@@ -163,7 +163,7 @@ export class Match {
 	}
 
 	updateScoreText(){
-		if(Play.world === 'finals')
+		if(this.world.name === 'thefinals')
 			return ;
 		this.scoreText[0].geometry.dispose();
 		this.scoreText[1].geometry.dispose();
@@ -243,9 +243,6 @@ export class Match {
 		if (event.which == this.player2.downKey){
 			event.preventDefault();
 			this.player2.moves.down = true;
-			console.log("azimuthal:",this.world.orbitControls.getAzimuthalAngle());
-			console.log("polar:",this.world.orbitControls.getPolarAngle());
-			console.log("distance:",this.world.orbitControls.getDistance());
 		}
 
 		if (event.which == UTILS.TWO)//first person with '2' key
@@ -715,11 +712,6 @@ export class Match {
 		document.getElementById('page_root').appendChild(this.endScreen);
 		if (this.socket)
 			this.socket.close();
-		// if (this.score1 > this.score2)
-		// 	alert("Player 1 wins!");
-		// else
-			// alert("Player 2 wins!");
-			
 		this.ended = true;
 	}
 }

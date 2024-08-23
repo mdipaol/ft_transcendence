@@ -25,7 +25,7 @@ export const parseRequestUrl = () => {
 
 export default function triggerHashChange(hash) {
   // Store the current hash
-  console.log('HA spostao la fatch');
+  // console.log('HA spostao la fatch');
   var currentHash = window.location.hash;
 
   // If the current hash is the same as the desired hash, temporarily change it

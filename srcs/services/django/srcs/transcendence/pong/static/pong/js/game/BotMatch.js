@@ -41,20 +41,14 @@ export class BotMatch extends Match {
         }
     }
 
-    // Esempio di utilizzo
-    // const vettoreA = [1, 2];
-    // const vettoreB = [3, 4];
-
-    // const angolo = angleBetweenVectors(vettoreA, vettoreB);
-
 
     onKeyDown(event) {
         
-        if (event.which == this.player1.upKey){
+        if (event.which == this.player1.upKey || event.which == this.player2.upKey){
             event.preventDefault();
 			this.player1.moves.up = true;
         }
-		if (event.which == this.player1.downKey)
+		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
         {
             event.preventDefault();
 			this.player1.moves.down = true;
@@ -65,12 +59,16 @@ export class BotMatch extends Match {
 			this.world.setCamera(this.world.player2Camera);
 			this.player1.upKey = UTILS.D;
 			this.player1.downKey = UTILS.A;
+			this.player2.upKey = UTILS.ARROWRIGHT;
+			this.player2.downKey = UTILS.ARROWLEFT;
 		}
 		if (event.which == UTILS.ONE)//first person with '1' key
 		{
 			this.world.setCamera(this.world.player1Camera);
 			this.player1.upKey = UTILS.A;
 			this.player1.downKey = UTILS.D;
+            this.player2.upKey = UTILS.ARROWLEFT;
+			this.player2.downKey = UTILS.ARROWRIGHT;
 		}
 		if (event.which == UTILS.SPACE)
 		{
@@ -85,9 +83,9 @@ export class BotMatch extends Match {
 	}
 
     onKeyUp(event) {
-		if (event.which == this.player1.upKey)
+		if (event.which == this.player1.upKey || event.which == this.player2.upKey)
 			this.player1.moves.up = false;
-		if (event.which == this.player1.downKey)
+		if (event.which == this.player1.downKey || event.which == this.player2.downKey)
 			this.player1.moves.down = false;
 	}
 
@@ -97,7 +95,7 @@ export class BotMatch extends Match {
 
         let directionX = this.ball.direction.x;
         let directionY = this.ball.direction.y;
-        let startPosition = [this.ball.mesh.position.x + (UTILS.TABLE_WIDTH/2), this.ball.mesh.position.y + (UTILS.TABLE_HEIGHT/2)];//ci greppiamo la posizione della palla
+        let startPosition = [this.ball.mesh.position.x + (UTILS.TABLE_WIDTH/2), this.ball.mesh.position.y + (UTILS.TABLE_HEIGHT/2)];
 
         if (directionY == 0)
             return (startPosition[1] -  (UTILS.TABLE_HEIGHT/2));
@@ -158,9 +156,11 @@ export class BotMatch extends Match {
             return (this.bot2.destinationY);
         }
 
-        const maxError = prediction + UTILS.PADDLE_SIZE / 2;
-        const minError = prediction - UTILS.PADDLE_SIZE / 2;
+        const maxError = prediction + UTILS.PADDLE_SIZE / 1.5;
+        const minError = prediction - UTILS.PADDLE_SIZE / 1.5;
         const randomPrediction = ( Math.random() * (maxError - minError) ) + minError;
+        // const distanceError = Math.abs(prediction - this.bot2.mesh.position.y);
+        // const randomPrediction = Math.random() * (distanceError - 0) + 0;
         // console.log("real prediction: " + prediction);
         // console.log("randomPrediction: " + randomPrediction);
         return (randomPrediction);

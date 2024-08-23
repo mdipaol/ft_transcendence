@@ -22,7 +22,7 @@
                 {% if link|lower == 'tournament_join'%}
                     <li class="nav-item"><a class="neonbar" href="/#/{{ link|lower }}">Tournament</a></li>
                 {% else %}
-                    <li class="nav-item"><a class="neonbar" href="/#/{{ link|lower }}">{{ link }}</a></li>
+                    <li class="nav-item"><a id="{{ link|lower }}" class="neonbar" href="/#/{{ link|lower }}">{{ link }}</a></li>
                 {% endif %}
             {% endfor %}
         </ul>

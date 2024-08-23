@@ -21,6 +21,7 @@ const Home = {
   */
  after_render: async () => 
   {
+    const loginButton42 = document.getElementById("login-button-42");
     const logoutButton = document.getElementById("logout-button");
     const notificationButton = document.getElementById("notification-button");
     const friendRequestFornm = document.getElementById("friend-request-form");
@@ -28,27 +29,39 @@ const Home = {
     const acceptRequestButtons = document.querySelectorAll("#accept-request-btn");
     const rejectRequestButtons = document.querySelectorAll("#reject-request-btn");
     const removeFriendButtons = document.querySelectorAll("#remove-friend-btn");
- 
+    const accountProfile = document.querySelectorAll("#account-profile");
+    
+    if (loginButton42){
+      loginButton42.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.location.href = '/login42/';
+      });
+    }
     
     if (loginForm){
       loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const formData = new FormData(loginForm);
-        const response = await fetch(`https://${window.location.host}/login_view/`, {
-          method : 'POST',
-          // headers : {
-          //   'X-CSRFToken': csrfTokens
-          //   },
-          body : formData,
+        try{
+          const response = await fetch(`https://${window.location.host}/login_view/`, {
+            method : 'POST',
+            // headers : {
+              //   'X-CSRFToken': getCookie('csrftoken')
+            //   },
+            body : formData,
           });
-          if (response.ok) {
-            triggerHashChange('/home/');
-          }
+            if (response.ok) {
+              triggerHashChange('/home/');
+            }
+        }
+        catch(error){
+          console.error('An error occurred during login:', error);
+        }
       });
       }
 
-    if (logoutButton) {
+      if (logoutButton) {
       logoutButton.addEventListener('click', async () => {
         try {
           const response = await fetch(`https://${window.location.host}/logout/`);
@@ -70,17 +83,17 @@ const Home = {
           console.log(await response.text());
         })
       }
-
+      
       if (friendRequestFornm){
         friendRequestFornm.addEventListener('submit', async (event) => {
           event.preventDefault()
-
+          
           console.log('Request sent');
           const formData = new FormData(friendRequestFornm);
-
+          
           const csrfToken = getCookie('csrftoken');
           const username = formData.get('username');
-
+          
           const response = await fetch('/send_friend_request/' + username + '/' , {
             method : 'POST',
             headers : {
@@ -100,7 +113,36 @@ const Home = {
           }
         })
       }
+      
+      if (accountProfile){
+        accountProfile.forEach(profile => {
+          profile.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('username', profile.getAttribute('data-account-profile'));
+            const response = await fetch('/account/', {
+              method : 'POST',
+              headers : {
+                'X-CSRFToken' : getCookie('csrftoken')
+              },
+              body : formData
+            });
+            if (response.ok){
+              const div = document.getElementById("page_root");
+              div.innerHTML = await response.text();
+              
+              const homeButton = document.getElementById("home");
 
+              if (homeButton){
+                homeButton.addEventListener('click', async (event) => {
+                  event.preventDefault();
+                  triggerHashChange('/home/');
+                })
+              }
+            }
+          })
+        })
+      }
       if (acceptRequestButtons) {
         acceptRequestButtons.forEach(acceptButton => {
           acceptButton.addEventListener('click', async (event) => {

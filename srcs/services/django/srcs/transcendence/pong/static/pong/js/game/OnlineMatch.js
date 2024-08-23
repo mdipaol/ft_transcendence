@@ -37,9 +37,6 @@ export class OnlineMatch extends Match {
 				this.socket.send(JSON.stringify({ 'type': 'ready'}));
 				this.connected = true;
 				this.searching = true;
-				//test
-				
-				//test
 				resolve();
 			};
 
@@ -59,41 +56,6 @@ export class OnlineMatch extends Match {
 	}
 
 	addPowerUp(data){
-		// console.log(data);
-		// let meshPowerUp = null;
-		
-		// switch (data.powerup_type) {
-		// 	case 'scale':
-		// 		if (data.effect == 'good')
-		// 			meshPowerUp = this.world.arrayPowerup[6];
-		// 		else
-		// 			meshPowerUp = this.world.arrayPowerup[7];
-		// 		console.log("Scale picked");
-		// 		break;
-		// 	case 'triple':
-		// 		if (data.effect == 'good')
-		// 			meshPowerUp = this.world.arrayPowerup[4];
-		// 		else
-		// 			meshPowerUp = this.world.arrayPowerup[5];
-		// 		console.log("Triple picked");
-		// 		break;
-		// 	case 'slowness':
-		// 		if (data.effect == 'good')
-		// 			meshPowerUp = this.world.arrayPowerup[2];
-		// 		else
-		// 			meshPowerUp = this.world.arrayPowerup[3];
-		// 		console.log("Slowness picked");
-		// 		break;
-		// 	case 'power':
-		// 		if (data.effect == 'good')
-		// 			meshPowerUp = this.world.arrayPowerup[0];
-		// 		else
-		// 			meshPowerUp = this.world.arrayPowerup[1];
-		// 		console.log("Power picked");
-		// 		break;
-		// 	default:
-		// 		break;
-		// 	}
 
 			const effect = data.powerup_effect == 'good' ? 'Positive' : 'Negative'
 			console.log(data.powerup_type + effect)
@@ -104,14 +66,6 @@ export class OnlineMatch extends Match {
 				this.world.powerUp = powerUp;
 				this.world.add(powerUp.mesh)
 			}
-
-			// if (meshPowerUp){
-			// 	console.log(data);
-			// 	console.log(this.world.arrayPowerup);
-			// 	meshPowerUp.mesh.position.set(0, data.powerup_position, 15);
-			// 	this.world.powerUp = meshPowerUp.mesh;
-			// 	this.world.add(meshPowerUp.mesh);
-			// }
 		}
 
 	removePowerUp(){
@@ -231,33 +185,28 @@ export class OnlineMatch extends Match {
 		}
 	}
 
-	onMessage(event) {
-		const msg = JSON.parse(event.data);
-		if (msg.type == "game_message")
-			this.gameMessage(msg);
-		else if (msg.type == "game_start")
-		{
-			this.searching = false;
+	gameStart(data){
+		this.searching = false;
 			this.htmlElement.querySelector('#searching-message').style.display = 'none';
 			console.log("game started")
-			console.log(msg.player)
+			console.log(data.player)
 			this.start = new Date();
-			this.player1.name = msg.username_one;
-			this.player2.name = msg.username_two;
-			if (msg.player == "player_one"){
+			this.player1.name = data.username_one;
+			this.player2.name = data.username_two;
+			if (data.player == "player_one"){
 				this.superPlayer = this.player1;
 			}
-			else if (msg.player == "player_two"){
+			else if (data.player == "player_two"){
 				this.superPlayer = this.player2;
 			}
 			if (this.world.username1)
-				this.world.setUsernameFont('one', msg.username_one)
+				this.world.setUsernameFont('one', data.username_one)
 			if (this.world.username2)
-				this.world.setUsernameFont('two', msg.username_two)
+				this.world.setUsernameFont('two', data.username_two)
 
 			if (this.world.name == 'thefinals'){
-				this.htmlElement.querySelector('#interface-player1').innerHTML = msg.username_one;
-				this.htmlElement.querySelector('#interface-player2').innerHTML = msg.username_two;
+				this.htmlElement.querySelector('#interface-player1').innerHTML = data.username_one;
+				this.htmlElement.querySelector('#interface-player2').innerHTML = data.username_two;
 			}
 
 			this.started = true;
@@ -265,6 +214,15 @@ export class OnlineMatch extends Match {
 			if (this.world.soundCoundwon.isPlaying)
 				this.world.soundCoundwon.stop()
 			this.world.soundCoundwon.play()
+	}
+
+	onMessage(event) {
+		const msg = JSON.parse(event.data);
+		if (msg.type == "game_message")
+			this.gameMessage(msg);
+		else if (msg.type == "game_start")
+		{
+			this.gameStart(msg);
 		}
 		else if (msg.type == "game_end")
 		{
@@ -488,122 +446,9 @@ export class OnlineMatch extends Match {
 
 		// Update game interface
 		this.updateHtmlInterface();
-
-		
-
-		// this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
-		// this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
-
-		// this.world.rotatePowerUp();
-
-		// //this.ball.mesh.position.x += this.ball.speed * this.ball.direction.x;
-		// //this.ball.mesh.position.y += this.ball.speed * this.ball.direction.y;
-
-		// // Triple ball update
-		// if (this.tripleEnabled) {
-		// 	const ball1 = this.fakeBalls[0];
-		// 	const ball2 = this.fakeBalls[1];
-
-		// 	ball1.mesh.position.x += ball1.speed * ball1.direction.x;
-		// 	ball1.mesh.position.y += ball1.speed * ball1.direction.y;
-		// 	ball1.mesh.position.z = ball1.getZ();
-
-		// 	ball2.mesh.position.x += ball2.speed * ball2.direction.x;
-		// 	ball2.mesh.position.y += ball2.speed * ball2.direction.y;
-		// 	ball2.mesh.position.z = ball2.getZ();
-
-		// 	// console.log(ball1.mesh.position);
-		// }
-
-		// if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
-		// {
-		// 	/* if (ball.speed < 2)
-		// 		ball.speed *= ACCELERATION; */
-		// 	this.ball.direction.x *= -1;
-		// 	this.ball.direction.y = (this.ball.mesh.position.y - this.player1.mesh.position.y)/10;
-		// 	const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-		// 	this.ball.direction.x = normalizedVector[0];
-		// 	this.ball.direction.y = normalizedVector[1];
-
-		// 	this.collision = true;
-		// 	this.updateExchanges();
-
-		// 	this.handlePowerUp(this.player1);
-		// 	this.addPowerUp()
-		// }
-		// if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
-		// {
-		// 	// if (ball.speed  < 2)
-		// 	// 	ball.speed  *= ACCELERATION;
-		// 	this.ball.direction.x *= -1;
-		// 	this.ball.direction.y = (this.ball.mesh.position.y - this.player2.mesh.position.y)/10;
-		// 	const normalizedVector = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-		// 	this.ball.direction.x = normalizedVector[0];
-		// 	this.ball.direction.y = normalizedVector[1];
-
-		// 	this.collision = true;
-		// 	this.updateExchanges();
-
-		// 	this.handlePowerUp(this.player2);
-		// 	this.addPowerUp();
-		// }
-		// // PowerUp collision
-		// if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
-
-		// 	this.world.remove(this.world.powerUp.mesh);
-		// 	this.activePowerUp = false;
-		// 	this.waitPowerup = 0;
-
-		// 	// Powerup assignment
-
-		// 	this.player1.powerUp = null;
-		// 	this.player2.powerUp = null;
-
-		// 	if(this.ball.direction.x < 0 && this.world.powerUp.type == "positive")
-		// 		this.player2.powerUp = this.world.powerUp;
-		// 	if(this.ball.direction.x < 0 && this.world.powerUp.type == "negative")
-		// 		this.player1.powerUp = this.world.powerUp;
-		// 	if(this.ball.direction.x > 0 && this.world.powerUp.type == "positive")
-		// 		this.player1.powerUp = this.world.powerUp;
-		// 	if(this.ball.direction.x > 0 && this.world.powerUp.type == "negative")
-		// 		this.player2.powerUp = this.world.powerUp;
-
-		// 	this.powerUpTaken();
-		// }
-
-
-
-		// if (UTILS.wallCollision(this.ball))
-		// 	this.ball.direction.y *= -1;
-
-		// //Reset positions
-		// if (this.ball.mesh.position.x > this.player2.mesh.position.x + 5  || this.ball.mesh.position.x < this.player1.mesh.position.x - 5)
-		// 	this.updateScore();
-
-		// // If triple ball is enabled
-		// if (this.tripleEnabled) {
-		// 	const b1 = this.fakeBalls[0];
-		// 	const b2 = this.fakeBalls[1];
-
-		// 	// Triple ball wall collision
-		// 	if (UTILS.wallCollision(b1))
-		// 		b1.direction.y *= -1;
-		// 	if (UTILS.wallCollision(b2))
-		// 		b2.direction.y *= -1;
-
-		// 	// Triple ball table limit
-		// 	if (b1.mesh.position.x > this.player2.mesh.position.x + 5 || b1.mesh.position.x < this.player1.mesh.position.x - 5)
-		// 		this.world.remove(b1.mesh);
-		// 	if (b2.mesh.position.x > this.player2.mesh.position.x + 5 || b2.mesh.position.x < this.player1.mesh.position.x - 5)
-		// 		this.world.remove(b2.mesh);
-		// }
-
-		// if (this.collision && this.ball.mesh.position.x > -10 && this.ball.mesh.position.x < 10)
-		// 	this.collision = false;
 	}
 
 	render() {
-		// console.log(this.started);
 		this.world.renderer.render(this.world.scene, this.world.activeCamera);
 	}
 }

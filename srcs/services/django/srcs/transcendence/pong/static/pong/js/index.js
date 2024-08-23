@@ -10,11 +10,10 @@ import Pong from './views/pages/Pong.js';
 import Register from './views/pages/Register.js';
 import Login from './views/pages/Login.js';
 import Navbar from './views/components/Navbar.js';
-import Footer from './views/components/Footer.js';
 import Play from './views/pages/Play.js';
 import Account from './views/pages/Account.js';
 
-import { parseRequestUrl } from './services/utils.js';
+import triggerHashChange, { parseRequestUrl } from './services/utils.js';
 import MyWebsocket from './services/MyWebsocket.js';
 
 // List of supported routes. Any url other than these will render 404 page.
@@ -31,6 +30,7 @@ const routes = {
   '/login': Login,
   '/register': Register,
   '/play': Play,
+  '/account/:username': Account,
 };
 
 
@@ -43,7 +43,7 @@ const router = async () => {
   // Lazy load view element:
   const header = null || document.getElementById('header_root');
   const content = null || document.getElementById('page_root');
-  const footer = null || document.getElementById('footer_root');
+  //const footer = null || document.getElementById('footer_root');
 
   // header.replaceChildren();
   // content.replaceChildren();
@@ -52,8 +52,8 @@ const router = async () => {
   // Render the header and footer of the page.
   header.innerHTML = await Navbar.render();
   await Navbar.after_render();
-  footer.innerHTML = await Footer.render();
-  await Footer.after_render();
+  //footer.innerHTML = await Footer.render();
+  //await Footer.after_render();
 
   // Destructure the parsed URl from the addressbar.
   const { resource, id, verb } = parseRequestUrl();
@@ -70,8 +70,9 @@ const router = async () => {
   if (data.authenticated)
     // MyWebsocket.startConnection returns if there is a connection already
     MyWebsocket.startConnection();
-  else
+  else{
     MyWebsocket.removeConnection();
+  }
 
 
   const currentPage = window.location.hash;
@@ -90,7 +91,9 @@ const router = async () => {
   //   }
   // }
   // Render the page from map of supported routes or render 404 page.
-  const page = routes[parsedUrl] || Error404;
+  let page = routes[parsedUrl] || Error404;
+  if (page == Error404)
+    page = routes['/'];
   content.innerHTML = await page.render();
   await page.after_render();
 

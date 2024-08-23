@@ -3,17 +3,20 @@
 <div class="container-tourn">
         <h1 class="logo-text-home">Tournaments</h1>
 		<!--  PULSANTI TORNEO -->
-        <button class="button" id="tournament-list">Tournament List</button>
-        <button class="button" id="tournament-create">Create Tournament</button>
+        <div class="container-tourn-button">
+        <button class="glow-button cyan" id="tournament-list">Tournament List</button>
+        <button class="glow-button fuchsia" id="tournament-create">Create Tournament</button>
+        
+        </div>    
             {% comment %} <div id="left-panel">
-                <div id="tournament-list">
+                <div id="tournament-list" single-match-container single-user>
 					<!--  LISTA TORNEI IN CORSO (AGGIUNGERE MAGARI FETCHANDO)-->
                     <h2>Your Tournaments</h2>
                     <ul>
-                        <li><button class="button">Tournament 1</button></li>
-                        <li><button class="button">Tournament 2</button></li>
-						<li><button class="button">Tournament 3</button></li>
-						<li><button class="button">Tournament 4</button></li>
+                        <li><button class="glow-button">Tournament 1</button></li>
+                        <li><button class="glow-button">Tournament 2</button></li>
+						<li><button class="glow-button">Tournament 3</button></li>
+						<li><button class="glow-button">Tournament 4</button></li>
                     </ul>
                 </div>
             </div>

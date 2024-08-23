@@ -18,8 +18,10 @@
 <div id="center-div">
   <div id="image-container">
     <img src="{{ user.image }}" alt="Avatar" class="account-image">
-    <form id="image-form">
-      <button class="glow-button cyan" id="change-image-btn"> Edit Image </button>
+    <form id="image-form" enctype="multipart/form-data" accept=".jpg,.jpeg,.png">
+      {% csrf_token %}
+      <input type="file" name="image" id="image">
+      <button type="submit" class="glow-button cyan" id="change-image-btn"> Edit Image </button>
     </form>
   </div>
   

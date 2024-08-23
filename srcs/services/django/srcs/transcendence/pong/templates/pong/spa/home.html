@@ -14,7 +14,9 @@
   <div id="center-home">
   <div class="login-light"></div>
     <div class="login-box">
-        <form action="{% url 'pong:login' %}" method="post" id="login-form">
+      
+        <form id="login-form">
+            {% csrf_token %}
             <input type="checkbox" class="input-check" id="input-check">
             <label for="input-check" class="toggle">
                 <span class="text off">off</span>
@@ -27,7 +29,7 @@
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
-                <input type="username" required>
+                <input name="username" type="username" required>
                 <label>Username</label>
                 <div class="input-line"></div>
             </div>
@@ -35,7 +37,7 @@
                 <span class="icon">
                     <ion-icon name="lock-closed"></ion-icon>
                 </span>
-                <input type="password" required>
+                <input name="password" type="password" required>
                 <label>Password</label>
                 <div class="input-line"></div>
             </div>
@@ -44,7 +46,7 @@
                 <p>Don't have an account? <a href="/#/register">Register</a></p>
             </div>
             <div class="register-link">
-            <button class="button-login"><a href="/login42">42 Login</a></button>
+            <button id="login-button-42" class="button-login">Login 42</button>
           </div>
         </form>
     </div>
@@ -160,20 +162,20 @@
   </section>
 
   <section class="account-column account-events">
-      <div>
+      <div class="center-content">
         <h2 class="logo-text-home">42pong</h2>
       </div>
       <div id="center-home">
         <div>
             <a class="glow-button fuchsia" href="/#/tournament_join">Tournament</a>
-          </div>
+        </div>
           <div>
             <a class="glow-button green" href="/#/play">Play Now</a>
           </div>
           <div>
             <button  class="glow-button red" id="logout-button">Logout</button>
           </div>
-      </div>
+        </div>
       <div>
         <svg id="spinner_home" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style="shape-rendering: auto; display: block; background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink"><g><g transform="rotate(0 50 50)">
             <rect fill="#86f6ff" height="5" width="2" ry="2" rx="1" y="10.5" x="49">
@@ -252,14 +254,13 @@
             <div class="social-element-container">
             <h2 class="friends friends-glow">Friends</h3>
             <div id="online-users-container" class="social-element-container friends">
-                
                 {% for item in friends %}
                     <div class="single-friend-container single-user">
-                        {{ item.username }} <button  id="remove-friend-btn" data-username="{{ item.username }}">
+                        {{ item.username }}
+                        <button id="remove-friend-btn" data-username="{{ item.username }}">
                             X
                         </button>
                     </div>
-                    
                 {% endfor %}
             </div>
         </div>
@@ -268,7 +269,9 @@
                 
                 {% for item in online_users %}
                     <div class="online-single-user-container single-user">
+                      <button class="single-user-btn" id="account-profile" data-account-profile="{{ item.username }}"> 
                         {{ item.username }}
+                      </button>
                     </div>
                 {% endfor %}
             </div>
@@ -284,7 +287,7 @@
                             v
                         </button>
                         <button  id="reject-request-btn" data-username="{{ item.username }}">
-                            ⅹ
+                            x
                         </button>
                     </div>
                 {% endfor %}
@@ -292,7 +295,6 @@
             <div class="social-element-container">
                 <label for="username" class="friends">Invite A fRIEND</label>
                 <form id="friend-request-form" class="form-group">
-                    
                     <div class="form-group-inner">
                         <input type="text" id="username-friend-request" name="username" placeholder="Type Username" class="username-friend-request" required>
                         <button  class="glow-button small send" id="friend-request-submit">INVITE</button>

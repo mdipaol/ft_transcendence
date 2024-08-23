@@ -1,4 +1,3 @@
-# ss
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -33,7 +32,7 @@ class Costants:
     MAX_WIDTH = (TABLE_WIDTH / 2)
     MIN_WIDTH = -(TABLE_WIDTH / 2)
 
-    MAX_SCORE = 5
+    MAX_SCORE = 7
 
     POWERUP_DURATION = 2
     WAIT_POWERUP = 2

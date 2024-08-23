@@ -1,5 +1,5 @@
 <div tyle="width:800px; margin:0 auto;" class="tournament-info">
-	<h2>{{ name }}</h2>
+	<h2 class="neonbar neonbar-medium neongreen">{{ name }}</h2>
 	{% comment %} <h3>{{ creator }}</h3> {% endcomment %}
 	{% if not started %}
 		<h3>List of partecipants</h3>
@@ -39,12 +39,31 @@
 				display: grid;
 				justify-content: center;
 				align-content: center;
+				font-family: 'Tilt-Neon';
 				height: 80px;
 				width: 180px;
 				margin: 10px auto;
 				background-color: #333;
 				border: 1px solid black;
 				font-size: 25px;
+				color: rgb(255, 255, 255);
+				text-shadow: 0 0 5px #00f7ff, 0 0 10px #81f0ff, 0 0 8px #81f0ff;
+				border: 2px solid #fff !important;
+				color: #fff !important;
+				background-color: transparent !important;
+				padding: 10px 20px !important;
+				font-size: 1.5rem !important;
+				font-family: "Tilt Neon", sans-serif !important;
+				text-transform: uppercase !important;
+				letter-spacing: 2px !important;
+				transition: all 0.3s ease !important;
+				/* position: relative !important; */
+				/* display: inline-block !important; */
+				/* margin: 20px !important; */
+				cursor: pointer !important;
+				/* outline: none !important; */
+				text-decoration: none !important;
+				border-radius: 10px;
 			  }
 
 			  .link {
@@ -92,9 +111,9 @@
 			<div class="round">
 			  <div class="match"> {% if winner %} {{ winner }} {% endif %} </div>
 			</div>
-			<button id="backButton">Back</button>
+			<button class="glow-button small send" id="backButton">Back</button>
 			{% if id_match_user %}
-				<button id="playGame" data-id="{{ id_match_user }}" data-alias="{{ user }}"> Play </button>
+				<button class="glow-button small send" id="playGame" data-id="{{ id_match_user }}" data-alias1="{{ match_user_info.player1.alias }}" data-alias2="{{ match_user_info.player2.alias }}"> Play </button>
 			{% endif %}
 	{% endif %}
 </div>

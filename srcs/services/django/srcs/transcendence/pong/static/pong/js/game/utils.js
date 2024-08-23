@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 //---------COSTANTS--------
-export const MAXSCORE = 5;
+export const MAXSCORE = 7;
 export const MOVSPEED = 85;
 export const STARTINGSPEED = 100;
 export const ACCELERATION  = 2;
@@ -9,7 +9,7 @@ export const POWERUPDURATION = 2;
 export const BALLTIMER = 3000;
 export const BOXSIZE = 250;
 export const TABLE_WIDTH = 108;
-export const TABLE_HEIGHT = 54;
+export const TABLE_HEIGHT = 55;// era 54
 export const PADDLE_SIZE = 15;
 export const PADDLE_SIZE_X = 2.5;
 export const PADDLE_SIZE_Y = 15;

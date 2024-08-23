@@ -86,15 +86,17 @@
     height: 100%;
     position: absolute;
     text-align: center;
-    top: 10%;
+    top: 12%;
 	pointer-events: none;
+    z-index: 51;
 }
 
+/* gestisce i punti */
 #interface-score{
     font-size: 4.5vh;
 }
 
-
+/*  */
 #interface-top {
     width: 100%;
     display: flex;
@@ -107,27 +109,27 @@
     font-size: 4.5vw;
     left: 10%;
     top : 0%;
+    width: 200px;
+    white-space: nowrap;
 }
 
 #interface-player2 {
     position: absolute;
     font-size: 4.5vw;
-    right: 25%;
+    right: 10%;
     top: 0%;
-    width: 200px;
-    white-space: nowrap;
 }
 
 #interface-info {
     position: absolute;
 }
 
-
+/* gestisce il time in cima alla interfaccia */
 .interface-timer {
     width: 100vw;
     height: 30vw;
     position: absolute;
-    top: 0;
+    top: 0%;
     display: flex;
     justify-content: center;
     text-align: center;

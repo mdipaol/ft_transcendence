@@ -283,23 +283,24 @@ export class World {
 	}
 
 	getMainCamera() {
-		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
 		camera.position.set(0, -10, 70);
 		camera.lookAt(0, 0, 0);
 		return camera;
 	}
 
-	getPlayer1Camera() {
-		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-		camera.position.set(-75, 0, 40 );
+	getPlayer1Camera(render, scene) {
+		const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.set(-75, 0, 35 );
 		camera.lookAt(0, 0, 0);
 		camera.rotateOnAxis(new THREE.Vector3( 0, 0, -1 ),1.57);
+
 		return camera;
 	}
 
 	getPlayer2Camera() {
-		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-		camera.position.set(75, 0, 40 );
+		const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.set(75, 0, 35 );
 		camera.lookAt(0, 0, 0);
 		camera.rotateOnAxis(new THREE.Vector3( 0, 0, 1 ),1.57);
 		return camera;
@@ -336,8 +337,8 @@ export class World {
 
 	skyboxInit() {
 		const box = new THREE.BoxGeometry(UTILS.BOXSIZE, UTILS.BOXSIZE, UTILS.BOXSIZE);
-		const wall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, map : new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/mattone.png"), side: THREE.DoubleSide});
-		const rotatedWall = new THREE.MeshStandardMaterial({emissive: 0.3,roughness: 1 ,metalness: 0.973, side: THREE.DoubleSide, map: (() => {
+		const wall = new THREE.MeshStandardMaterial({emissive: 0, roughness: 0.75 ,metalness: 1, map : new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/mattone.png"), side: THREE.DoubleSide});
+		const rotatedWall = new THREE.MeshStandardMaterial({emissive: 0,roughness: 0.75 ,metalness: 1, side: THREE.DoubleSide, map: (() => {
 			const texture = new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/mattone.png");
 			texture.center.set(0.5, 0.5);
 			texture.rotation = Math.PI/ 2;
@@ -353,7 +354,8 @@ export class World {
 
 	posterInit() {
 		const posterGeometry = new THREE.PlaneGeometry( 53.85, 68.35 );
-		const posterMaterial = new THREE.MeshPhongMaterial( {map:  new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/escape_room.jpg") , side: THREE.DoubleSide});
+		// const posterMaterial = new THREE.MeshPhongMaterial( {map:  new THREE.TextureLoader().load("/static/pong/js/Pong_Fake/escape_room.jpg") , side: THREE.DoubleSide});
+		const posterMaterial = new THREE.MeshPhongMaterial( {map:  new THREE.TextureLoader().load("/static/pong/images/fogli.jpeg") , side: THREE.DoubleSide});
 		const poster = new THREE.Mesh( posterGeometry, posterMaterial );
 		poster.rotation.set(Math.PI/2, 0, 0);
 		poster.position.set(0, 124.5, 70);
@@ -526,14 +528,15 @@ export class World {
 						}
 					});
 					// region MeshPhysicalMaterial
-					this.paddle.rotation.x = Math.PI / 2; 
+					this.paddle.rotation.x = Math.PI / 2;
+					this.paddle.rotation.y = Math.PI; 
 					this.paddle.position.x = -54;
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
 				
 					this.paddle2 = this.paddle.clone();
 					this.paddle2.position.x = 54;
-					this.paddle2.rotation.x = Math.PI / 2;
+					this.paddle2.rotation.y = Math.PI;
 					resolve();
 				}
 			)
@@ -958,9 +961,28 @@ export class World {
 		})
 	}
 
+
+	// loadambientlight(){
+	// 	return new Promise((resolve, reject)=> {
+	// 		// const lightA = new THREE.AmbientLight(0xECA009, 0.9);
+	// 		// lightA.position.set(0,0, 100);
+	// 		const lightB = new THREE.PointLight(0xECA009, 5, 100000000, 0.35);
+	// 		lightB.position.set(0, 0, 40);
+	// 		// const lightC = new THREE.PointLight(0xB92727, 5, 100000000, 0.2);
+	// 		// lightB.position.set(60, 0, 10);
+	// 		this.add(lightB);
+	// 		//this.add(lightC);
+	// 		// this.add(lightA); 
+	// 		resolve();
+	// 	})
+	// }
+
+
+
 	async loadObjects() {
 		this.ready = new Promise((resolve) => {
 		const proms = [
+			// this.loadambientlight(),
 			this.loadPaddle(),
 			this.loadPlant(),
 			this.loadPort(),

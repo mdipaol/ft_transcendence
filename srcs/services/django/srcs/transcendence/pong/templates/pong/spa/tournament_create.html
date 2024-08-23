@@ -12,14 +12,14 @@
 </style>
 
 <div class="form-group1">
-    <h2 class="neonbar">Create a tournament</h2>
+    <h2 class="neonbar neonbar-medium neonpink">Create a tournament</h2>
     <form class="form-tourn" id="tournament-form">
         {% csrf_token %}
         <span id="tournament-name-error" class="error"></span>
-		<input class="username-friend-request" type="text" id="tournament-name" name="tournament-name" placeholder="Insert a tournament name" required maxlength="255" minlength="1" />
+		<input class="username-friend-request" type="text" id="tournament-name" name="tournament-name" placeholder="Insert a tournament name" required maxlength="20" minlength="1" />
         <br>
         <span id="alias-error" class="error"></span>
-        <input type="text" id="alias" name="alias" placeholder="Insert an alias name for the tournament" required maxlength="100" minlength="1"/>
+        <input type="text" id="alias" name="alias" placeholder="Insert an alias name for the tournament" required maxlength="10" minlength="1"/>
         <br>
         <input type="submit" id="submit" value="Submit">
     </form>

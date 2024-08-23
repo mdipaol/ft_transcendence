@@ -1,0 +1,44 @@
+<div class="account-columns">
+    <section class="account-column account-highlights">
+        <div id="account-header-left">
+            <img class="account-image" src="{{img}}" alt="avatar" id="characterImage">
+            <div class="account-info-text">
+                <h3 class="neonbar neonbar-smallest neonbar-blue">Known as {{nickname}}</h3>
+                    <h3 class="neonbar neonbar-smallest neonbar-blue">Level: {{level}}</h3>
+                        <h3 class="neonbar neonbar-smallest neonbar-blue">Email: {{email}}</h3>
+            </div>
+        </div>
+    </section>
+       <section class="account-column account-section">
+        <div id="account-header-right">
+            <h2 class="friends friends-glow">Match History</h2>
+                <div id="match-history-container" class="social-element-container history">
+                    <div class="single-match-container single-user" style="background-color: black; text-emphasis-color: rgb(255, 255, 255);">
+                        <span class="match-date">Date</span>
+                            <span class="match-opponent">Player 1</span>
+                            <span class="match-opponent">Player 2</span>
+                        <span class="match-score">Score</span>
+                    </div>
+                    {% for match in match_history %}
+                        <div class="single-match-container single-user">
+                            <span class="match-date">{{ match.date }}</span>
+                            {% if match_history|length >= 1 %}
+                                <span class="match-opponent">{{ match.player1 }}</span>
+                                vs
+                                <span class="match-opponent">{{ match.player2 }}</span>
+                            {% endif %}
+                            <span class="match-score">{{ match.score1 }} - {{match.score2}}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <h2 class="friends friends-glow" style="top: 1em;">Statistics</h2>
+                <div class="social-element-container">
+                    <div class="account-info-text">
+                        <h3 class="neonbar neonbar-smallest neonbar-pink">Matches: {{ matches }}</h3>
+                        <h3 class="neonbar neonbar-smallest neonbar-green">Wins: {{ wins }}</h3>
+                        <h3 class="neonbar neonbar-smallest neonbar-red">Lost: {{ lost }}</h3>
+                    </div>
+                </div>
+        </div>
+    </section>
+</div>

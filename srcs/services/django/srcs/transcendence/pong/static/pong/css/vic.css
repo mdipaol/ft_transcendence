@@ -304,3 +304,25 @@
 
 
 /* end Home page */
+
+
+/* setting page game  */
+
+.game-container{
+    position: absolute;
+    top:0%;
+    width: 99%;
+    height: 99%;
+    left: 0.5%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.game-container canvas{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: block;
+}
+

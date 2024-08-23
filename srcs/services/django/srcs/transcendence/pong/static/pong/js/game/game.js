@@ -30,12 +30,16 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	// page_root cleaning
 	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
-	
+	const gameContainer = document.createElement('div');
+	gameContainer.setAttribute('class', 'game-container');
+	content.appendChild(gameContainer);
 
 	// Loading page
 	// ...
 
 	//---------INIT----------
+
+
 	let world = null;
 	if (worldMap == 'underground')
 		world = new World();
@@ -92,10 +96,13 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	}
 	match.endScreen = parser.parseFromString(htmlEnd, "text/html").getElementById('interface');
 
-	content.appendChild(world.renderer.domElement)
+	
+	gameContainer.appendChild(world.renderer.domElement)
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
 	})
+
+	
 	//---------KEYBOARD INPUT----------
 	const keyDownBind = match.onKeyDown.bind(match);
 	const keyUpBind = match.onKeyUp.bind(match);
@@ -144,9 +151,13 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const lincks = document.querySelectorAll('li');
 	lincks.forEach(li =>{
 		li.addEventListener('click', (event)=>{
-			console.log('hai pigiato uno dei LI della pagina');
-			match.gameEnd("disconnection");
+			console.log("event listener attivo");
+			if (match.socket)
+				match.socket.close();
+			match.ended = true;
 			match.QuitMatch = true;
+			if(li.querySelector('a').innerHTML == "Play")
+				triggerHashChange('/play/');
 		}, {once: true});
 	})
 				
@@ -186,12 +197,21 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	})	
 }
 
-export async function startTournamentGame(matchId, alias){
+
+
+
+////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////////////
+
+export async function startTournamentGame(matchId, alias1, alias2){
 
 	// page_root cleaning
 	const content = null || document.getElementById('page_root');
 	content.replaceChildren();
-	
+	const gameContainer = document.createElement('div');
+	gameContainer.setAttribute('class', 'game-container');
+	content.appendChild(gameContainer);
 
 	// Loading page
 	// ...
@@ -205,10 +225,12 @@ export async function startTournamentGame(matchId, alias){
 	const match = new TournamentMatch(world, true);
 
 	let response = await fetch(`https://${window.location.host}/interface_thefinals/`);
+	let endScreen = await fetch(`https://${window.location.host}/match_end/`);
 
 	//userInterface.innerHTML = await response.text();
 	// canvas dom element
 	const html = await response.text();
+	const htmlEnd = await endScreen.text();
 	
 	const parser = new DOMParser();
 	// Parse the text
@@ -220,8 +242,9 @@ export async function startTournamentGame(matchId, alias){
 	match.initHtmlInterface(interfaceUser);
 	if (interfaceUser)
 		content.appendChild(interfaceUser);
+	match.endScreen = parser.parseFromString(htmlEnd, "text/html").getElementById('interface');
 
-	content.appendChild(world.renderer.domElement)
+	gameContainer.appendChild(world.renderer.domElement);
 	window.addEventListener('resize', function() {
 		world.resize(window.innerWidth, window.innerHeight);
 	})
@@ -239,9 +262,12 @@ export async function startTournamentGame(matchId, alias){
 	
 	lincks.forEach(li =>{
 		li.addEventListener('click', (event)=>{
-			console.log('hai pigiato uno dei LI della pagina');
-			match.gameEnd("disconnection");
+			if (match.socket)
+				match.socket.close();
+			match.ended = true;
 			match.QuitMatch = true;
+			if(li.querySelector('a').innerHTML == "Play")
+				triggerHashChange('/play/');
 		}, {once: true});
 	})
 	

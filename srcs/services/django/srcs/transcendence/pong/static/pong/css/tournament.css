@@ -1,4 +1,6 @@
 
+
+
 	.container-tourn {
         align-items: center;
         text-align: center;
@@ -16,24 +18,34 @@
 		align-items: center;
 		display: flex;
 		background: #111;
-		border: 2px solid #0ff;
-		box-shadow: 0 0 20px #0ff;
 		padding: 20px;
 		border-radius: 10px;
-		margin: 20px 0;
 		height: 70vh;
         width: 90%;
 		overflow-x: auto; /* Enable horizontal scrolling */
+		box-shadow: 0 0 10px #0ff,  0 0 15px rgba(178, 227, 255, 0.7);
 	}
-	#tournament-visualization {
-		display: inline-block; /* Align items horizontally */
-		background: #222;
-		padding: 10px;
+
+	.tournament:hover {
+		box-shadow: 0 0 5px rgba(115, 157, 204, 0.7), 0 0 40px rgba(178, 227, 255, 0.7);
+	  }
+
+	#tournament-list, #tournament-visualization {
+		/* padding: 10px; */
 		border-radius: 10px;
-		box-shadow: 0 0 10px #0ff;
-		height: 100%;
-		margin-right: 10px; /* Space between items */
+		/* height: 100%; */
 	}
+	
+	#tournament-visualization {
+		/* display: inline-block; */
+		background: #222;
+		/* padding: 10px; */
+		/* border-radius: 10px; */
+		/* box-shadow: 0 0 10px #0ff; */
+		/* height: 100%; */
+		/* margin-right: 10px; */
+	}
+
 	#tournament-visualization button {
 		display: block;
 		width: 100%;
@@ -57,12 +69,7 @@
 	#left-panel {
 		border-right: 2px solid #0ff;
 	}
-	#tournament-list, #tournament-visualization {
-		padding: 10px;
-		border-radius: 10px;
-		box-shadow: 0 0 10px #0ff;
-		height: 100%;
-	}
+
 	.bracket {
 		display: flex;
 		justify-content: space-around;
@@ -90,73 +97,94 @@
 	.match span {
 		margin: 5px 0;
 	}
-	.button {
+	/* .button {
 		margin: 10px;
 		padding: 10px 20px;
 		background: #333;
 		border: 1px solid #0ff;
 		border-radius: 5px;
 		cursor: pointer;
-		transition: background 0.3s ease, color 0.3s ease;
-	}
-	.button:hover {
-		background: #0ff;
-		color: #000;
-	  }
+		transition: background 0.3s ease, color 0.3s ease; */
+	/* } */
+
+
 	.tournament-button{
-		width: 100%;
+		width: 80%;
 		height: 100%;
 		align-items: center;
-		background: #333;
-		border: 1px solid #0ff;
 		border-radius: 5px;
 		cursor: pointer;
+		border: 2px solid #fff !important;
+		color: #fff !important;
+		background-color: rgb(20, 40, 46) !important;
+		font-size: 1rem !important;
+		font-family: "Tilt Neon", sans-serif !important;
+		text-transform: uppercase !important;
+		cursor: pointer !important;
+		letter-spacing: 2px !important;
+		transition: all 0.3s ease !important;
+		position: relative !important;
+		display: inline-block !important;
+		box-shadow: 0 0 5px #fff, 0 0 10px rgb(16, 255, 223) !important;
 		/* transition: background 0.3s ease, color 0.3s ease; */
 	}
+
+   
 	.container-tournament-button{
 		width: 70%;
 		height: 100%;
 	}
+
 	.tournament-button:hover {
 		background: #0ff;
 		color: #000;
 	}
+
 	.tournament-info {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
-	.tournament-info-container{
+
+	.tournament-info-container {
 		display: flex;
 		width: 100%;
 		height: 10%;
-		color:rgb(0, 0, 0);
-		background: #333;
-		border: 1px solid black;
-		border-radius: 5px;
+		color: rgb(0, 0, 0);
+		background: #33333363;
+		border-radius: 10px;
 		transition: background 0.3s ease, color 0.3s ease;
+		box-shadow: aqua;
+		/* opacity: 0.5; */
 	}
-	.tournament-eye{
+
+	.tournament-eye {
 		height: 100%;
 		width: 50%;
-		background-color: #333;
+		justify-content: space-around;
+		display: flex;
+		align-items: center;
 	}
+
 	.tournament-list{
 		height: 100%;
 		width: 50%;
 		background-color: #333;
 	}
+
 	.tournament-leave{
 		height: 100%;
 		width: 50%;
 		background-color: #333;
 	}
+
 	.tournament-partecipants{
 		height: 100%;
-		width: 100%;
+		width: 60%;
 		text-align: center;
+		font-family: "Tilt-Neon";
+		color: #0ff;
 	}
-
 
     .form-group1{
 
