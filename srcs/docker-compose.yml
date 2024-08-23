@@ -83,6 +83,7 @@ services:
       context: ./services/redis
     volumes:
       - redis-volume:/data
+    restart: unless-stopped
     networks:
       - transcendence-network
 

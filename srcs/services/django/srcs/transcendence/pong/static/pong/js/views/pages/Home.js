@@ -24,10 +24,30 @@ const Home = {
     const logoutButton = document.getElementById("logout-button");
     const notificationButton = document.getElementById("notification-button");
     const friendRequestFornm = document.getElementById("friend-request-form");
+    const loginForm = document.getElementById("login-form");
     const acceptRequestButtons = document.querySelectorAll("#accept-request-btn");
     const rejectRequestButtons = document.querySelectorAll("#reject-request-btn");
     const removeFriendButtons = document.querySelectorAll("#remove-friend-btn");
+ 
     
+    if (loginForm){
+      loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(loginForm);
+        const response = await fetch(`https://${window.location.host}/login_view/`, {
+          method : 'POST',
+          // headers : {
+          //   'X-CSRFToken': csrfTokens
+          //   },
+          body : formData,
+          });
+          if (response.ok) {
+            triggerHashChange('/home/');
+          }
+      });
+      }
+
     if (logoutButton) {
       logoutButton.addEventListener('click', async () => {
         try {

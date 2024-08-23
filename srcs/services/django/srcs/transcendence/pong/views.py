@@ -244,6 +244,20 @@ class LoginCustomView(View):
 			return render(request, 'pong/spa/home.html')
 		return render(request, 'pong/login.html', {'form': form}, status=401)
 
+def login_view(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		print(username)
+		print(password)
+		user = authenticate(request, username=username, password=password)
+		print(user)
+		if user is not None:
+			login(request, user)
+			return JsonResponse({'status' : 'success', 'message' : 'Login successful'})
+		else:
+			return JsonResponse({'status' : 'error', 'message' : 'Invalid credentials'}, status=401)
+
 
 class LogoutView(TemplateView):
 	def get(self, request):
@@ -704,19 +718,6 @@ def tournament_leave(request, name):
 def edit_account(request):
 	if request.method == 'GET':
 		user = request.user
-		form = EditProfileForm(instance=user)
-		print(form)
-		return render(request, 'pong/spa/edit_account.html', { 'user' : user})
-	if request.method == 'POST':
-		print(vars(request))
-		user = request.user
-		form = EditProfileForm(request.POST, request.FILES, instance=user)
-		if form.is_valid():
-			form.save()
-			return redirect('/#/account')
-		else:
-			form = EditProfileForm(instance=user)
-
 		return render(request, 'pong/spa/edit_account.html', {'user' : user})
 
 def handle_uploaded_file(file):
@@ -793,9 +794,9 @@ password_policy = PasswordPolicy.from_names(
 @login_required(login_url='/')
 def change_password(request):
 	if request.method == 'POST':
-		old_password = request.POST.get('old_password')
-		new_password = request.POST.get('new_password')
-		confirm_password = request.POST.get('confirm_password')
+		old_password = request.POST.get('old-password')
+		new_password = request.POST.get('new-password')
+		confirm_password = request.POST.get('confirm-password')
 
 		if not request.user.check_password(old_password):
 			return JsonResponse(data={'status' : 'error', 'message' : 'Old password is incorrect'}, status=400)
@@ -806,6 +807,7 @@ def change_password(request):
 			return JsonResponse(data={'status' : 'error', 'message' : errors[0]}, status=400)
 		request.user.set_password(new_password)
 		request.user.save()
+		login(request, request.user)
 		return JsonResponse(data={'status' : 'success', 'message' : 'Password changed successfully'})
 
 @login_required(login_url='/')
