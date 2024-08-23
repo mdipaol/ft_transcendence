@@ -48,6 +48,7 @@
           {% csrf_token %}
           <input type="password" name="old-password" placeholder="Enter old password" required>
           <br>
+          <span id="password-error" class="error"></span>
           <input type="password" name="new-password" placeholder="Enter a new password" required>
           <br>
           <input type="password" name="confirm-password" placeholder="Confirm password" required>

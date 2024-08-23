@@ -19,14 +19,21 @@ const Home = {
   after_render: async () => {
         const buttonChangeImage = document.getElementById('change-image-btn');
         const buttonChangeUsername = document.getElementById('change-username-btn');
-        const buttonChangePassword = document.getElementById('change-password-btn');
+        const passwordForm = document.getElementById('password-form');
         const usernameForm = document.getElementById('username-form');
         const imageForm = document.getElementById('image-form');
 
         if (imageForm) {
         imageForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const response = await fetch(`https://${window.location.host}/change_image/`);
+            const formData = new FormData(imageForm);
+            const response = await fetch(`https://${window.location.host}/change_image/`, {
+              method: 'POST',
+              headers : {
+                'X-CSRFToken' : getCookie('csrftoken')
+              },
+              body: formData
+            });
             if (response.ok) {
               triggerHashChange('/edit_account/');
             }
@@ -66,9 +73,37 @@ const Home = {
             }
         });
         }
-        if (buttonChangePassword) {
-        buttonChangePassword.addEventListener('click', async (event) => {
+        if (passwordForm) {
+        passwordForm.addEventListener('submit', async (event) => {
             event.preventDefault();
+            const formData = new FormData(passwordForm);
+            const response = await fetch(`https://${window.location.host}/change_password/`, {
+              method: 'POST',
+              headers : {
+                'X-CSRFToken' : getCookie('csrftoken')
+              },
+              body: formData
+            });
+            if (response.ok){
+              const data = await response.json();
+              const success = data.status;
+              if (success && success == 'success'){
+                triggerHashChange('/edit_account/');
+              }
+            }
+            else{
+              const data = await response.json();
+              const error = data.status.error;
+              console.log(data);
+              if (error){
+                const errorElement = document.getElementById("password-error");
+                if (errorElement){
+                  errorElement.innerHTML = error;
+                  errorElement.classList.add('visible');
+                }
+                return ;
+              }
+            }
         });
         }
     }

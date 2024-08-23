@@ -14,7 +14,8 @@
   <div id="center-home">
   <div class="login-light"></div>
     <div class="login-box">
-        <form action="{% url 'pong:login' %}" method="post" id="login-form">
+        <form id="login-form">
+            {% csrf_token %}
             <input type="checkbox" class="input-check" id="input-check">
             <label for="input-check" class="toggle">
                 <span class="text off">off</span>
@@ -27,7 +28,7 @@
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
-                <input type="username" required>
+                <input name="username" type="username" required>
                 <label>Username</label>
                 <div class="input-line"></div>
             </div>
@@ -35,7 +36,7 @@
                 <span class="icon">
                     <ion-icon name="lock-closed"></ion-icon>
                 </span>
-                <input type="password" required>
+                <input name="password" type="password" required>
                 <label>Password</label>
                 <div class="input-line"></div>
             </div>

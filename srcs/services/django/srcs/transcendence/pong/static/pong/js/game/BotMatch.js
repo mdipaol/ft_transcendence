@@ -155,7 +155,7 @@ export class BotMatch extends Match {
 
         if (prediction == null){
             // console.log('esco');
-            return (0);
+            return (this.bot2.destinationY);
         }
 
         const maxError = prediction + UTILS.PADDLE_SIZE / 2;
@@ -199,13 +199,14 @@ export class BotMatch extends Match {
         this.time_update = new Date();
 
         if (this.ball.direction.x < 0){
-            this.bot2.destinationY = 0;
+            // this.bot2.destinationY = 0;
             return
         }
 
         // this.bot2.destinationY = this.ball.mesh.position.y;
 
         this.bot2.destinationY = (this.pointPrediction());
+        console.log(this.bot2.destinationY)
     }
 
     updateScore() { 

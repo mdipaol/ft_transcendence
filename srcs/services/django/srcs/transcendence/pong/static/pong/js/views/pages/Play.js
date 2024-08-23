@@ -75,7 +75,7 @@ const Play = {
             //selezione mondo
             if (ButtonThefinals.checked){
                 selectedWorld = 'finals';
-            } 
+            }
             else if (ButtonUnderground.checked){
                 selectedWorld = 'underground';
             }
