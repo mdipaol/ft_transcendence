@@ -52,6 +52,7 @@ class MatchManager:
         match: Match = cls.get_available_match(consumer)
         match.add_player(consumer)
         consumer.match = match
+        # Chamber layer
         await match.channel_layer.group_add(match.id, consumer.channel_name)
         if match.is_full():
             cls.start_match(match)
@@ -59,7 +60,7 @@ class MatchManager:
 
     @classmethod
     async def add_player_id(cls, consumer, id):
-        # Pick or create a match
+        # Get available match
         match = None
         for item in cls.invite_matches:
             if id == item.id:
@@ -72,19 +73,12 @@ class MatchManager:
         if match.is_full():
             return None
 
-        # Add player to the match
-        # match_db = await sync_to_async(ModelMatch.objects.get)(id=id)
-        # player1 = await  sync_to_async(match_db.player1)
-        # player2 = await sync_to_async(match_db.player2)
+        match.add_player(consumer)
+        consumer.match = match
 
-        # if player1 and player1.username == consumer.username:
-        #     match.add_player(consumer, 'player_one')
-        # elif player2 and player2.username == consumer.username:
-        #     match.add_player(consumer, 'player_two')
-        # else:
-        #     return None
-        # Channel layer logic
+        # Channel layer
         await match.channel_layer.group_add(str(match.id), consumer.channel_name)
+        
         # Start match
         if match.is_full():
             cls.start_match(match)
@@ -116,7 +110,6 @@ class MatchManager:
 
             tournament : Tournament = match_db.tournament
             if tournament:
-                print('sto per salvare il torneo')
                 match1_db = tournament.match1
                 match2_db = tournament.match2
                 the_finals_db = tournament.the_finals
@@ -241,22 +234,14 @@ class MatchManager:
         match_db.score1 = match.score1
         match_db.score2 = match.score2
 
-        print(player1)
-        print(player2)
-        print(match.score1)
-        print(match.score2)
-
         winner: BaseUser = player1 if (match.score1 > match.score2) else player2
         if player1.username != match.player1.consumer.username:
             winner = player1 if winner.username == player2.username else player2 # Ensure winner is the correct user
             match_db.score1, match_db.score2 = match_db.score2, match_db.score1  # Swap scores if necessary
 
+        cls.raise_user_level(winner)
 
         match_db.is_played = True
-
-        print('before')
-        print('winner')
-        print(winner)
 
         # Ensure start_time is in the correct datetime format
         if isinstance(match.start_time, (int, float)):
@@ -270,9 +255,6 @@ class MatchManager:
 
         # Save the match object asynchronously
         match_db.save()
-
-        print('after')
-        print(f"Match saved: {match_db}")
 
         match1_db : ModelMatch = tournament.match1
         match2_db : ModelMatch = tournament.match2
@@ -292,10 +274,9 @@ class MatchManager:
         # Save the tournament object asynchronously
         tournament.save()
 
-        print('all saved')
-
     @classmethod
-    def set_alias_name(match: Match):
+    def set_alias_name(cls, match: Match):
+        print("Setting alias name")
         if not match or not match.tournament:
             return
 
@@ -325,12 +306,15 @@ class MatchManager:
                match.player1.consumer.alias = player1_tournament.alias
             if player2_tournament.alias:
                 match.player2.consumer.alias = player2_tournament.alias
+
+            print(f"Alias set: {match.player1.consumer.alias}, {match.player2.consumer.alias}")
         except Exception as e:
             print(f"Error getting match: {e}")
             return
 
     @classmethod
     async def game_init(cls, match: Match):
+        print("Game init")
         if match and not match.is_started():
             return
 
@@ -359,17 +343,18 @@ class MatchManager:
 
     @classmethod
     async def game_loop(cls, match: Match):
+        print("Game loop")
         if not match.is_started():
             return
 
         await cls.game_init(match)
 
+        print("Before ready")
+
         while not match.ready(None):
             await asyncio.sleep(0.5)
 
         match.update_ball_await = time.time()
-
-        print("Game loop started")
 
         while not match.is_ended():
 

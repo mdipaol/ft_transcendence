@@ -109,7 +109,7 @@
 			  <div class="match"> {% if the_finals.player2.alias %} {{ the_finals.player2.alias}} {% endif %}</div>
 			</div>
 			<div class="round">
-			  <div class="match"> {% if winner %} {{ winner }} {% endif %} </div>
+			  <div class="match"> {% if the_finals.winner %} {{ the_finals.winner }} {% endif %} </div>
 			</div>
 			<button class="glow-button small send" id="backButton">Back</button>
 			{% if id_match_user %}

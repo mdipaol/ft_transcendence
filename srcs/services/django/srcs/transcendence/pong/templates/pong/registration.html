@@ -1,4 +1,4 @@
-<h2>Registration</h2>
+<!-- <h2>Registration</h2>
 <form action="{% url 'pong:registration' %}" method="post" id="registration-form">
 	{% csrf_token %}
 	{% for field in form %}
@@ -8,4 +8,48 @@
 	</div>
 	{% endfor %}
 	<input type="submit" value="Submit">
-</form>
+</form> -->
+
+<div id="center-home">
+	<div class="registration-box">
+		
+		<form id="registration-form">
+			{% csrf_token %}
+
+			<h2 class="login-text">Register</h2>
+			<div class="input-box">
+				<span class="icon">
+					<ion-icon name="mail"></ion-icon>
+				</span>
+				<input name="username" type="username" required>
+				<label>Username</label>
+				<div class="input-line"></div>
+			</div>
+			<div class="input-box">
+				<span class="icon">
+					<ion-icon name="lock-closed"></ion-icon>
+				</span>
+				<input name="email" type="password" required>
+				<label>Email</label>
+				<div class="input-line"></div>
+			</div>
+			<div class="input-box">
+				<span class="icon">
+					<ion-icon name="mail"></ion-icon>
+				</span>
+				<input name="password1" type="username" required>
+				<label>Enter Password</label>
+				<div class="input-line"></div>
+			</div>
+			<div class="input-box">
+				<span class="icon">
+					<ion-icon name="mail"></ion-icon>
+				</span>
+				<input name="password2" type="username" required>
+				<label>Confirm Password</label>
+				<div class="input-line"></div>
+			</div>
+			<button class="button-login" type="submit">Register</button>
+		</form>
+	</div>
+</div>

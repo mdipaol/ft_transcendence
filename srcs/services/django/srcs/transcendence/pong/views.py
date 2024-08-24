@@ -1,6 +1,5 @@
 import logging, json, requests, secrets, uuid, os
 from pathlib import Path
-
 import time
 from datetime import datetime, timedelta
 from oauthlib.oauth2 import WebApplicationClient
@@ -33,7 +32,6 @@ def send_friend_request(request, username):
 				to_send,
 				message=f'User {request.user.username} has sent to you a friend request'
 			)
-			print('Request sent')
 			return JsonResponse(data={'status' : 'success', 'message' : 'Request sent successfully'})
 		except Exception as e:
 			print(e)
@@ -94,12 +92,6 @@ def friend_template(request):
     # request.user,                               # The sender
     # other_user,                                 # The recipient
     # message='Hi! I would like to add you')      # This message is optional
-	print(friend)
-	print(unread_request)
-	print(unrejected_request)
-	print(unrejected_request_count)
-	print(rejected_request)
-	print(sent_request)
 	context = {
 		'friend' : friend,
 		'unread_request' : unread_request,
@@ -108,10 +100,6 @@ def friend_template(request):
 		'rejected_request' : rejected_request,
 		'sent_request' : sent_request,
 	}
-
-	for item in sent_request:
-		print('ciao')
-		print(item.__dict__)
 
 	users = BaseUser.objects.all()
 
@@ -157,7 +145,6 @@ class CallbackView(View):
 		state = data['state']
 
 		if state != self.request.session['state']:
-			print('Invalid state')
 			return HttpResponseRedirect(reverse('pong:index'))
 		else:
 			del self.request.session['state']
@@ -176,12 +163,6 @@ class CallbackView(View):
 		)
 
 		response = requests.post(token_url, data=data)
-		# print((json.dumps(json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
-		# 	"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
-		# }).text), indent=4)))
-		print(response)
-		# print(json.loads(response.text))
-		# return HttpResponse('ciao')
 		json_data = json.loads(requests.get('https://api.intra.42.fr/v2/me', headers={
 			"Authorization" : "Bearer " + json.loads(response.text)["access_token"]
 		}).text)
@@ -193,6 +174,8 @@ class CallbackView(View):
 		if BaseUser.objects.filter(email=email).exists():
 			user = BaseUser.objects.get(email=email)
 			login(request, user)
+		elif BaseUser.objects.filter(username=username).exists():
+			return HttpResponseRedirect(reverse('pong:index'))
 		else:
 			user = BaseUser.objects.create_user(username=username, email=email, password=str(uuid.uuid4()))
 			user.image = image
@@ -221,6 +204,52 @@ class IndexView(TemplateView):
 			'incoming_requests' : incoming_requests,
 			})
 
+def registration(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		email = request.POST.get('email')
+		password1 = request.POST.get('password1')
+		password2 = request.POST.get('password2')
+
+		#clean username
+		if not username:
+			return JsonResponse({'error' : 'Username is empty'}, status=400)
+		if BaseUser.objects.filter(username=username).exists():
+			return JsonResponse({'error' : 'Username already taken'}, status=400)
+
+		# clean username from whitespaces
+		username = username.strip()
+		if username == '':
+			return JsonResponse({'error' : 'Username is empty'}, status=400)
+
+		# clean email
+		if not email:
+			return JsonResponse({'error' : 'Email is empty'}, status=400)
+		if BaseUser.objects.filter(email=email).exists():
+			return JsonResponse({'error' : 'Email already taken'}, status=400)
+
+		# clean email from whitespaces
+		email = email.strip()
+		if email == '':
+			return JsonResponse({'error' : 'Email is empty'}, status=400)
+
+		# clean password
+		if not password1:
+			return JsonResponse({'error' : 'Password is empty'}, status=400)
+		if not password2:
+			return JsonResponse({'error' : 'Password is empty'}, status=400)
+		if password1 != password2:
+			return JsonResponse({'error' : 'Passwords do not match'}, status=400)
+
+		# save user
+		user = BaseUser.objects.create_user(username=username, email=email, password=password1)
+		user.image = 'static/pong/images/man.png'
+		user.save()
+
+		# success message
+		return JsonResponse({'status' : 'success', 'message' : 'Registration successful'}, status=201)
+
+
 class RegistrationFormView(View):
 	def get(self, request):
 		form = RegistrationForm()
@@ -246,13 +275,9 @@ class LoginCustomView(View):
 
 def login_view(request):
 	if request.method == 'POST':
-		print(request.POST)
 		username = request.POST.get('username')
 		password = request.POST.get('password')
-		print(username)
-		print(password)
 		user = authenticate(request, username=username, password=password)
-		print(user)
 		if user is not None:
 			login(request, user)
 			return JsonResponse({'status' : 'success', 'message' : 'Login successful'})
@@ -361,7 +386,6 @@ def home(request):
 		online_users = BaseUser.objects.filter(online__gt=0)
 		friends = Friend.objects.friends(request.user)
 		friend_requests = Friend.objects.unrejected_requests(user=request.user)
-		print(friend_requests)
 		friend_requests_ids = [u.from_user_id for u in friend_requests]
 		friend_requests_users = [BaseUser.objects.get(pk=u) for u in friend_requests_ids]
 		context = {
@@ -567,6 +591,12 @@ def get_match_info(match : Match) -> dict:
 						player1 = p
 					else:
 						player2 = p
+		winner = None
+		if match.is_played:
+			if match.score1 > match.score2:
+				winner = player1
+			else:
+				winner = player2
 	return {
 		'match' : match,
 		'score1' : match.score1,
@@ -581,6 +611,7 @@ def get_match_info(match : Match) -> dict:
 			'user' : player2[0] if player2 else None,
 			'alias' : player2[1] if player2 else None,
 		},
+		'winner' : winner[1] if winner else None
 	}
 
 def get_matchId_user(user : BaseUser, match1 : Match, match2 : Match, the_finals : Match):
@@ -646,7 +677,6 @@ def tournament_join(request, name):
 				'the_finals' : the_finals,
 				'id_match_user' : id_match_user,
 				'match_user_info' : match_user_info,
-				'winner' : tournament.winner,
 				'finished' : tournament.finished,
 				'joined' : request.user.username in partecipant_user,
 			}
@@ -685,7 +715,6 @@ def tournament_join(request, name):
 				'the_finals' : the_finals,
 				'id_match_user' : id_match_user,
 				'match_user_info' : match_user_info,
-				'winner' : tournament.winner,
 				'finished' : tournament.finished,
 				'joined' : request.user.username in partecipant_user,
 				}
@@ -699,7 +728,6 @@ def tournament_join(request, name):
 
 		# Add new partecipant to database
 		alias : str = request.POST.get('alias')
-		print(alias)
 
 		if not alias or alias.strip() == '':
 			return JsonResponse(data={'error' : 'Enter a valid alias'})
@@ -715,7 +743,7 @@ def tournament_join(request, name):
 		# Creation of matches if tournament is full
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		user_partecipant = [item.user for item in partecipant_list]
-		print(user_partecipant)
+
 		if len(user_partecipant) == 4 and tournament.started == False:
 			sorted_user = sorted(user_partecipant, key=lambda user: user.level)
 			paired_user = [(sorted_user[i], sorted_user[i + 1]) for i in range(0, len(sorted_user) - 1, 2)]
@@ -742,7 +770,6 @@ def tournament_join(request, name):
 				'the_finals' : the_finals,
 				'id_match_user' : id_match_user,
 				'match_user_info' : match_user_info,
-				'winner' : tournament.winner,
 				'joined' : request.user in user_partecipant,
 				}
 		return JsonResponse(data={
@@ -773,8 +800,6 @@ def tournaments_list(request):
 def online_users(request):
 	if request.method == 'GET':
 		users = BaseUser.objects.filter(online__gt=0)
-		for item in users:
-			print(item)
 		return render(request, 'pong/spa/online_users.html', {'online_users' : users})
 
 from asgiref.sync import async_to_sync
@@ -802,7 +827,6 @@ def tournament_leave(request, name):
 		partecipant_list = TournamentPartecipant.objects.filter(tournament__name=tournament.name)
 		partecipant_user = [item.user for item in partecipant_list]
 		if request.user in partecipant_user:
-			print(request.user)
 			try:
 				TournamentPartecipant.objects.get(user=request.user, tournament=tournament).delete()
 			# partecipant.delete()
@@ -835,7 +859,6 @@ class ImageUpload(View):
 	def post(self, request):
 		form = ImageUploadForm(request.POST, request.FILES)
 		if form.is_valid():
-			print(request.FILES)
 			file_name = handle_uploaded_file(request.FILES['image'])
 			user: BaseUser = request.user
 			user.image = settings.MEDIA_URL + file_name
@@ -874,9 +897,6 @@ def change_username(request):
 		if not username or username == '':
 			return JsonResponse(data={'status' : 'error', 'message' : 'Blank username'}, status=400)
 		# Check if username already exists
-		print('username')
-		print(username)
-		print(BaseUser.objects.filter(username=username))
 		if len(BaseUser.objects.filter(username=username)) > 0:
 			return JsonResponse(data={'status' : 'error', 'message' : 'Username already taken'}, status=400)
 		request.user.username = username
@@ -916,7 +936,6 @@ def notification(request, username):
 	if not user:
 		return HttpResponse('user not found')
 	channel_layer = get_channel_layer()
-	# print(f"notifications_{str(user.id)}")
 	async_to_sync(channel_layer.group_send)(
         f"notifications_{str(user.id)}",
         {

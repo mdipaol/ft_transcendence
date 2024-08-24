@@ -122,14 +122,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 			requestAnimationFrame(() => gameLoop(resolve));
 			match.update();
 			match.render();
-			/*if (match.connected && !match.culo)
-			{
-			//this.socket.send(JSON.stringify({ 'type': 'ready'}));
-			console.log("..");
-			match.culo = true;     
-					IN CASO IN CUI LA PARTITA INIZI PRIMA CHE ENTRAMBI 
-					I PLAYER ABBIANO RENDERIZZATO TUTTO
-					}*/
 		}
 		else {
 			resolve();
@@ -137,13 +129,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	};
 			
 	await match.ready();
-			
-			// window.addEventListener('hashchange', () =>{
-				// 	match.ended = true;
-				// 	console.log('so qui')
-				// });
-				
-				// console.log("sicurissimo non arriva");
 	let gameStatus = new Promise((resolve) =>{
 		gameLoop(resolve)
 	})
@@ -161,14 +146,9 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 		}, {once: true});
 	})
 				
-				
-
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
-
-	//const buttom = document.getElementByTagname('buttom')
-
 
 	gameStatus.then(async () => {
 
@@ -227,8 +207,7 @@ export async function startTournamentGame(matchId, alias1, alias2){
 	let response = await fetch(`https://${window.location.host}/interface_thefinals/`);
 	let endScreen = await fetch(`https://${window.location.host}/match_end/`);
 
-	//userInterface.innerHTML = await response.text();
-	// canvas dom element
+
 	const html = await response.text();
 	const htmlEnd = await endScreen.text();
 	

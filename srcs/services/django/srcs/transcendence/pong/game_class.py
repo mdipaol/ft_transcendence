@@ -326,7 +326,6 @@ class Match:
 
         if self.active_powerup.type == 'scale':
             self.active_powerup.player = oppenent if good else taker
-            print(f'scale on : {self.active_powerup.player}')
             self.active_powerup.player.size *= 0.7
             await self.channel_layer.group_send(self.id, {
                 'type' : 'game_message',
@@ -366,7 +365,6 @@ class Match:
         if self.ball.position.x > -3 and self.ball.position.x < 3:
             if self.ball.position.y > self.active_powerup.position - 3 and self.ball.position.y < self.active_powerup.position + 3:
                 self.event_update = True
-                print('powerup_taken')
                 await self.powerup_taken()
 
     async def handle_player_collision(self, player : Player):
@@ -390,7 +388,6 @@ class Match:
                 await self.reset_powerup_changes()
                 if self.wait_powerup >= Costants.WAIT_POWERUP:
                     self.active_powerup = PowerUp()
-                    print(self.active_powerup.__dict__)
                     powerup_add = True
                     powerup_type = self.active_powerup.type
                     powerup_effect = self.active_powerup.effect

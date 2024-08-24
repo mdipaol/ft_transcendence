@@ -46,13 +46,18 @@ const Home = {
         try{
           const response = await fetch(`https://${window.location.host}/login_view/`, {
             method : 'POST',
-            // headers : {
-              //   'X-CSRFToken': getCookie('csrftoken')
-            //   },
             body : formData,
           });
             if (response.ok) {
               triggerHashChange('/home/');
+            }
+            else{
+              const jsonResponse = await response.json();
+              const error = document.getElementById('login-error');
+              if (error && jsonResponse.status == 'error'){
+                error.innerHTML = jsonResponse.message;
+                error.classList.add('visible');
+              }
             }
         }
         catch(error){

@@ -178,14 +178,14 @@ export class World1 {
 		const PosMaterial = this.setMeshStandardMaterial(posColor, posColor, 10, 0, 1, 1);
 		const NegMaterial = this.setMeshStandardMaterial(negColor, negColor, 10, 0, 1, 1);
 		//speed///
-		const Fulmine_P = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
+		const Fulmine_P = this.setMeshGLTF('static/pong/assets/models/PowerUp/Speed_fulmine.glb', PosMaterial, 2.5, Math.PI/2, Math.PI/2, 0);
 		Fulmine_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("speed", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		})
 
-		const Fulmine_N = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
+		const Fulmine_N = this.setMeshGLTF('static/pong/assets/models/PowerUp/Speed_fulmine.glb', NegMaterial,2.5 , Math.PI/2, Math.PI/2, 0);
 		Fulmine_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("speed", mesh, "negative"));
 		}).catch((error)=>{
@@ -193,14 +193,14 @@ export class World1 {
 		});
 
 		//slow////
-		const Tartole_P = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		const Tartole_P = this.setMeshGLTF('static/pong/assets/models/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
 		Tartole_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
-		const Tartole_N = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
+		const Tartole_N = this.setMeshGLTF('static/pong/assets/models/PowerUp/slow_tartaruga.glb', NegMaterial, 2 , Math.PI/2, Math.PI/2, 0);
 		Tartole_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("slowness", mesh, "negative"));
 		}).catch((error)=>{
@@ -208,14 +208,14 @@ export class World1 {
 		});
 
 		//triple
-		const Triple_P = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
+		const Triple_P = this.setMeshGLTF('static/pong/assets/models/PowerUp/tripla_x3.glb', PosMaterial, 4, Math.PI/2, Math.PI/2, 0);
 		Triple_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("triple", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
 
-		const Triple_N = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
+		const Triple_N = this.setMeshGLTF('static/pong/assets/models/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
 		Triple_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("triple", mesh, "negative"));
 			//this.scene.add(mesh);
@@ -224,13 +224,13 @@ export class World1 {
 		});
 
 		//scale
-		const Scale_P = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
+		const Scale_P = this.setMeshGLTF('static/pong/assets/models/PowerUp/scale_Arrow.glb', PosMaterial,2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_P.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("scale", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
-		const Scale_N = this.setMeshGLTF('static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
+		const Scale_N = this.setMeshGLTF('static/pong/assets/models/PowerUp/scale_Arrow.glb', NegMaterial, 2.5, -Math.PI/2, Math.PI/2, 0);
 		Scale_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("scale", mesh, "negative"));
 
@@ -303,13 +303,14 @@ export class World1 {
 			this.orbitControls.enabled = false;
 		this.orbitControls.update();
 	}
-	/* vik a modificato */
+
 	rotatePowerUp() {
 		if(this.powerUp){
 			if(this.powerUp.mesh){
 				let speed = 0.01;
 				let oscllazioneZ = 10;
-				let oscillationAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; // Modifica Math.PI / 12 per regolare l'ampiezza dell'oscillazione su z
+				// Modifica Math.PI / 12 per regolare l'ampiezza dell'oscillazione su z
+				let oscillationAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; 
 				this.powerUp.mesh.position.z = oscillationAngleZ + oscllazioneZ;
 				this.powerUp.mesh.rotation.y += 0.03;
 			}
@@ -324,7 +325,6 @@ export class World1 {
 			emissiveIntensity: 15,
             roughness: 1,
         	metalness: 1,
-			//reflectivity: 0,
 			envMapIntensity: 1,
             side: THREE.DoubleSide
         })
@@ -334,23 +334,10 @@ export class World1 {
 		this.add(cube);
 	}
 
-	/* materiale vetro */
-	/* const material1 = new THREE.MeshPhysicalMaterial({
-		color: 0xffffff,  // Colore bianco per la base
-		metalness: 0,  // Il vetro non è metallico
-		roughness: 0,  // La superficie del vetro è liscia
-		transmission: 1,  // La trasparenza è al massimo
-		opacity: 0.25,  // Imposta l'opacità per vedere attraverso
-		transparent: true,  // Necessario per abilitare la trasparenza
-		reflectivity: 0.9,  // Alto valore per riflettività
-		side: THREE.DoubleSide,  // Lati del materiale
-		envMapIntensity: 1  // Intensità della mappa ambientale (per riflessi)
-	}); */
-
 	loadTable() {
 		return new Promise((resolve, reject) => {
 		this.gltfLoader.load(
-			'static/pong/js/Pong_Fake/table/table_wold1.glb',
+			'static/pong/assets/models/table/table_wold1.glb',
 			(object)=>{
 				object.scene.rotation.x =Math.PI/2;
 				object.scene.scale.multiplyScalar(8);
@@ -366,7 +353,6 @@ export class World1 {
 				const material_rete = new THREE.MeshStandardMaterial({
 					roughness: 0,
 					metalness:1,
-					//reflectivity: 1,
 					envMapIntensity: 1,
 					side: THREE.DoubleSide
 				})
@@ -374,9 +360,6 @@ export class World1 {
 				if(object.scene.children[0]){
 					object.scene.children[0].material = material_bordi;
 				}
-				// if(object.scene.children[1]){
-				// 	object.scene.children[1].material = material_rete;
-				// }
 				this.add(object.scene);
 				resolve();
 			},
@@ -390,22 +373,17 @@ export class World1 {
 	loadPaddle() {
 		return new Promise((resolve, reject) => {
 			this.gltfLoader.load(
-				'static/pong/js/Pong_Fake/paddle/paddle_wold1.glb',
+				'static/pong/assets/models/paddle/paddle_wold1.glb',
 				(object)=>{
-					//object.scene.rotation.z = Math.PI/2;
-					//object.scene.rotation.y = Math.PI/2;
-					//const material_bordi = new THREE.MeshPhysicalMaterial({
 					const material_bordi = new THREE.MeshStandardMaterial({
 						color: 0xf06400,
 						emissive: 0xf06400,
 						emissiveIntensity: 0.1,
 						roughness: 0,
 						metalness:1,
-						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					});
-					//const material_face1 = new THREE.MeshPhysicalMaterial({
 					const material_face1 = new THREE.MeshStandardMaterial({
 						color: 0xffffff,
 						metalness: 1,
@@ -441,21 +419,15 @@ export class World1 {
 					})
 					if(object.scene.children[0]){ // bordi
 						object.scene.children[0].material = material_bordi;
-						//object.scene.children[0].add(new THREE.PointLight( 0x0011FF, 1000, 100 ));
 					}
 					if(object.scene.children[1]){ // face1
 						object.scene.children[1].material = material_face1;
-						//object.scene.children[1].add(new THREE.PointLight( 0xFF9A00, 1000, 1000 ));
 					}
 					if(object.scene.children[2]){ // face2
 						object.scene.children[2].material = material_face2;
-						//object.scene.children[2].add(new THREE.PointLight( 0x0033FF, 1000, 1000 ));
 					}
 					if(object.scene.children[3]) // manico
 						object.scene.children[3].material = material_manico;
-					//object.scene.add(PointLight2);
-
-					//object.scene.scale.multiplyScalar(0.85);
 					this.paddle = object.scene;
 					this.paddle.traverse(function(child) {
 						if (child instanceof THREE.Mesh) {
@@ -469,41 +441,12 @@ export class World1 {
 					this.paddle.position.x = -54;
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
-				// 	const box = new THREE.Box3().setFromObject(this.paddle);
-				// 	const size = new THREE.Vector3();
-				// 	box.getSize(size);
-				// 	console.log(this.paddle);
-				// 	console.log(size);
-
-				// const targetWidth = UTILS.PADDLE_SIZE_X;
-				// const targetHeight = UTILS.PADDLE_SIZE_Y;
-				// const targetDepth = UTILS.PADDLE_SIZE_Z;
-
-				// // Calculate the scaling factors
-				// const scaleX = targetWidth / size.x;
-				// const scaleY = targetHeight / size.y;
-				// const scaleZ = targetDepth / size.z;
-
-				// this.paddle.scale.set(scaleX, scaleY, scaleZ);
-				// const box1 = new THREE.Box3().setFromObject(this.paddle);
-				// const size1 = new THREE.Vector3();
-				// box1.getSize(size1);
-				// console.log('after scale');
-				// console.log(size1);
 				
-				this.paddle2 = this.paddle.clone();
-				this.paddle2.position.x = 54;
-				this.paddle2.rotation.x = Math.PI / 2; // world1
-				this.spotLight2.target = this.paddle2; // world1
-				this.spotLightWall2.target = this.paddle2; // world1
-
-					// console.log(this.paddle);
-
-					// // console.log(this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y);
-					// this.paddle.children[0].geometry.computeBoundingBox();
-					// const currentWidth = this.paddle.children[0].geometry.boundingBox.max.y - this.paddle.children[0].geometry.boundingBox.min.y;
-					// const scaleFactor = (15) / currentWidth;
-					// this.paddle.scale.set(scaleFactor, scaleFactor, scaleFactor);
+					this.paddle2 = this.paddle.clone();
+					this.paddle2.position.x = 54;
+					this.paddle2.rotation.x = Math.PI / 2;
+					this.spotLight2.target = this.paddle2;
+					this.spotLightWall2.target = this.paddle2;
 
 					if (this.paddle2.children[0]){
 						this.paddle2.children[0].material = new THREE.MeshStandardMaterial({
@@ -512,7 +455,6 @@ export class World1 {
 							emissiveIntensity: 10,
 							roughness: 0,
 							metalness:1,
-							//reflectivity: 1,
 							envMapIntensity: 1,
 							side: THREE.DoubleSide
 						})
@@ -526,7 +468,7 @@ export class World1 {
 	loadFonts() {
 		return new Promise((resolve, reject) => {
 			this.fontLoader.load(
-				'static/pong/js/Pong_Fake/Font/Beauty.json',
+				'static/pong/assets/fonts/Beauty.json',
 				(font) => {
 					this.font = font;
 					const geometry = new TextGeometry( 'PONG', {
@@ -551,16 +493,6 @@ export class World1 {
 					text2.position.set(0,0,0);
 					text2.position.set(124, 0, 50)
 					neon2.position.set(110, 0, 50);
-
-
-					// this.add(neonLight);
-					// this.add(neon2);
-					// this.add(text2);
-					// this.add(text);
-
-
-
-
 					resolve();
 				},
 				(xhr) => console.log((xhr.loaded / xhr.total * 100) + '% font loaded'),
@@ -572,15 +504,13 @@ export class World1 {
 	load_wall(){
 		return new Promise((resolve, reject)=>{
 			this.gltfLoader.load(
-				'static/pong/js/Pong_Fake/UtilsMesh/bordi_skybox.glb',
+				'static/pong/assets/models/UtilsMesh/bordi_skybox.glb',
 				(object)=> {
 					object.scene.scale.multiplyScalar(41.5);
 					object.scene.position.set(0,125,105);
 					const material = new THREE.MeshStandardMaterial({
-						//color: 0x000000,
 						roughness:0,
 						metalness:1,
-						//reflectivity: 1,
 						envMapIntensity: 1,
 						side: THREE.DoubleSide
 					})
@@ -654,9 +584,7 @@ export class World1 {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.sound = sound;
-			//The Finals OST - Main Menu Themes
-			//sound_World1
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/sound_World1.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/sound_World1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
 				sound.setVolume(0.1);
@@ -673,8 +601,7 @@ export class World1 {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundCollision = sound;
-
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/collision_world1.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/collision_world1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.1);
@@ -690,8 +617,7 @@ export class World1 {
 		return new Promise((resolve, reject)=> {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpNegative = sound;
-
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/powerdown.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/powerdown.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.3);
@@ -706,8 +632,7 @@ export class World1 {
 		return new Promise((resolve, reject)=> {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPowerUpPositive = sound;
-
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/powerup.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/powerup.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.3);
@@ -724,7 +649,7 @@ export class World1 {
 			const sound = new THREE.Audio(this.listener);
 			this.soundWallCollision = sound;
 
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/collision_world1.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/collision_world1.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.1);
@@ -740,7 +665,7 @@ export class World1 {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundPoint = sound;
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/punto_Win.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/punto_Win.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(1);
@@ -756,7 +681,7 @@ export class World1 {
 		return new Promise((resolve, reject) => {
 			const sound = new THREE.Audio(this.listener);
 			this.soundEndMach = sound;
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/partita_end.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/partita_end.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(true);
 				sound.setVolume(0.1);
@@ -772,7 +697,7 @@ export class World1 {
 		return new Promise((resolve, reject)=> {
 			const sound = new THREE.Audio(this.listener);
 			this.soundCoundwon = sound;
-			this.audioLoader.load('static/pong/js/Pong_Fake/music/coundwon.mp3', function(buffer) {
+			this.audioLoader.load('static/pong/assets/sounds/countdownRobot.mp3', function(buffer) {
 				sound.setBuffer(buffer);
 				sound.setLoop(false);
 				sound.setVolume(0.3);
@@ -800,10 +725,10 @@ export class World1 {
 			this.loadSounPoint(),
 			this.loadSoundEndMach(),
 			this.loadSoundCoundwon(),
-			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
-			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
-			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
-			this.loadPowerUpMap('/static/pong/js/Pong_Fake/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/assets/models/PowerUp/Speed_fulmine.glb', 'power', 2.5, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/assets/models/PowerUp/tripla_x3.glb', 'triple', 4, [Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/assets/models/PowerUp/scale_Arrow.glb', 'scale', 2.5, [-Math.PI/2, Math.PI/2, 0]),
+			this.loadPowerUpMap('/static/pong/assets/models/PowerUp/slow_tartaruga.glb', 'slowness', 2, [Math.PI/2, Math.PI/2, 0]),
 
 		];
 		Promise.all(proms).then(() => {;

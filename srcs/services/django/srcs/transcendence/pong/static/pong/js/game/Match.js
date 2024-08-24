@@ -71,7 +71,6 @@ export class Match {
 		if (!window.username){
 			window.username = 'pippo'
 		}
-		// console.log(this.htmlElement);
 		this.htmlElement.querySelector('#interface-timer').innerHTML = UTILS.timeToString(new Date() - this.start);
 		this.htmlElement.querySelector('#interface-player1').innerHTML = this.player1.name;
 		this.htmlElement.querySelector('#interface-player2').innerHTML = this.player2.name;
@@ -307,13 +306,12 @@ export class Match {
 
 				this.world.powerUp = this.world.randomPowerUp();
 				this.world.powerUp.duration = UTILS.POWERUPDURATION;
-				// console.log(this.world.PowerUp);
 				const max = UTILS.MAX_SIZEY;
 				const min = UTILS.MIN_SIZEY;
 				const y = Math.floor(Math.random() * (max - min + 1)) + min;
 				const z = 15;
 				this.world.powerUp.mesh.position.set(0, y, z);
-				this.world.scene.add(this.world.powerUp.mesh);//.mesh
+				this.world.scene.add(this.world.powerUp.mesh);
 			}
 		}
 	}
@@ -448,7 +446,6 @@ export class Match {
 		}
 		player.powerUp.duration--;
 		if (player.powerUp.duration == 0) {
-			// p = player ===?<valore1>:<valore2></valore2>
 			const opp = (player === this.player1) ? this.player2 : this.player1;
 			opp.speed = UTILS.MOVSPEED;
 			if (player.powerUp.name == "scale"){
@@ -462,13 +459,11 @@ export class Match {
 	deltaErrorCheck() {
 		if (this.ball.mesh.position.x > 0)
 		{
-			console.log(this.ball.mesh.position.y - this.player2.mesh.position.y);
 			if (Math.abs(this.ball.mesh.position.y - this.player2.mesh.position.y) < UTILS.PADDLE_SIZE_Y / 2)
 				return true;
 		}
 		else
 		{
-			console.log(this.ball.mesh.position.y - this.player1.mesh.position.y);
 			if (Math.abs(this.ball.mesh.position.y - this.player1.mesh.position.y) < UTILS.PADDLE_SIZE_Y / 2)
 				return true;
 		}
@@ -508,21 +503,6 @@ export class Match {
 				this.ball.startTimer = null;
 			}
 		}
-		//salvo pos futura
-/* 		let futureX = this.ball.mesh.position.x + this.ball.speed * this.ball.direction.x * deltaTime;
-		let futureY = this.ball.mesh.position.y + this.ball.speed * this.ball.direction.y * deltaTime;
-		//check se è oltre la racchetta
- 		if (futureX > this.player2.mesh.position.x  || futureX < this.player1.mesh.position.x){
-			// Paddle in ball trajectory
-			if (){
-
-			}
-		}
-		//se si teletrasporto dove mi pare
-		//se no salvo pos futura in pos della ball
-		this.ball.mesh.position.x = futureX;
-		this.ball.mesh.position.y = futureY;
-		this.ball.mesh.position.z = this.ball.getZ(); */
 
 		if(this.ball.mesh.position.z < 0){
             if (this.world.soundWallCollision.isPlaying)
@@ -543,7 +523,6 @@ export class Match {
 			ball2.mesh.position.y += ball2.speed * ball2.direction.y * deltaTime;
 			ball2.mesh.position.z = ball2.getZ();
 
-			// console.log(ball1.mesh.position);
 		}
 		if (this.ball.mesh.position.x > this.player2.mesh.position.x + 2  || this.ball.mesh.position.x < this.player1.mesh.position.x - 2)
 		{
@@ -562,8 +541,6 @@ export class Match {
 		}
 		if (UTILS.checkCollision(this.player1.mesh, this.ball.mesh) && !this.collision)
 		{
-			/* if (ball.speed < 2)
-				ball.speed *= ACCELERATION; */
 			if (this.world.soundCollision.isPlaying)
                 this.world.soundCollision.stop();
 			this.world.soundCollision.play();
@@ -582,8 +559,6 @@ export class Match {
 		}
 		if (UTILS.checkCollision(this.player2.mesh, this.ball.mesh) && !this.collision)
 		{
-			// if (ball.speed  < 2)
-			// 	ball.speed  *= ACCELERATION;
 			if (this.world.soundCollision.isPlaying)
                 this.world.soundCollision.stop();
 			this.world.soundCollision.play();
@@ -598,7 +573,6 @@ export class Match {
 
 			this.handlePowerUp(this.player2);
 			this.addPowerUp();
-			// UTILS.setSound('music/ball.hit.mp3', false, 1);
 		}
 		// PowerUp collision
 		if (this.activePowerUp == true && UTILS.checkPowerUpCollision(this.ball.mesh, this.world.powerUp.mesh)){
@@ -606,7 +580,6 @@ export class Match {
 			this.world.remove(this.world.powerUp.mesh);
 			this.activePowerUp = false;
 			this.waitPowerup = 0;
-			//assegnazione powerUp Player
 			this.powerUpTaken();
 
 		}

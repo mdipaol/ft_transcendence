@@ -295,23 +295,6 @@ export class OnlineMatch extends Match {
 		}
 	}
 
-    // updateMovements() {
-	// 	if (!this.started)
-	// 		return;
-	// 	if (this.superPlayer.moves.up && this.superPlayer.mesh.position.y < 27)
-	// 	{
-	// 		// this.superPlayer.mesh.position.y += this.superPlayer.speed;
-	// 		// this.player1.mesh.position.y += this.player1.speed;
-	// 		this.socket.send(JSON.stringify({ 'type': 'input','direction': 'up' }));
-	// 	}
-	// 	if (this.superPlayer.moves.down && this.superPlayer.mesh.position.y > -27)
-	// 	{
-	// 		// this.superPlayer.mesh.position.y -= this.superPlayer.speed;
-	// 		// this.player1.mesh.position.y -= this.player1.speed;
-	// 		this.socket.send(JSON.stringify({ 'type': 'input','direction': 'down' }));
-	// 	}
-	// }
-
 	animateSearching()
 	{
 		this.htmlElement.querySelector('#searching-message').style.display = 'flex';
@@ -358,10 +341,6 @@ export class OnlineMatch extends Match {
 		this.player2.powerUp = null;
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
-		//---------------------------
-		// Reset direction
-		//const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
-		//this.ball.direction.x = normalized[0];
 
 		// Triple Ball
 		this.remove_triple();
@@ -405,12 +384,10 @@ export class OnlineMatch extends Match {
 		const ball1 = this.fakeBalls[0];
 		const ball2 = this.fakeBalls[1];
 
-		// ball1.mesh.position.x += ball1.speed * ball1.direction.x * deltaTime;
 		ball1.mesh.position.x = this.ball.mesh.position.x
 		ball1.mesh.position.y += ball1.speed * ball1.direction.y * deltaTime;
 		ball1.mesh.position.z = ball1.getZ();
 
-		// ball2.mesh.position.x += ball2.speed * ball2.direction.x * deltaTime;
 		ball2.mesh.position.x = this.ball.mesh.position.x
 		ball2.mesh.position.y += ball2.speed * ball2.direction.y * deltaTime;
 		ball2.mesh.position.z = ball2.getZ();

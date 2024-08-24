@@ -9,6 +9,18 @@
     align-items: center;
 }
 
+.registration-box {
+    position: absolute;
+    width: 400px;
+    height: 600px;
+    background: #191919;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 15px;
+}
+
 .login-text {
     font-size: 2em;
     color: #fff;
@@ -152,7 +164,7 @@
     align-items: center;
 }
 
-.input-check:checked~button {
+.input-check:checked~.login-box button.button-login {
     background: #00f7ff;
     box-shadow: 0 0 15px #00f7ff, 0 0 15px #00f7ff;
 }
@@ -313,3 +325,15 @@
     transform: translate(-50%, -50%);
     opacity: 0.8;
   }
+
+  #login-error.error{
+    color: red;
+    font-size: 1em;
+    text-align: center;
+    transition: .5s ease;
+    display: none;
+  }
+
+    #login-error.error.visible{
+        display: block;
+    }

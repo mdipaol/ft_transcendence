@@ -31,7 +31,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
 
         self.db_match_id : int = self.scope["url_route"]["kwargs"].get("id")
 
-        print(self.db_match_id)
 
         if self.user and self.user.is_authenticated:
             self.username = self.user.username
@@ -42,8 +41,6 @@ class AsyncGameConsumer(AsyncWebsocketConsumer):
             self.match =  await MatchManager.add_player(self)
 
         if self.match == None:
-            print('None match!!!!')
-            print(None)
             await self.close()
 
         await self.accept()
@@ -160,7 +157,6 @@ class OnlineConsumer(WebsocketConsumer):
         ...
 
     def send_notification(self, event):
-        print(event)
         (self.send)(text_data=json.dumps({
             'type' : event.get('type'),
             'message' : event.get('message'),

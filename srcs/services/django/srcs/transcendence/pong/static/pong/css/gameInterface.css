@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'fontC';
-    src: url('/static/pong/js/Pong_Fake/Font/fontinterface/Speedy.ttf');
+    src: url('/static/pong/assets/fonts/fontinterface/Speedy.ttf');
 }
 
 .styleinterface{
@@ -52,15 +52,15 @@
 
 #searching-message {
 
-    position: relative;
+    position: fixed;
     display: none;
-	top: 50%;
+	top: 45%;
+    left: 32%;
     justify-content: center;
+    font-size: 48px;
     align-items: center;
     text-align: center;
-    font-size: 48px;
     font-weight: bold;
-	white-space: nowrap;
     color: #00ff00;
     animation: pulseGlow 1.5s ease-in-out infinite;
 }
@@ -91,12 +91,10 @@
     z-index: 51;
 }
 
-/* gestisce i punti */
 #interface-score{
     font-size: 4.5vh;
 }
 
-/*  */
 #interface-top {
     width: 100%;
     display: flex;
@@ -124,7 +122,6 @@
     position: absolute;
 }
 
-/* gestisce il time in cima alla interfaccia */
 .interface-timer {
     width: 100vw;
     height: 30vw;
@@ -148,7 +145,6 @@
     font-weight: bold;
     display: flex;
 
-    /* Effetto Neon Ciano */
     color: #fff;
     text-shadow:
         0 0 10px #00ffff,
@@ -158,7 +154,6 @@
         0 0 50px #00ffff,
         0 0 75px #00ffff;
     
-    /* Animazione Glow */
     animation: glow 1.5s ease-in-out infinite;
 }
 

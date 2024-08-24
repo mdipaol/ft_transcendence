@@ -21,7 +21,7 @@
                     </div>
                     {% for match in match_history %}
                         <div class="single-match-container single-user">
-                            <span class="match-date">{{ match.date }}</span>
+                            <span class="match-date">{{ match.date|date:'m/d/Y' }} {{ match.date|time:'H:i' }}</span>
                             {% if match_history|length >= 1 %}
                                 <span class="match-opponent">{{ match.player1 }}</span>
                                 vs

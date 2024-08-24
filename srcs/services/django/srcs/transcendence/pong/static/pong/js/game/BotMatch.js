@@ -123,13 +123,6 @@ export class BotMatch extends Match {
         }
         let prediction = null;
         if (collisions){
-            // iterator -= midDeltaX;
-            // let finalDirY = (!(numberOfCollisions % 2)) ? Math.sign(directionY) : -Math.sign(directionY) ;
-            // let destinationY = (108 - iterator) * Math.tan(alpha);
-            // if (finalDirY > 0)
-            //     return (destinationY -27)
-            // else
-            //     return (108 - destinationY - 27)TABLE_HEIGHT
             iterator -= midDeltaX;
             let destinationY = (UTILS.TABLE_WIDTH - iterator) * Math.tan(alpha);
             if (directionY > 0 && !(numberOfCollisions % 2))
@@ -152,17 +145,12 @@ export class BotMatch extends Match {
         }
 
         if (prediction == null){
-            // console.log('esco');
             return (this.bot2.destinationY);
         }
 
         const maxError = prediction + UTILS.PADDLE_SIZE / 1.5;
         const minError = prediction - UTILS.PADDLE_SIZE / 1.5;
         const randomPrediction = ( Math.random() * (maxError - minError) ) + minError;
-        // const distanceError = Math.abs(prediction - this.bot2.mesh.position.y);
-        // const randomPrediction = Math.random() * (distanceError - 0) + 0;
-        // console.log("real prediction: " + prediction);
-        // console.log("randomPrediction: " + randomPrediction);
         return (randomPrediction);
     }
 
@@ -180,33 +168,25 @@ export class BotMatch extends Match {
         if (this.bot2.mesh.position.y < this.bot2.destinationY && this.bot2.mesh.position.y < UTILS.MAX_SIZEY){
             this.bot2.mesh.position.y += this.bot2.speed * deltaTime;
             // this.bot2.mesh.position.y = this.bot2.destinationY;
-            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
+            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 1)
                 this.bot2.mesh.position.y = this.bot2.destinationY;
         }
         else if (this.bot2.mesh.position.y > this.bot2.destinationY  && this.bot2.mesh.position.y > UTILS.MIN_SIZEY){
             this.bot2.mesh.position.y -= this.bot2.speed * deltaTime;
             // this.bot2.mesh.position.y = this.bot2.destinationY;
-            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 0.5)
+            if (Math.abs( this.bot2.mesh.position.y - this.bot2.destinationY ) < 1)
                 this.bot2.mesh.position.y = this.bot2.destinationY;
         }
 	}
 
     updateMovementsBot(){
-
         if (((new Date()) - this.time_update) < 1000)
             return ;
-
         this.time_update = new Date();
-
         if (this.ball.direction.x < 0){
-            // this.bot2.destinationY = 0;
             return
         }
-
-        // this.bot2.destinationY = this.ball.mesh.position.y;
-
         this.bot2.destinationY = (this.pointPrediction());
-        console.log(this.bot2.destinationY)
     }
 
     updateScore() { 
@@ -224,7 +204,6 @@ export class BotMatch extends Match {
             if(this.world.sound.isPlaying){
                 this.world.sound.stop();
             }                  
-            // this.world.soundEndMach.play();
 			this.gameEnd();
         }
         else if(this.score1 != this.maxScore && this.score1 != this.maxScore)
@@ -246,30 +225,22 @@ export class BotMatch extends Match {
 		this.player1.mesh.scale.set(this.player1.originScale[0], this.player1.originScale[1], this.player1.originScale[2]);
 		this.player2.mesh.scale.set(this.player2.originScale[0], this.player2.originScale[1], this.player2.originScale[2]);
 		this.world.resetMesh();
-        // Reset direction
 		this.ball.direction.y = 0;
 		const normalized = UTILS.normalizeVector([this.ball.direction.x, this.ball.direction.y]);
 		this.ball.direction.x = normalized[0];
-
-		// Triple Ball
 		this.remove_triple();
 
-
-        // Reset bot destination
         this.bot2.destinationY = 0;
 
-		// Exchanges
 		this.exchanges = 0;
 		this.exchangesText = this.exchangesTextInit();
 
-        //world1/////////////////////////////////////
         const player1Div = document.getElementById('player1-score');
         const player2Div = document.getElementById('player2-score');
         if (player1Div)
             player1Div.innerHTML = this.score1.toString();
         if (player2Div)
             player2Div.innerHTML = this.score2.toString();
-        ///////////////////////////////////////////
 	}
 
     // region update()

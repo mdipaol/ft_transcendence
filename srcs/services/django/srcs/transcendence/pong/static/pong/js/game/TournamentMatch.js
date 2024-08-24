@@ -24,6 +24,7 @@ export class TournamentMatch extends OnlineMatch {
 				console.log('WebSocket connection opened');
 				this.socket.send(JSON.stringify({ 'type': 'ready'}));
 				this.connected = true;
+				this.searching = true;
 				resolve();
 			};
 
