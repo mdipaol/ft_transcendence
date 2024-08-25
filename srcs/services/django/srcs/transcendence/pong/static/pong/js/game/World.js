@@ -41,7 +41,6 @@ export class World {
 		this.soundCollision = null;
 		this.gltfLoader = new GLTFLoader();
 		this.dracoLoader = new DRACOLoader();
-		// 'https://www.gstatic.com/draco/v1/decoders/'
 		this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 		this.dracoLoader.setDecoderConfig({type: 'js'});
 		this.gltfLoader.setDRACOLoader(this.dracoLoader);
@@ -62,7 +61,6 @@ export class World {
 		this.mapPowerUp = new Map();
 		this.arrayPowerup = this.powerUpsInit();
 
-		//end gest cube
 
 		this.loadObjects();
 	}
@@ -175,7 +173,6 @@ export class World {
 						if(child.isMesh)
 							child.material = NegMaterial
 					});
-					//this.scene.add(obj);
 					this.mapPowerUp.set(type + "Positive", new PowerUp(type, obj, 'positive'));
 					this.mapPowerUp.set(type + "Negative", new PowerUp(type, negativePowerUp, 'negative'));
 					resolve();
@@ -214,7 +211,6 @@ export class World {
 		const Turtle_P = this.setMeshGLTF('/static/pong/assets/models/PowerUp/slow_tartaruga.glb', PosMaterial, 2 , Math.PI/2, Math.PI/2, 0);
 		Turtle_P.then((mesh)=>{
 			arrayPowerup[2] = new PowerUp("slowness", mesh, "positive");
-			// arrayPowerup.push(new PowerUp("slowness", mesh, "positive"));
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
@@ -237,7 +233,6 @@ export class World {
 		const Triple_N = this.setMeshGLTF('/static/pong/assets/models/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
 		Triple_N.then((mesh)=>{
 			arrayPowerup[5] = new PowerUp("triple", mesh, "negative");
-			//this.scene.add(mesh);
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
@@ -259,7 +254,6 @@ export class World {
 		return arrayPowerup;
 	}
 
-	/* vik ha modificato */
 	randomPowerUp(){
 		const index = Math.floor(Math.random() * this.arrayPowerup.length);
 		return this.arrayPowerup[index];
@@ -455,7 +449,6 @@ export class World {
 					this.door.material.emissive = new THREE.Color(0x808080); // Colore emissivo (verde in questo caso)
                     this.door.material.emissiveIntensity = 0.025;
 					object.name = "door";
-					console.log(object);
 					this.add(object.scene);
 					resolve();
 				}
@@ -527,12 +520,12 @@ export class World {
 					// region MeshPhysicalMaterial
 					this.paddle.rotation.x = Math.PI / 2;
 					this.paddle.rotation.y = Math.PI; 
-					this.paddle.position.x = -54;
+					this.paddle.position.x = -(UTILS.TABLE_WIDTH / 2);
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
 				
 					this.paddle2 = this.paddle.clone();
-					this.paddle2.position.x = 54;
+					this.paddle2.position.x = UTILS.TABLE_WIDTH / 2;
 					this.paddle2.rotation.y = Math.PI;
 					resolve();
 				}

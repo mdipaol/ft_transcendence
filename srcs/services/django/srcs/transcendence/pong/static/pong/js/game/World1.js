@@ -218,7 +218,6 @@ export class World1 {
 		const Triple_N = this.setMeshGLTF('static/pong/assets/models/PowerUp/tripla_x3.glb', NegMaterial,4, Math.PI/2, Math.PI/2, 0);
 		Triple_N.then((mesh)=>{
 			arrayPowerup.push(new PowerUp("triple", mesh, "negative"));
-			//this.scene.add(mesh);
 		}).catch((error)=>{
 			console.error('Sei un bischero: ', error);
 		});
@@ -308,10 +307,10 @@ export class World1 {
 		if(this.powerUp){
 			if(this.powerUp.mesh){
 				let speed = 0.01;
-				let oscllazioneZ = 10;
+				let oscillazioneZ = 10;
 				// Modifica Math.PI / 12 per regolare l'ampiezza dell'oscillazione su z
 				let oscillationAngleZ = Math.sin(Date.now() * speed) * Math.PI / 8; 
-				this.powerUp.mesh.position.z = oscillationAngleZ + oscllazioneZ;
+				this.powerUp.mesh.position.z = oscillationAngleZ + oscillazioneZ;
 				this.powerUp.mesh.rotation.y += 0.03;
 			}
 		}
@@ -396,8 +395,7 @@ export class World1 {
 						envMapIntensity: 1
 					});
 
-					// const material_face2 =  new THREE.MeshPhysicalMaterial({
-						const material_face2 = new THREE.MeshStandardMaterial({
+					const material_face2 = new THREE.MeshStandardMaterial({
 						color: 0xffffff,
 						metalness: 1,
 						roughness: 0,
@@ -438,12 +436,12 @@ export class World1 {
 					this.spotLightWall1.target = this.paddle; // world1
 					this.spotLight.target = this.paddle; // world1
 					this.paddle.rotation.x = Math.PI / 2; // world1
-					this.paddle.position.x = -54;
+					this.paddle.position.x = -(UTILS.TABLE_WIDTH / 2);
 					this.paddle.position.z = UTILS.POSITION_Z_W1;
 					this.paddle.scale.multiplyScalar(0.85);
 				
 					this.paddle2 = this.paddle.clone();
-					this.paddle2.position.x = 54;
+					this.paddle2.position.x = UTILS.TABLE_HEIGHT;
 					this.paddle2.rotation.x = Math.PI / 2;
 					this.spotLight2.target = this.paddle2;
 					this.spotLightWall2.target = this.paddle2;

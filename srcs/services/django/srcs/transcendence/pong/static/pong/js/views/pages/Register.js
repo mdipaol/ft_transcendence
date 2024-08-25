@@ -22,14 +22,14 @@ const Register = {
   after_render: async () => {
     const form = document.getElementById('registration-form');
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent the form's default submit behavior
+    if (form){
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form's default submit behavior
+    
+            const formData = new FormData(form);
+            const csrfToken = formData.get('csrfmiddlewaretoken');
 
-        const formData = new FormData(form);
-        const csrfToken = formData.get('csrfmiddlewaretoken');
-
-        try {
-            const response = await fetch(form.action, {
+            const response = await fetch(`https://${window.location.host}/registration/`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -40,14 +40,16 @@ const Register = {
             if (response.ok) {
                 triggerHashChange('/home/');
             } else {
-                const errorForm = await response.text();
-                document.getElementById('page_root').innerHTML = errorForm;
-                await Register.after_render();
+                const jsonResponse = await response.json();
+                console.log(jsonResponse);
+                const error = document.getElementById('registration-error');
+                if (error && jsonResponse.status === 'error') {
+                    error.innerHTML = jsonResponse.message;
+                    error.classList.add('visible');
+                }
             }
-        } catch (error) {
-            console.log(error);
-        }
-    });
+        });
+    }
   }
 };
 export default Register;

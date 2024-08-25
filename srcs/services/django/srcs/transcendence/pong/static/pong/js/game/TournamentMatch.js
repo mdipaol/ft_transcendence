@@ -50,7 +50,6 @@ export class TournamentMatch extends OnlineMatch {
 		this.searching = false;
 		this.htmlElement.querySelector('#searching-message').style.display = 'none';
 		console.log("game started")
-		console.log(data.player)
 		this.start = new Date();
 		this.player1.name = data.username_one;
 		this.player2.name = data.username_two;

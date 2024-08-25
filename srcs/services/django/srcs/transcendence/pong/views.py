@@ -205,6 +205,8 @@ class IndexView(TemplateView):
 			})
 
 def registration(request):
+	if request.method == 'GET':
+		return render(request, 'pong/registration.html')
 	if request.method == 'POST':
 		username = request.POST.get('username')
 		email = request.POST.get('email')
@@ -213,38 +215,40 @@ def registration(request):
 
 		#clean username
 		if not username:
-			return JsonResponse({'error' : 'Username is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Username is empty'}, status=400)
 		if BaseUser.objects.filter(username=username).exists():
-			return JsonResponse({'error' : 'Username already taken'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Username already taken'}, status=400)
 
 		# clean username from whitespaces
 		username = username.strip()
 		if username == '':
-			return JsonResponse({'error' : 'Username is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Username is empty'}, status=400)
 
 		# clean email
 		if not email:
-			return JsonResponse({'error' : 'Email is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Email is empty'}, status=400)
 		if BaseUser.objects.filter(email=email).exists():
-			return JsonResponse({'error' : 'Email already taken'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Email already taken'}, status=400)
 
 		# clean email from whitespaces
 		email = email.strip()
 		if email == '':
-			return JsonResponse({'error' : 'Email is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Email is empty'}, status=400)
 
 		# clean password
 		if not password1:
-			return JsonResponse({'error' : 'Password is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Password is empty'}, status=400)
 		if not password2:
-			return JsonResponse({'error' : 'Password is empty'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Password is empty'}, status=400)
 		if password1 != password2:
-			return JsonResponse({'error' : 'Passwords do not match'}, status=400)
+			return JsonResponse({'status' : 'error', 'message' : 'Passwords do not match'}, status=400)
 
 		# save user
 		user = BaseUser.objects.create_user(username=username, email=email, password=password1)
 		user.image = 'static/pong/images/man.png'
 		user.save()
+
+		login(request, user)
 
 		# success message
 		return JsonResponse({'status' : 'success', 'message' : 'Registration successful'}, status=201)

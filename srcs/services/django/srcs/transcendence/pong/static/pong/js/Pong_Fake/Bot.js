@@ -46,18 +46,10 @@ export class MatchBot extends Match {
         }
     }
 
-    // Esempio di utilizzo
-    // const vettoreA = [1, 2];
-    // const vettoreB = [3, 4];
-
-    // const angolo = angleBetweenVectors(vettoreA, vettoreB);
-    // console.log("Angolo in radianti:", angolo);
-
 
     onKeyDown(event) {
         if (event.which == this.player1.upKey){
 			this.player1.moves.up = true;
-            console.log(this.player1.moves.up);
         }
 		if (event.which == this.player1.downKey)
 			this.player1.moves.down = true;
@@ -83,7 +75,6 @@ export class MatchBot extends Match {
 			this.player1.downKey = UTILS.S;
 		}
 
-        console.log(this.player1.moves.up);
 	}
 
     onKeyUp(event) {
@@ -94,8 +85,6 @@ export class MatchBot extends Match {
 	}
 
     pointPrediction(){
-        //l  = 108
-        //h  = 27
 
         let directionX = this.ball.direction.x;
         let directionY = this.ball.direction.y;
@@ -127,14 +116,6 @@ export class MatchBot extends Match {
         }
 
         if (collisions){
-            // console.log("collisions detected");
-            // iterator -= midDeltaX;
-            // let finalDirY = (!(numberOfCollisions % 2)) ? Math.sign(directionY) : -Math.sign(directionY) ;
-            // let destinationY = (108 - iterator) * Math.tan(alpha);
-            // if (finalDirY > 0)
-            //     return (destinationY -27)
-            // else
-            //     return (108 - destinationY - 27)
             iterator -= midDeltaX;
             let destinationY = (108 - iterator) * Math.tan(alpha);
             if (directionY > 0 && !(numberOfCollisions % 2))

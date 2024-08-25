@@ -145,14 +145,14 @@
     font-weight: bold;
     display: flex;
 
-    color: #fff;
+    color: #003cff;
     text-shadow:
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 30px #00ffff,
-        0 0 40px #00ffff,
-        0 0 50px #00ffff,
-        0 0 75px #00ffff;
+            0 0 10px #00ffff,
+            0 0 20px #00ffffc4,
+            0 0 30px #00ffff8e,
+            0 0 40px #00ffff80,
+            0 0 50px #00ffff7a,
+            0 0 75px #00ffff57;
     
     animation: glow 1.5s ease-in-out infinite;
 }
@@ -161,20 +161,20 @@
     0%, 100% {
         text-shadow:
             0 0 10px #00ffff,
-            0 0 20px #00ffff,
-            0 0 30px #00ffff,
-            0 0 40px #00ffff,
-            0 0 50px #00ffff,
-            0 0 75px #00ffff;
+            0 0 20px #00ffffc4,
+            0 0 30px #00ffff8e,
+            0 0 40px #00ffff80,
+            0 0 50px #00ffff7a,
+            0 0 75px #00ffff57;
     }
     50% {
         text-shadow:
             0 0 20px #00ffff,
-            0 0 30px #00ffff,
-            0 0 40px #00ffff,
-            0 0 60px #00ffff,
-            0 0 80px #00ffff,
-            0 0 100px #00ffff;
+            0 0 30px #00ffffc5,
+            0 0 40px #00ffff8a,
+            0 0 60px #00ffff75,
+            0 0 80px #00ffff67,
+            0 0 100px #00ffff56;
     }
 }
 
@@ -182,9 +182,9 @@
     display: none;
     font-size: 24px;
     top: 20%;
-    color: #00ffff;
+    color: #0057fa;
 }
 
 #winner{
-    color: #00ffff;
+    color: #034dec;
 }

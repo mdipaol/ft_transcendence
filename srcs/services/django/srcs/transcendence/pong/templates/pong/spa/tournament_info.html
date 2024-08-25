@@ -4,7 +4,7 @@
 	{% if not started %}
 		<h3>List of partecipants</h3>
 			{% for item in partecipants %}
-				<h3 >{{ item.alias }} ({{ item.user.username }})</h3>
+				<h3 class="friends">{{ item.alias }} ({{ item.user.username }})</h3>
 			{% endfor %}
 		{% comment %} <h3>{{ winner }}</h3>
 		<h3>{{ finished }}</h3> {% endcomment %}

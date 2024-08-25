@@ -77,19 +77,6 @@ const router = async () => {
 
   const currentPage = window.location.hash;
   
-  // If the current page is not the game page, stop the game loop
-  // if(currentPage !== '#play'){
-  //   function addEventListenerClick(){
-  //     const lincks = document.querySelectorAll('li');
-  //     lincks.forEach(li =>{
-  //       li.addEventListener('click', (event)=>{
-  //         console.log('hai pigiato uno dei li della pagina');
-
-  //           //cleanupOtherResources();
-  //       }, {once: true});
-  //     })
-  //   }
-  // }
   // Render the page from map of supported routes or render 404 page.
   let page = routes[parsedUrl] || Error404;
   if (page == Error404)

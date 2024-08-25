@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - static-files:/var/www/django-files/static
+      - media-files:/var/www/django-files/media
     depends_on:
       - django
     networks:
@@ -33,27 +34,27 @@ services:
       - INTRA_OAUTH_SECRET=${INTRA_OAUTH_SECRET}
       - REDIRECT_URI=${REDIRECT_URI}
       - HOST=${HOST}
+      - DJANGO_SETTINGS_MODULE=transcendence.settings
     build:
       context: ./services/django
-    ports:
-      - "8000:8000"
     volumes:
       - ./services/django/srcs/:/app
       - static-files:/app/transcendence/staticfiles
+      - media-files:/app/transcendence/media
     depends_on:
       postgres:
         condition: service_healthy
-      # elasticsearch:
-      #   condition: service_started
-      # logstash:
-      #   condition: service_started
-      # kibana:
-      #   condition: service_started
+      elasticsearch:
+        condition: service_started
+      logstash:
+        condition: service_started
+      kibana:
+        condition: service_started
     restart: unless-stopped
     networks:
       - transcendence-network
-    stdin_open: true
-    tty: true
+    # stdin_open: true
+    # tty: true
   
   #Database
   postgres:
@@ -87,142 +88,145 @@ services:
     networks:
       - transcendence-network
 
-  # setup:
-  #   container_name: setup
-  #   build:
-  #     context : ./services/elasticsearch/
-  #   volumes:
-  #     - certs:/usr/share/elasticsearch/config/certs
-  #   user: "0"
-  #   networks:
-  #     - transcendence-network
-  #   command: >
-  #     bash -c '
-  #       if [ x${ELASTIC_PASSWORD} == x ]; then
-  #         echo "Set the ELASTIC_PASSWORD environment variable in the .env file";
-  #         exit 1;
-  #       elif [ x${KIBANA_PASSWORD} == x ]; then
-  #         echo "Set the KIBANA_PASSWORD environment variable in the .env file";
-  #         exit 1;
-  #       fi;
-  #       if [ ! -f config/certs/ca.zip ]; then
-  #         echo "Creating CA";
-  #         bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
-  #         unzip config/certs/ca.zip -d config/certs;
-  #       fi;
-  #       if [ ! -f config/certs/certs.zip ]; then
-  #         echo "Creating certs";
-  #         echo -ne \
-  #         "instances:\n"\
-  #         "  - name: elasticsearch\n"\
-  #         "    dns:\n"\
-  #         "      - elasticsearch\n"\
-  #         "      - localhost\n"\
-  #         "    ip:\n"\
-  #         "      - 127.0.0.1\n"\
-  #         > config/certs/instances.yml;
-  #         bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
-  #         unzip config/certs/certs.zip -d config/certs;
-  #       fi;
-  #       echo "Setting file permissions"
-  #       chown -R root:root config/certs;
-  #       find . -type d -exec chmod 750 \{\} \;;
-  #       find . -type f -exec chmod 640 \{\} \;;
-  #       ls -laR config;
-  #       echo "Waiting for Elasticsearch availability";
-  #       until curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
-  #       echo "Setting kibana_system password";
-  #       until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
-  #       echo "All done!";
-  #     '
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
-  #     interval: 1s
-  #     timeout: 5s
-  #     retries: 120
+  setup:
+    container_name: setup
+    build:
+      context : ./services/elasticsearch/
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    networks:
+      - transcendence-network
+    command: >
+      bash -c '
+        if [ x${ELASTIC_PASSWORD} == x ]; then
+          echo "Set the ELASTIC_PASSWORD environment variable in the .env file";
+          exit 1;
+        elif [ x${KIBANA_PASSWORD} == x ]; then
+          echo "Set the KIBANA_PASSWORD environment variable in the .env file";
+          exit 1;
+        fi;
+        if [ ! -f config/certs/ca.zip ]; then
+          echo "Creating CA";
+          bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
+          unzip config/certs/ca.zip -d config/certs;
+        fi;
+        if [ ! -f config/certs/certs.zip ]; then
+          echo "Creating certs";
+          echo -ne \
+          "instances:\n"\
+          "  - name: elasticsearch\n"\
+          "    dns:\n"\
+          "      - elasticsearch\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          > config/certs/instances.yml;
+          bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
+          unzip config/certs/certs.zip -d config/certs;
+        fi;
+        echo "Setting file permissions"
+        chown -R root:root config/certs;
+        find . -type d -exec chmod 750 \{\} \;;
+        find . -type f -exec chmod 640 \{\} \;;
+        ls -laR config;
+        echo "Waiting for Elasticsearch availability";
+        until curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        echo "Setting kibana_system password";
+        until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        echo "All done!";
+      '
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 120
 
-  # elasticsearch:
-  #   depends_on:
-  #     setup:
-  #       condition: service_healthy
-  #   container_name: elasticsearch
-  #   build:
-  #     context : ./services/elasticsearch/
-  #   environment:
-  #     - discovery.type=single-node
-  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m
-  #     - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-  #     - node.name=elasticsearch
-  #     - xpack.security.enabled=true
-  #     - xpack.security.http.ssl.enabled=true
-  #     - xpack.security.http.ssl.key=certs/elasticsearch/elasticsearch.key
-  #     - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.crt
-  #     - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
-  #     - xpack.security.transport.ssl.enabled=true
-  #     - xpack.security.transport.ssl.key=certs/elasticsearch/elasticsearch.key
-  #     - xpack.security.transport.ssl.certificate=certs/elasticsearch/elasticsearch.crt
-  #     - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
-  #     - xpack.security.transport.ssl.verification_mode=certificate
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD-SHELL",
-  #         "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
-  #       ]
-  #     interval: 10s
-  #     timeout: 10s
-  #     retries: 120
-  #   ports:
-  #     - "9200:9200"
-  #   volumes:
-  #     - certs:/usr/share/elasticsearch/config/certs
-  #     - esdata:/usr/share/elasticsearch/data
-  #   networks:
-  #     - transcendence-network
+  elasticsearch:
+    depends_on:
+      setup:
+        condition: service_healthy
+    container_name: elasticsearch
+    build:
+      context : ./services/elasticsearch/
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - node.name=elasticsearch
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/elasticsearch/elasticsearch.key
+      - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.key=certs/elasticsearch/elasticsearch.key
+      - xpack.security.transport.ssl.certificate=certs/elasticsearch/elasticsearch.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.verification_mode=certificate
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+    ports:
+      - "9200:9200"
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - esdata:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    networks:
+      - transcendence-network
 
-  # logstash:
-  #   container_name: logstash
-  #   build:
-  #     context : ./services/logstash/
-  #   environment:
-  #     discovery.seed_hosts: logstash
-  #     LS_JAVA_OPTS: "-Xms512m -Xmx512m"
-  #   volumes:
-  #     - ./services/logstash/conf/:/usr/share/logstash/pipeline/
-  #     - certs:/usr/share/logstash/config/certs
-  #   ports:
-  #     - "5044:5044"
-  #     - "9600:9600"
-  #   networks:
-  #     - transcendence-network
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+  logstash:
+    container_name: logstash
+    build:
+      context : ./services/logstash/
+    environment:
+      discovery.seed_hosts: logstash
+      LS_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - ./services/logstash/conf/:/usr/share/logstash/pipeline/
+      - certs:/usr/share/logstash/config/certs
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
 
-  # kibana:
-  #   container_name: kibana
-  #   build:
-  #     context : ./services/kibana/
-  #   volumes:
-  #     - certs:/usr/share/kibana/config/certs
-  #     - kibanadata:/usr/share/kibana/data
-  #   environment:
-  #     - SERVERNAME=kibana
-  #     - server.ssl.enabled=true
-  #     - server.ssl.certificate=/usr/share/kibana/config/certs/ca/ca.crt
-  #     - server.ssl.key=/usr/share/kibana/config/certs/ca/ca.key
-  #     - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-  #     - ELASTICSEARCH_USERNAME=kibana_system
-  #     - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-  #     - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-  #   ports:
-  #     - "5601:5601"
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   networks:
-  #     - transcendence-network
+  kibana:
+    container_name: kibana
+    build:
+      context : ./services/kibana/
+    volumes:
+      - certs:/usr/share/kibana/config/certs
+      - kibanadata:/usr/share/kibana/data
+    environment:
+      - SERVERNAME=kibana
+      - server.ssl.enabled=true
+      - server.ssl.certificate=/usr/share/kibana/config/certs/ca/ca.crt
+      - server.ssl.key=/usr/share/kibana/config/certs/ca/ca.key
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - transcendence-network
 
 networks:
   transcendence-network:
@@ -230,6 +234,8 @@ networks:
 
 volumes:
 
+  media-files:
+    driver: local
   static-files:
     driver: local
   postgres-volume:

@@ -15,7 +15,8 @@ export class OnlineMatch extends Match {
 
 		this.connected = false;
 		this.searching = false;
-		this.culo = null;
+		this.player1.mesh.position.x -= 1;
+		this.player2.mesh.position.x += 1;
 	}
 
 
@@ -58,7 +59,6 @@ export class OnlineMatch extends Match {
 	addPowerUp(data){
 
 			const effect = data.powerup_effect == 'good' ? 'Positive' : 'Negative'
-			console.log(data.powerup_type + effect)
 			const powerUp = this.world.mapPowerUp.get(data.powerup_type + effect);
 			
 			if (powerUp){
@@ -104,7 +104,6 @@ export class OnlineMatch extends Match {
 		else if (data.type == 'reset'){
 			// Scale, triple 
 			// The mesh of the powerup shall remain on the field
-			console.log('reset');
 			this.player1.mesh.scale.x = this.player1.originScale[0]
 			this.player1.mesh.scale.y = this.player1.originScale[1]
 			this.player1.mesh.scale.z = this.player1.originScale[2]
@@ -120,15 +119,12 @@ export class OnlineMatch extends Match {
 		else if (data.type == 'triple'){
 			if (data.action == 'add'){
 				this.add_triple();
-				console.log('triple enabled');
 			}
 			else if (data.action == 'remove'){
-				console.log('triple removed');
 				this.remove_triple();
 			}
 		}
 		else if (data.type == 'scale'){
-			console.log(data)
 			let taker = null;
 			if(data.player == 'player_one')
 				taker = this.player1.mesh;
@@ -151,7 +147,6 @@ export class OnlineMatch extends Match {
 			this.updateExchanges();
 
 			if (msg.message.add_powerup){
-				console.log("powerup added")
 				console.log(msg.message);
 				this.addPowerUp(msg.message);
 			}
@@ -189,7 +184,6 @@ export class OnlineMatch extends Match {
 		this.searching = false;
 			this.htmlElement.querySelector('#searching-message').style.display = 'none';
 			console.log("game started")
-			console.log(data.player)
 			this.start = new Date();
 			this.player1.name = data.username_one;
 			this.player2.name = data.username_two;

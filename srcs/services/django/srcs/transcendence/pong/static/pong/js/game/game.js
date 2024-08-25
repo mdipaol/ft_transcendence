@@ -17,7 +17,6 @@ import Play from '../views/pages/Play.js';
 
 import triggerHashChange from '../services/utils.js';
 
-(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 /**
 	@description This function start a game selecting the match, the map and if powerUps will be active
@@ -136,7 +135,6 @@ export async function startGame(gameMode, worldMap, powerUpMode){
 	const lincks = document.querySelectorAll('li');
 	lincks.forEach(li =>{
 		li.addEventListener('click', (event)=>{
-			console.log("event listener attivo");
 			if (match.socket)
 				match.socket.close();
 			match.ended = true;

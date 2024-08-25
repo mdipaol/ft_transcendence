@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os, sys
 import mimetypes
+from pythonjsonlogger import jsonlogger
 
 mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("text/html", ".html", True)
@@ -28,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [os.environ.get('HOST'),'django', 'localhost']
 
@@ -38,14 +39,14 @@ CSRF_TRUSTED_ORIGINS = ['https://localhost'] + [f'https://localhost:{port}' for 
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
-    'friendship',
-    'pong.apps.PongConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
+    'friendship',
+    'pong.apps.PongConfig',
     'django.contrib.staticfiles',
 ]
 
@@ -82,7 +83,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'transcendence.wsgi.application'
-ASGI_APPLICATION = 'asgi.application'
+ASGI_APPLICATION = 'transcendence.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -156,6 +157,12 @@ MEDIA_URL = '/media/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+	'formatters': {
+		'json': {
+			'()': jsonlogger.JsonFormatter,
+			'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
+        },
+    },
     'handlers': {
         'logstash': {
             'level': 'DEBUG',

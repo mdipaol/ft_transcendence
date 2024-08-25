@@ -18,7 +18,7 @@ urlpatterns = [
     path('chat/', views.chat_index, name='chat'),
 	path('login_view/', views.login_view, name='login'),
 	path('logout/', views.LogoutView.as_view(), name='logout'),
-	path('registration/', views.RegistrationFormView.as_view(), name='registration'),
+	path('registration/', views.registration, name='registration'),
 	path('profile/<str:username>', views.ProfileView.as_view(), name='profile'),
     path('profile/settings/<str:setting>', views.SettingsView.as_view(), name='settings'),
     path('profile/', views.personal_profile),

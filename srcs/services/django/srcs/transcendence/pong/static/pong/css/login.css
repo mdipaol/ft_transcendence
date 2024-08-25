@@ -11,14 +11,22 @@
 
 .registration-box {
     position: absolute;
+    position: relative;
     width: 400px;
     height: 600px;
     background: #191919;
     border-radius: 20px;
-    display: flex;
+    /* display: flex; */
     justify-content: center;
-    align-items: center;
-    bottom: 15px;
+    align-items: flex-start;
+    display: flex;
+    top: 40px;
+}
+
+#registration-form
+{
+    top: 40px;
+    position: relative;
 }
 
 .login-text {
@@ -89,6 +97,8 @@
     transition: .5s ease;
     box-shadow: none;
 }
+
+
 
 .input-check:checked~.input-box input {
     color: #00f7ff;
@@ -164,7 +174,22 @@
     align-items: center;
 }
 
+#login-button-42
+{
+ background: #000;
+ color: #fff;
+ text-shadow: 0 0 10px #7dd2db;
+ border-color: #fff;
+box-shadow: #fff;
+}
+
 .input-check:checked~.login-box button.button-login {
+    background: #00f7ff;
+    box-shadow: 0 0 15px #00f7ff, 0 0 15px #00f7ff;
+}
+
+.input-check:checked~#login-button-42
+{
     background: #00f7ff;
     box-shadow: 0 0 15px #00f7ff, 0 0 15px #00f7ff;
 }
@@ -326,14 +351,27 @@
     opacity: 0.8;
   }
 
-  #login-error.error{
+#login-error.error{
     color: red;
     font-size: 1em;
     text-align: center;
-    transition: .5s ease;
     display: none;
-  }
+    padding: 2px;
+}
 
-    #login-error.error.visible{
-        display: block;
-    }
+#login-error.error.visible{
+    display: block;
+}
+
+#registration-error.error{
+    color: red;
+    font-size: 1em;
+    text-align: center;
+    display: none;
+    padding: 2px;
+
+}
+
+#registration-error.error.visible{
+    display: block;
+}

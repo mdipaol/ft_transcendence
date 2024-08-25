@@ -28,9 +28,6 @@ function world_1_2(){
 }
 
 const world = world_1_2();
-//const bot = new MatchBot(world);
-console.log(world.ready);
-console.log(world.paddle);
 world.ready.then(() => {
 
 	console.log("Meshes have been loaded");
